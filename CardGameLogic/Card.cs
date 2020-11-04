@@ -32,14 +32,15 @@ namespace CardGameLogic
         private int rank;                   //сила 
         private int width = 130;
         private int height = 180;
+        private int zIndex;
 
         private string suit;                //масть 
         private string imageName;
         public static string CardBackImageName = "_CardBack.jpg";
 
-        private bool isOnDesk = false;
+        private bool isOnDesk = false;      
         private bool isCloseOnDesk = false; //Карта, выложенная на стол, побита
-        private bool haveInHand = false;
+        private bool haveInHand = false;    //Может быть не нужно и надо убрать в будущем
         private bool trumpCard = false;     //Козырная масть
 
         public Card(Suits _suit, int _rank, string _imageName)
@@ -118,9 +119,8 @@ namespace CardGameLogic
             this.BeginAnimation(Canvas.TopProperty, null);
 
             Game.ColorHandField = Brushes.NavajoWhite;
-            //Canvas.SetZIndex(this, 100);
-            Debug.WriteLine(Canvas.GetZIndex(this));
-            Debug.WriteLine($"y = {Canvas.GetTop(this)} x = {Canvas.GetLeft(this)}");
+            this.zIndex = Canvas.GetZIndex(this);
+            Canvas.SetZIndex(this, 100);
         }
 
         public void MouseUpFunc(object sender, MouseEventArgs e)
@@ -129,6 +129,16 @@ namespace CardGameLogic
             this.ReleaseMouseCapture();
 
             Game.ColorHandField = null;
+            Canvas.SetZIndex(this, this.zIndex);
+            //Если хотим оставить в руке
+            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop)
+                Game.UpdateHand();
+            else
+            {
+                this.isOnDesk = true;
+                this.ChangeBorder(Brushes.Black,1);
+                Game.SetCardOnDesk(this);
+            }
         }
 
         public void MouseMoveFunc(object sender, MouseEventArgs e)

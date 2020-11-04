@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
+using System.Windows.Data;
 
 namespace CardGameLogic
 {
@@ -27,9 +28,10 @@ namespace CardGameLogic
         private static int marginTopEnemy = -90;
 
         //На столе
-        private static int deskMarginLeft = 108;
+        private const int deskMarginLeft = 108;                 //Констатное начало для 1 карты на столе
+        private static int deskLeftVariable = deskMarginLeft;   //Меняется в зависимости от кол-ва карт
         private static int deskMarginTop = 258;
-        private static int deskInterval = 146;
+        private static int deskInterval = 145;
 
         //Положение области, показывающей границы поля карт в руке
         private static int handFieldLeft = 0;
@@ -48,14 +50,13 @@ namespace CardGameLogic
         private static Label handField = new Label();
 
 
-        private static Card cd = new Card(Card.Suits.Clubs, 1, "Clubs6.jpg");
-        private static Card cd2 = new Card(Card.Suits.Clubs, 1, "Clubs7.jpg");
+        private static List<Card> deck = new List<Card>();
+        private static List<Card> handList = new List<Card>();
+        private static List<Card> enemyList = new List<Card>();
 
+        private static bool turnIsEnemy = false;
 
-        public static List<Card> deck = new List<Card>();
-        public static List<Card> handList = new List<Card>();
-        public static List<Card> enemyList = new List<Card>();
-
+        private static int zIndex = 1;
 
         public static void Start()
         {
@@ -67,8 +68,6 @@ namespace CardGameLogic
 
                 return temp;
             }
-
-            int zIndex = 1;
 
             //Создаем поле, отражающее нашу руку
             handField.Height = 180;
@@ -88,21 +87,21 @@ namespace CardGameLogic
             trumpImage.Height = 70;
             AddContorl(trumpImage, trumpImageMarginLeft, trumpImageMarginTop, ref zIndex);
 
-            //
+
+            //Заполняем колоду
+            foreach (Enum i in suitsNameList)
+                for(int j = 6; j<=14; j++)
+                    deck.Add(new Card((Card.Suits)i, j, $"{i.ToString()}{j}.jpg"));
+
+
+            //Cчетчик карт в колоде
             TextBlock countDeck = new TextBlock();
-            countDeck.DataContext = deck.Count;
-            countDeck.Text = countDeck.DataContext.ToString();
             countDeck.Width = 70;
             countDeck.Height = 70;
             countDeck.Foreground = Brushes.Aqua;
             countDeck.FontSize = 30;
             countDeck.TextAlignment = TextAlignment.Center;
             AddContorl(countDeck, countDeckMarginLeft, countDeckMarginTop, ref zIndex);
-
-            //Заполняем колоду
-            foreach (Enum i in suitsNameList)
-                for(int j = 6; j<=14; j++)
-                    deck.Add(new Card((Card.Suits)i, j, $"{i.ToString()}{j}.jpg"));
 
 
             //Выдаем по 6 карт
@@ -116,7 +115,7 @@ namespace CardGameLogic
                 if (i % 2 == 0)                                                //Выдаем противнику
                 {
                     card.LoadImage(Card.CardBackImageName);
-                    ChangeCardEvents(ref card, true);
+                    ChangeCardEvents(card, true);
                     AddContorl(card, leftPos, marginTopEnemy, ref zIndex);
                     enemyList.Add(card);
                     leftPos += 140;                                             //Ширина карт + 10
@@ -130,6 +129,51 @@ namespace CardGameLogic
                 }
                 deck.RemoveAt(cardIndex);
             }
+            countDeck.Text = deck.Count.ToString();
+        }
+
+        private static void ClearDesk(bool _turnIsEnemy = false)
+        {
+            //Если "Бито" говорит бот
+            if (_turnIsEnemy)
+            {
+
+            }
+            else
+            {
+                void DeleteFromGame(List<Card> list)
+                {
+                    for(int i = 0; i<list.Count; i++)
+                        if (list[i].IsOnDesk)
+                        {
+                            list[i] = null;
+                            window.Children.Remove(list[i]);
+                            list.RemoveAt(i);
+                        }
+                }
+                DeleteFromGame(handList);
+                DeleteFromGame(enemyList);
+            }
+            
+        }
+
+        public static void SetCardOnDesk(Card element)
+        {
+            SetCanvasPosition(element, deskLeftVariable, deskMarginTop);
+            deskLeftVariable += deskInterval;
+            ChangeCardEvents(element, true);
+            UpdateHand();
+        }
+
+        public static void UpdateHand()
+        {
+            int leftPos = marginLeft;
+            foreach(Card i in handList)
+                if (!i.IsOnDesk)
+                {
+                    SetCanvasPosition(i, leftPos, marginTopHand);
+                    leftPos += 140;
+                }
         }
 
         private static void AddContorl(UIElement element, int left, int top, ref int zIndex)
@@ -141,7 +185,13 @@ namespace CardGameLogic
             zIndex++;
         }
 
-        private static void ChangeCardEvents(ref Card card, bool forEnemy = false)
+        private static void SetCanvasPosition(UIElement element, int left, int top)
+        {
+            Canvas.SetLeft(element, left);
+            Canvas.SetTop(element, top);
+        }
+
+        private static void ChangeCardEvents(Card card, bool forEnemy = false)
         {
             if (forEnemy)      //Если карта для врага
             {
@@ -172,6 +222,23 @@ namespace CardGameLogic
             set { handField.Background = value; }
             get { return (SolidColorBrush)handField.Background; }
         }
+
+        public static int DeskMarginLeft
+        {
+            set { if (value == 0) deskLeftVariable = deskMarginLeft; }
+            get { return deskLeftVariable; }
+        }
+
+        public static int DeskMarginTop
+        {
+            get { return deskMarginTop; }
+        }
+
+        public static int DeskInterval
+        {
+            get { return deskInterval; }
+        }
+
 
         public static int HandFieldTop
         {
