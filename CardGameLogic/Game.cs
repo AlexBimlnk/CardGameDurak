@@ -37,13 +37,9 @@ namespace CardGameLogic
         private static int handFieldLeft = 0;
         private static int handFieldTop = 570;
 
-        //Положение картинки козырной масти на столе
-        private static int trumpImageMarginLeft = 1200;
-        private static int trumpImageMarginTop = 270;
-
-        //Положение счетчика карт в колоде на столе
-        private static int countDeckMarginLeft = 1200;
-        private static int countDeckMarginTop = 340;
+        //Положение правой панели (кнопки, счетчик, коз. масть на столе)
+        private static int rightPanelMarginLeft = 1180;
+        private static int rightPanelMarginTop = 270;
 
         #endregion
 
@@ -80,12 +76,12 @@ namespace CardGameLogic
             int indexTrumpSuit = rnd.Next(0, 4);
             Debug.WriteLine($"TrumpCard is {suitsNameList[indexTrumpSuit]}");
 
-            //Создаем карттинку козырной карты
+            //Создаем картинку козырной карты
             Image trumpImage = new Image();
             trumpImage.Source = ReturnsImage($"Resources/{suitsNameList[indexTrumpSuit].ToString()}Sym.jpg");
             trumpImage.Width = 70;
             trumpImage.Height = 70;
-            AddContorl(trumpImage, trumpImageMarginLeft, trumpImageMarginTop, ref zIndex);
+            AddContorl(trumpImage, rightPanelMarginLeft, rightPanelMarginTop, ref zIndex);
 
 
             //Заполняем колоду
@@ -101,7 +97,32 @@ namespace CardGameLogic
             countDeck.Foreground = Brushes.Aqua;
             countDeck.FontSize = 30;
             countDeck.TextAlignment = TextAlignment.Center;
-            AddContorl(countDeck, countDeckMarginLeft, countDeckMarginTop, ref zIndex);
+            AddContorl(countDeck, rightPanelMarginLeft, rightPanelMarginTop + 70, ref zIndex);
+
+
+            //Кнопка "бито"
+            Button btnBito = new Button();
+            btnBito.Width = 80;
+            btnBito.Height = 70;
+            btnBito.Foreground = Brushes.Black;
+            btnBito.Background = Brushes.NavajoWhite;
+            btnBito.FontSize = 30;
+            btnBito.Content = "Бито";
+            btnBito.Click += new RoutedEventHandler(BtnBitoClick);
+            AddContorl(btnBito, rightPanelMarginLeft, rightPanelMarginTop + 120, ref zIndex);
+
+
+            //Кнопка "взять"
+            Button btnTake = new Button();
+            btnTake.Width = 80;
+            btnTake.Height = 70;
+            btnTake.Foreground = Brushes.Black;
+            btnTake.Background = Brushes.NavajoWhite;
+            btnTake.FontSize = 30;
+            btnTake.Content = "Взять";
+            btnTake.Click += new RoutedEventHandler(BtnTakeClick);
+            AddContorl(btnTake, rightPanelMarginLeft, rightPanelMarginTop + 190, ref zIndex);
+
 
 
             //Выдаем по 6 карт
@@ -114,7 +135,8 @@ namespace CardGameLogic
                     card.TrumpCard = true;
                 if (i % 2 == 0)                                                //Выдаем противнику
                 {
-                    card.LoadImage(Card.CardBackImageName);
+                    //card.LoadImage(Card.CardBackImageName);
+                    card.LoadImage(card.ImageName);
                     ChangeCardEvents(card, true);
                     AddContorl(card, leftPos, marginTopEnemy, ref zIndex);
                     enemyList.Add(card);
@@ -132,8 +154,85 @@ namespace CardGameLogic
             countDeck.Text = deck.Count.ToString();
         }
 
+        public static void TurnMove()
+        {
+            if (turnIsEnemy)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+
+        //------------EnemyLogic----------------
+
+        private static void EnemyMoves()
+        {
+            if (turnIsEnemy)
+            {
+
+            }
+            else
+            {
+                foreach(var humanCard in handList)
+                {
+                    if(humanCard.IsOnDesk &&
+                       !humanCard.IsCloseOnDesk &&
+                       !humanCard.TrumpCard)
+                    {
+                        bool findNormal = false;
+                        bool findTrump = false;
+                        int indexOptimalNormal = -1;
+                        int indexOptimalTrump = -1;
+                        for(int i = 0; i<enemyList.Count; i++)
+                            if (!enemyList[i].IsOnDesk)     //Если карта в руке
+                            {
+                                if (enemyList[i].TrumpCard)
+                                {
+                                    findTrump = true;
+                                    if (indexOptimalTrump == -1)
+                                        indexOptimalTrump = i;
+                                    else if (enemyList[i].Rank <= enemyList[indexOptimalTrump].Rank)
+                                        indexOptimalTrump = i;
+                                }
+                                else if (enemyList[i].Suit == humanCard.Suit &&
+                                        enemyList[i].Rank > humanCard.Rank)
+                                {
+                                    findNormal = true;
+                                    if (indexOptimalNormal == -1)
+                                        indexOptimalNormal = i;
+                                    else if (enemyList[i].Rank <= enemyList[indexOptimalNormal].Rank)
+                                        indexOptimalNormal = i;
+                                }
+                            }
+
+                        if (findNormal) //Если нашли обычную для побития
+                        {
+                            humanCard.IsCloseOnDesk = true;
+
+                                                    }
+                    }
+                }
+            }
+        }
+
+        //------------EnemyLogic----------------
+
         private static void ClearDesk(bool _turnIsEnemy = false)
         {
+            void DeleteFromGame(List<Card> list)
+            {
+                for (int i = 0; i < list.Count; i++)
+                    if (list[i].IsOnDesk)
+                    {
+                        window.Children.Remove(list[i]);
+                        list[i] = null;
+                        list.RemoveAt(i);
+                    }
+            }
+
             //Если "Бито" говорит бот
             if (_turnIsEnemy)
             {
@@ -141,28 +240,25 @@ namespace CardGameLogic
             }
             else
             {
-                void DeleteFromGame(List<Card> list)
-                {
-                    for(int i = 0; i<list.Count; i++)
-                        if (list[i].IsOnDesk)
-                        {
-                            list[i] = null;
-                            window.Children.Remove(list[i]);
-                            list.RemoveAt(i);
-                        }
-                }
                 DeleteFromGame(handList);
                 DeleteFromGame(enemyList);
             }
             
         }
 
-        public static void SetCardOnDesk(Card element)
+        public static void SetCardOnDesk(Card element, bool forEnemy = false, int leftPos = 0)
         {
-            SetCanvasPosition(element, deskLeftVariable, deskMarginTop);
-            deskLeftVariable += deskInterval;
-            ChangeCardEvents(element, true);
-            UpdateHand();
+            if (forEnemy)
+            {
+
+            }
+            else
+            {
+                SetCanvasPosition(element, deskLeftVariable, deskMarginTop);
+                deskLeftVariable += deskInterval;
+                ChangeCardEvents(element, true);
+                UpdateHand();
+            }
         }
 
         public static void UpdateHand()
@@ -211,6 +307,18 @@ namespace CardGameLogic
             }
         }
 
+        private static void BtnBitoClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+        private static void BtnTakeClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
         public static Canvas GameWindow
         {
             set { window = value; }
@@ -223,7 +331,12 @@ namespace CardGameLogic
             get { return (SolidColorBrush)handField.Background; }
         }
 
-        public static int DeskMarginLeft
+        public static bool TurnIsEnemy
+        {
+            get { return turnIsEnemy; }
+        }
+
+        public static int DeskLeftVariable
         {
             set { if (value == 0) deskLeftVariable = deskMarginLeft; }
             get { return deskLeftVariable; }

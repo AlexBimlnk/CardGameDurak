@@ -131,7 +131,7 @@ namespace CardGameLogic
             Game.ColorHandField = null;
             Canvas.SetZIndex(this, this.zIndex);
             //Если хотим оставить в руке
-            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop)
+            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop || Game.TurnIsEnemy)
                 Game.UpdateHand();
             else
             {
