@@ -154,21 +154,10 @@ namespace CardGameLogic
             countDeck.Text = deck.Count.ToString();
         }
 
-        public static void TurnMove()
-        {
-            if (turnIsEnemy)
-            {
-
-            }
-            else
-            {
-
-            }
-        }
 
         //------------EnemyLogic----------------
 
-        private static void EnemyMoves()
+        public static void EnemyMoves()
         {
             //Противник ходит
             if (turnIsEnemy)
@@ -178,9 +167,9 @@ namespace CardGameLogic
             //Противник отбивается
             else
             {
-                foreach(var humanCard in handList)
+                foreach (var humanCard in handList)
                 {
-                    if(humanCard.IsOnDesk &&
+                    if (humanCard.IsOnDesk &&
                        !humanCard.IsCloseOnDesk &&
                        !humanCard.TrumpCard)
                     {
@@ -188,7 +177,7 @@ namespace CardGameLogic
                         bool findTrump = false;
                         int indexOptimalNormal = -1;
                         int indexOptimalTrump = -1;
-                        for(int i = 0; i<enemyList.Count; i++)
+                        for (int i = 0; i < enemyList.Count; i++)
                             if (!enemyList[i].IsOnDesk)     //Если карта в руке
                             {
                                 if (enemyList[i].TrumpCard)
@@ -210,9 +199,21 @@ namespace CardGameLogic
                                 }
                             }
 
-                        if (findNormal) //Если нашли обычную для побития
+                        //Если нашли карту для побития
+                        if (findNormal || findTrump) 
                         {
+                            int index = findNormal ? indexOptimalNormal : indexOptimalTrump;
+
                             humanCard.IsCloseOnDesk = true;
+                            enemyList[index].IsOnDesk = true;
+                            //Чтобы карта игрока на столе была за картой противника после побития
+                            Canvas.SetZIndex(enemyList[index], Canvas.GetZIndex(humanCard) + 1);
+                            SetCardOnDesk(enemyList[index], true, (int)Canvas.GetLeft(humanCard));
+                        }
+
+                        //Противник берет карты
+                        else
+                        {
 
                         }
                     }
@@ -221,6 +222,31 @@ namespace CardGameLogic
         }
 
         //------------EnemyLogic----------------
+
+
+        public static void SetCardOnDesk(Card element, bool forEnemy = false, int leftPos = 0)
+        {
+            if (forEnemy)
+                SetCanvasPosition(element, leftPos, deskMarginTop-90);
+            else
+            {
+                SetCanvasPosition(element, deskLeftVariable, deskMarginTop);
+                deskLeftVariable += deskInterval;
+                ChangeCardEvents(element, true);
+                UpdateHand();
+            }
+        }
+
+        public static void UpdateHand()
+        {
+            int leftPos = marginLeft;
+            foreach(Card i in handList)
+                if (!i.IsOnDesk)
+                {
+                    SetCanvasPosition(i, leftPos, marginTopHand);
+                    leftPos += 140;
+                }
+        }
 
         private static void ClearDesk(bool _turnIsEnemy = false)
         {
@@ -245,33 +271,7 @@ namespace CardGameLogic
                 DeleteFromGame(handList);
                 DeleteFromGame(enemyList);
             }
-            
-        }
 
-        public static void SetCardOnDesk(Card element, bool forEnemy = false, int leftPos = 0)
-        {
-            if (forEnemy)
-            {
-
-            }
-            else
-            {
-                SetCanvasPosition(element, deskLeftVariable, deskMarginTop);
-                deskLeftVariable += deskInterval;
-                ChangeCardEvents(element, true);
-                UpdateHand();
-            }
-        }
-
-        public static void UpdateHand()
-        {
-            int leftPos = marginLeft;
-            foreach(Card i in handList)
-                if (!i.IsOnDesk)
-                {
-                    SetCanvasPosition(i, leftPos, marginTopHand);
-                    leftPos += 140;
-                }
         }
 
         private static void AddContorl(UIElement element, int left, int top, ref int zIndex)
@@ -314,12 +314,13 @@ namespace CardGameLogic
 
         }
 
-
         private static void BtnTakeClick(object sender, RoutedEventArgs e)
         {
 
         }
 
+
+        #region Свойства
 
         public static Canvas GameWindow
         {
@@ -374,5 +375,6 @@ namespace CardGameLogic
         {
             get { return marginLeft; }
         }
+        #endregion
     }
 }

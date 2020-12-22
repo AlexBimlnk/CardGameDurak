@@ -138,6 +138,7 @@ namespace CardGameLogic
                 this.isOnDesk = true;
                 this.ChangeBorder(Brushes.Black,1);
                 Game.SetCardOnDesk(this);
+                Game.EnemyMoves();
             }
         }
 
