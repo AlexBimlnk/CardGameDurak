@@ -170,10 +170,12 @@ namespace CardGameLogic
 
         private static void EnemyMoves()
         {
+            //Противник ходит
             if (turnIsEnemy)
             {
 
             }
+            //Противник отбивается
             else
             {
                 foreach(var humanCard in handList)
@@ -212,7 +214,7 @@ namespace CardGameLogic
                         {
                             humanCard.IsCloseOnDesk = true;
 
-                                                    }
+                        }
                     }
                 }
             }
