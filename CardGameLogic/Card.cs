@@ -155,6 +155,11 @@ namespace CardGameLogic
 
         #region Свойства
 
+
+        public int GetZIndex
+        {
+            get { return zIndex; }
+        }
         public int Rank
         {
             get { return rank; }

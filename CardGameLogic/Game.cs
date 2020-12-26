@@ -167,35 +167,37 @@ namespace CardGameLogic
             //Противник отбивается
             else
             {
-                foreach (var humanCard in handList)
+                int i = 0;
+                for (;i<handList.Count; i++)
                 {
-                    if (humanCard.IsOnDesk &&
-                       !humanCard.IsCloseOnDesk &&
-                       !humanCard.TrumpCard)
+                    if (handList[i].IsOnDesk &&
+                       !handList[i].IsCloseOnDesk)
                     {
+                        if (handList[i].TrumpCard)
+                            break;
                         bool findNormal = false;
                         bool findTrump = false;
                         int indexOptimalNormal = -1;
                         int indexOptimalTrump = -1;
-                        for (int i = 0; i < enemyList.Count; i++)
-                            if (!enemyList[i].IsOnDesk)     //Если карта в руке
+                        for (int j = 0; j < enemyList.Count; j++)
+                            if (!enemyList[j].IsOnDesk)     //Если карта в руке
                             {
-                                if (enemyList[i].TrumpCard)
+                                if (enemyList[j].TrumpCard)
                                 {
                                     findTrump = true;
                                     if (indexOptimalTrump == -1)
-                                        indexOptimalTrump = i;
-                                    else if (enemyList[i].Rank <= enemyList[indexOptimalTrump].Rank)
-                                        indexOptimalTrump = i;
+                                        indexOptimalTrump = j;
+                                    else if (enemyList[j].Rank <= enemyList[indexOptimalTrump].Rank)
+                                        indexOptimalTrump = j;
                                 }
-                                else if (enemyList[i].Suit == humanCard.Suit &&
-                                        enemyList[i].Rank > humanCard.Rank)
+                                else if (enemyList[j].Suit == handList[i].Suit &&
+                                        enemyList[j].Rank > handList[i].Rank)
                                 {
                                     findNormal = true;
                                     if (indexOptimalNormal == -1)
-                                        indexOptimalNormal = i;
-                                    else if (enemyList[i].Rank <= enemyList[indexOptimalNormal].Rank)
-                                        indexOptimalNormal = i;
+                                        indexOptimalNormal = j;
+                                    else if (enemyList[j].Rank <= enemyList[indexOptimalNormal].Rank)
+                                        indexOptimalNormal = j;
                                 }
                             }
 
@@ -204,24 +206,81 @@ namespace CardGameLogic
                         {
                             int index = findNormal ? indexOptimalNormal : indexOptimalTrump;
 
-                            humanCard.IsCloseOnDesk = true;
+                            handList[i].IsCloseOnDesk = true;
                             enemyList[index].IsOnDesk = true;
                             //Чтобы карта игрока на столе была за картой противника после побития
-                            Canvas.SetZIndex(enemyList[index], Canvas.GetZIndex(humanCard) + 1);
-                            SetCardOnDesk(enemyList[index], true, (int)Canvas.GetLeft(humanCard));
-                        }
-
-                        //Противник берет карты
+                            Canvas.SetZIndex(enemyList[index], handList[i].GetZIndex + 1);
+                            SetCardOnDesk(enemyList[index], true, (int)Canvas.GetLeft(handList[i]));
+                            UpdateHand(true);
+                        }                
                         else
-                        {
-
-                        }
+                            break;
                     }
                 }
+
+                //Если был сделан break
+                if (i != handList.Count)
+                    EnemyTake();
             }
         }
 
+        //Противник берет карты
+        private static void EnemyTake()
+        {
+            for (int i = handList.Count-1; i >= 0; i--)
+            {
+                if (handList[i].IsOnDesk)
+                {
+                    handList[i].IsCloseOnDesk = false;
+                    ChangeCardEvents(handList[i], true);
+                    //handList[i].LoadImage(Card.CardBackImageName);
+                    enemyList.Add(handList[i]);
+                    handList.RemoveAt(i);
+                }
+            }
+
+            for (int i = 0; i < enemyList.Count; i++)
+                enemyList[i].IsOnDesk = false;
+
+            deskLeftVariable = deskMarginLeft;
+
+            UpdateHand(true);
+        }
+
         //------------EnemyLogic----------------
+
+
+        //------------HumanLogic----------------
+
+        //Можно ли положить карту на стол?
+        public static bool CanDrop(Card element)
+        {
+            bool flag = false;
+
+            //Если игрок отбивается
+            if (turnIsEnemy)
+            {
+
+            }
+            else
+            {
+
+            }
+
+            return flag;
+        }
+
+        private static void BtnBitoClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private static void BtnTakeClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        //------------HumanLogic----------------
 
 
         public static void SetCardOnDesk(Card element, bool forEnemy = false, int leftPos = 0)
@@ -237,18 +296,37 @@ namespace CardGameLogic
             }
         }
 
-        public static void UpdateHand()
+        public static void UpdateHand(bool forEnemy = false)
         {
+            int step;
+            int cardCount = forEnemy ? enemyList.Count : handList.Count;
+
+            if (cardCount <= 9)
+                step = 140;
+            else if (9 < cardCount && cardCount <= 12)
+                step = 100;
+            else if (12 < cardCount && cardCount <= 18)
+                step = 70;
+            else if (18 < cardCount && cardCount <= 25)
+                step = 50;
+            else
+                step = 35;
+
+
             int leftPos = marginLeft;
-            foreach(Card i in handList)
+            int topPos = forEnemy ? marginTopEnemy : marginTopHand;
+            byte zIndex = 50;
+            foreach(Card i in forEnemy ? enemyList : handList)
                 if (!i.IsOnDesk)
                 {
-                    SetCanvasPosition(i, leftPos, marginTopHand);
-                    leftPos += 140;
+                    Canvas.SetZIndex(i, zIndex);
+                    SetCanvasPosition(i, leftPos, topPos);
+                    leftPos += step;
+                    zIndex++;
                 }
         }
 
-        private static void ClearDesk(bool _turnIsEnemy = false)
+        private static void ClearDesk()
         {
             void DeleteFromGame(List<Card> list)
             {
@@ -262,7 +340,7 @@ namespace CardGameLogic
             }
 
             //Если "Бито" говорит бот
-            if (_turnIsEnemy)
+            if (turnIsEnemy)
             {
 
             }
@@ -307,16 +385,6 @@ namespace CardGameLogic
                 card.MouseMove += new MouseEventHandler(card.MouseMoveFunc);
                 card.MouseUp += new MouseButtonEventHandler(card.MouseUpFunc);
             }
-        }
-
-        private static void BtnBitoClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private static void BtnTakeClick(object sender, RoutedEventArgs e)
-        {
-
         }
 
 
