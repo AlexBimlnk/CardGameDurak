@@ -133,12 +133,17 @@ namespace CardGameLogic
             //Если хотим оставить в руке
             if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop || Game.TurnIsEnemy)
                 Game.UpdateHand();
-            else
+            else if(Game.CanDrop(this))
             {
                 this.isOnDesk = true;
                 this.ChangeBorder(Brushes.Black,1);
-                Game.SetCardOnDesk(this);
+                Game.SetCardOnDesk(this,Game.TurnIsEnemy);
                 Game.EnemyMoves();
+            }
+            else
+            {
+                Game.UpdateHand();
+                MessageBox.Show("Сейчас невозможно положить эту карту на стол.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
