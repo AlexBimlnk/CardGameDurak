@@ -15,9 +15,16 @@ using System.Windows.Data;
 
 namespace CardGameLogic
 {
-    public abstract class Game
+    public static class Game
     {
+        /*
+         * Для того, чтобы убрать отображение "рубашки" у бота
+         * Нужно закомментить строку 207 и строку 383
+         */
         private static Canvas window;
+
+        public delegate void EndGameHandler();
+        public static event EndGameHandler EndGameEvent;
 
         private static Enum[] suitsNameList = { Card.Suits.Clubs, Card.Suits.Diamonds, Card.Suits.Hearts, Card.Suits.Spades };
 
@@ -54,6 +61,9 @@ namespace CardGameLogic
         private static bool deskIsClear = true;
 
         private static int zIndex = 1;
+        
+        //Количество "подкинутых для побития карт" во время хода
+        private static int countAddedCardOnDesk = 0;
 
         public static void Start()
         {
@@ -75,7 +85,6 @@ namespace CardGameLogic
             //Выбираем козырную масть
             Random rnd = new Random();
             int indexTrumpSuit = rnd.Next(0, 4);
-            Debug.WriteLine($"TrumpCard is {suitsNameList[indexTrumpSuit]}");
 
             //Создаем картинку козырной карты
             Image trumpImage = new Image();
@@ -129,11 +138,63 @@ namespace CardGameLogic
             DropCard(enemyList, true);
         }
 
+        public static void SetCardOnDesk(Card element, bool forDefense = false)
+        {
+            deskIsClear = false;
+            if (forDefense)
+            {
+                SetCanvasPosition(element, deskLeftVariable - deskInterval, deskMarginTop - 90);
+                if (turnIsEnemy)
+                    ChangeCardEvents(element, true);
+            }
+            else
+            {
+                SetCanvasPosition(element, deskLeftVariable, deskMarginTop);
+                deskLeftVariable += deskInterval;
+                if (!turnIsEnemy)
+                    ChangeCardEvents(element, true);
+                UpdateHand(turnIsEnemy);
+            }
+        }
+
+        public static void UpdateHand(bool forEnemy = false)
+        {
+            int step;
+            int cardCount = forEnemy ? enemyList.Count : handList.Count;
+
+            if (cardCount <= 9)
+                step = 140;
+            else if (9 < cardCount && cardCount <= 12)
+                step = 100;
+            else if (12 < cardCount && cardCount <= 18)
+                step = 70;
+            else if (18 < cardCount && cardCount <= 25)
+                step = 50;
+            else
+                step = 35;
+
+
+            int leftPos = marginLeft;
+            int topPos = forEnemy ? marginTopEnemy : marginTopHand;
+            byte zIndex = 50;
+            foreach (Card i in forEnemy ? enemyList : handList)
+                if (!i.IsOnDesk)
+                {
+                    Canvas.SetZIndex(i, zIndex);
+                    SetCanvasPosition(i, leftPos, topPos);
+                    leftPos += step;
+                    zIndex++;
+                }
+        }
+
+        //-------------------------------------------------------------------------
+
+
         private static void DropCard(List<Card> cardList, bool forEnemy = false)
         {
             Random rnd = new Random();
 
-            while (cardList.Count < 6)
+            while (cardList.Count < 6 && deck.Count > 0)
             {
                 int cardIndex = rnd.Next(0, deck.Count);
                 Card card = deck[cardIndex];
@@ -142,7 +203,7 @@ namespace CardGameLogic
 
                 if (forEnemy)
                 {
-                    //card.LoadImage(Card.CardBackImageName);
+                    card.LoadImage(Card.CardBackImageName);
                     ChangeCardEvents(card, true);
                 }
 
@@ -160,30 +221,37 @@ namespace CardGameLogic
             UpdateHand(forEnemy);
         }
 
+        //Передача хода
+        private static void Turn()
+        {
+            deskLeftVariable = deskMarginLeft;
+            turnIsEnemy = !turnIsEnemy;
+            ClearDesk();
+            CheckWin();
+            if (turnIsEnemy)
+            {
+                DropCard(handList);
+                DropCard(enemyList, true);
+                EnemyMoves();
+            }
+            else
+            {
+                DropCard(enemyList, true);
+                DropCard(handList);
+            }
+        }
 
-        //------------EnemyLogic----------------
+
+        #region -------------EnemyLogic----------------
 
         public static void EnemyMoves()
         {
             //Противник ходит
             if (turnIsEnemy)
             {
-                //Если выставлять на доску все сразу, то собъется дескИнтервал
-                //Видимо надо находить по одной карте на шаге, ждать когда игрок побьет
-                //И потом снова смотреть на последовательность
-                List<int> indexes = new List<int>();
-
-                void LoadOnDesk()
-                {
-                    foreach(int i in indexes)
-                    {
-                        enemyList[i].IsOnDesk = true;
-                        SetCardOnDesk(enemyList[i]);
-                        enemyList[i].LoadImage(enemyList[i].ImageName);
-                    }
-                    UpdateHand(true);
-                }
+                int index = -1;
                 
+                //Если доска пустая
                 if (deskIsClear)
                 {
                     int indexOptimalNormal = -1;
@@ -197,44 +265,48 @@ namespace CardGameLogic
                             enemyList[j].Rank < enemyList[indexOptimalNormal].Rank))
                             indexOptimalNormal = j;
                     }
-                    indexes.Add(indexOptimalNormal == -1 ? indexOptimalTrump : indexOptimalNormal);
+                    index = indexOptimalNormal == -1 ? indexOptimalTrump : indexOptimalNormal;
                 }
+                //Подкидывает карты
                 else
-                {
-                    int count = 0;
                     for (int j = 0; j < enemyList.Count; j++)
                     {
-                        if (count == 6)
+                        if (countAddedCardOnDesk == 6)
                             break;
                         if (!enemyList[j].IsOnDesk && !enemyList[j].TrumpCard)
                         {
                             bool find = false;
                             foreach(Card i in enemyList)
-                            {
                                 if (i.IsOnDesk && enemyList[j].Rank == i.Rank)
                                 {
-                                    indexes.Add(j);
-                                    count++;
+                                    index = j;
+                                    countAddedCardOnDesk++;
                                     find = true;
                                     break;
                                 }
-                            }
                             if (!find)
-                            {
                                 foreach(Card i in handList)
-                                {
                                     if (i.IsOnDesk && enemyList[j].Rank == i.Rank)
                                     {
-                                        indexes.Add(j);
-                                        count++;
+                                        index = j;
+                                        countAddedCardOnDesk++;
                                         break;
                                     }
-                                }
-                            }
                         }
                     }
+
+                //Если нашли карту, которую можно подкинуть - подкидываем
+                if (index != -1)
+                {
+                    enemyList[index].IsOnDesk = true;
+                    SetCardOnDesk(enemyList[index]);
+                    enemyList[index].LoadImage(enemyList[index].ImageName);
                 }
-                
+                else
+                {
+                    MessageBox.Show("Бито.", "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Turn();     //Если подкинуть больше нечего - передаем ход
+                }
 
             }
             //Противник отбивается
@@ -307,30 +379,38 @@ namespace CardGameLogic
                 {
                     handList[i].IsCloseOnDesk = false;
                     ChangeCardEvents(handList[i], true);
-                    //handList[i].LoadImage(Card.CardBackImageName);
+                    handList[i].LoadImage(Card.CardBackImageName);
                     enemyList.Add(handList[i]);
                     handList.RemoveAt(i);
                 }
             }
 
             for (int i = 0; i < enemyList.Count; i++)
+            {
                 enemyList[i].IsOnDesk = false;
+                enemyList[i].LoadImage(Card.CardBackImageName);
+            }
 
             deskLeftVariable = deskMarginLeft;
-
+            deskIsClear = true;
+            CheckWin();
             UpdateHand(true);
+            DropCard(handList);
         }
 
-        //------------EnemyLogic----------------
+        #endregion
 
 
-        //------------HumanLogic----------------
+        #region -------------HumanLogic----------------
 
         //Можно ли положить карту на стол?
         public static bool CanDrop(Card element)
         {
             if (deskIsClear)
                 return true;
+
+            if (enemyList.Count == 0)
+                return false;
 
             //Если игрок отбивается
             if (turnIsEnemy)
@@ -343,7 +423,8 @@ namespace CardGameLogic
                             i.Rank < element.Rank ||
                             !i.TrumpCard && element.TrumpCard))
                         {
-                            Canvas.SetZIndex(element, i.GetZIndex + 1);
+                            Canvas.SetZIndex(element, Canvas.GetZIndex(i) + 1);
+                            i.IsCloseOnDesk = true;
                             return true;
                         }
                     }
@@ -361,71 +442,63 @@ namespace CardGameLogic
             return deskIsClear;
         }
 
-
         private static void BtnBitoClick(object sender, RoutedEventArgs e)
         {
-
+            if (!turnIsEnemy && !deskIsClear)
+                Turn();
+            else
+                MessageBox.Show("Сейчас не ваш ход или нет карт на столе.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private static void BtnTakeClick(object sender, RoutedEventArgs e)
         {
+            if (!turnIsEnemy)
+                return;
 
-        }
-
-        //------------HumanLogic----------------
-
-
-        public static void SetCardOnDesk(Card element, bool forDefense = false)
-        {
-            deskIsClear = false;
-            if (forDefense)
-                SetCanvasPosition(element, deskLeftVariable-deskInterval, deskMarginTop - 90);
-            else
+            for (int i = enemyList.Count - 1; i >= 0; i--)
             {
-                SetCanvasPosition(element, deskLeftVariable, deskMarginTop);
-                deskLeftVariable += deskInterval;
-                if(!turnIsEnemy)
-                    ChangeCardEvents(element, true);
-                UpdateHand(turnIsEnemy);
+                if (enemyList[i].IsOnDesk)
+                {
+                    enemyList[i].IsCloseOnDesk = false;
+                    ChangeCardEvents(enemyList[i]);
+                    handList.Add(enemyList[i]);
+                    enemyList.RemoveAt(i);
+                }
             }
+
+            for (int i = 0; i < handList.Count; i++)
+                handList[i].IsOnDesk = false;
+
+            deskLeftVariable = deskMarginLeft;
+            deskIsClear = true;
+            CheckWin();
+            UpdateHand();
+            DropCard(enemyList, true);
+            EnemyMoves();
         }
 
-        public static void UpdateHand(bool forEnemy = false)
+        #endregion
+
+
+        private static void CheckWin()
         {
-            int step;
-            int cardCount = forEnemy ? enemyList.Count : handList.Count;
-
-            if (cardCount <= 9)
-                step = 140;
-            else if (9 < cardCount && cardCount <= 12)
-                step = 100;
-            else if (12 < cardCount && cardCount <= 18)
-                step = 70;
-            else if (18 < cardCount && cardCount <= 25)
-                step = 50;
-            else
-                step = 35;
-
-
-            int leftPos = marginLeft;
-            int topPos = forEnemy ? marginTopEnemy : marginTopHand;
-            byte zIndex = 50;
-            foreach(Card i in forEnemy ? enemyList : handList)
-                if (!i.IsOnDesk)
-                {
-                    Canvas.SetZIndex(i, zIndex);
-                    SetCanvasPosition(i, leftPos, topPos);
-                    leftPos += step;
-                    zIndex++;
-                }
+            if(deck.Count == 0 && (handList.Count == 0 || enemyList.Count == 0))
+            {
+                if(handList.Count == 0 && enemyList.Count == 0)
+                    MessageBox.Show("Ничья", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
+                else if(handList.Count == 0 && enemyList.Count!=0)
+                    MessageBox.Show("Вы выиграли", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
+                else if(handList.Count!=0 && enemyList.Count == 0)
+                    MessageBox.Show("Вы проиграли", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
+                EndGameEvent?.Invoke();
+            }
         }
 
         private static void ClearDesk()
         {
-            deskIsClear = true;
             void DeleteFromGame(List<Card> list)
             {
-                for (int i = 0; i < list.Count; i++)
+                for (int i = list.Count-1; i >= 0; i--)
                     if (list[i].IsOnDesk)
                     {
                         window.Children.Remove(list[i]);
@@ -433,17 +506,10 @@ namespace CardGameLogic
                     }
             }
 
-            //Если "Бито" говорит бот
-            if (turnIsEnemy)
-            {
+            DeleteFromGame(handList);
+            DeleteFromGame(enemyList);
 
-            }
-            else
-            {
-                DeleteFromGame(handList);
-                DeleteFromGame(enemyList);
-            }
-
+            deskIsClear = true;
         }
 
         private static void AddContorl(UIElement element, int left, int top, ref int zIndex)
@@ -501,23 +567,6 @@ namespace CardGameLogic
             get { return turnIsEnemy; }
         }
 
-        public static int DeskLeftVariable
-        {
-            set { if (value == 0) deskLeftVariable = deskMarginLeft; }
-            get { return deskLeftVariable; }
-        }
-
-        public static int DeskMarginTop
-        {
-            get { return deskMarginTop; }
-        }
-
-        public static int DeskInterval
-        {
-            get { return deskInterval; }
-        }
-
-
         public static int HandFieldTop
         {
             get { return handFieldTop; }
@@ -528,15 +577,6 @@ namespace CardGameLogic
             get { return marginTopHand; }
         }
 
-        public static int MarginTopEnemy
-        {
-            get { return marginTopEnemy; }
-        }
-
-        public static int MarginLeft
-        {
-            get { return marginLeft; }
-        }
         #endregion
     }
 }

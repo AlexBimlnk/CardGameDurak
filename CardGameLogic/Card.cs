@@ -36,7 +36,7 @@ namespace CardGameLogic
 
         private string suit;                //масть 
         private string imageName;
-        public static string CardBackImageName = "_CardBack.jpg";
+        public const string CardBackImageName = "_CardBack.jpg";
 
         private bool isOnDesk = false;      
         private bool isCloseOnDesk = false; //Карта, выложенная на стол, побита
@@ -131,13 +131,14 @@ namespace CardGameLogic
             Game.ColorHandField = null;
             Canvas.SetZIndex(this, this.zIndex);
             //Если хотим оставить в руке
-            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop || Game.TurnIsEnemy)
+            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop)
                 Game.UpdateHand();
             else if(Game.CanDrop(this))
             {
                 this.isOnDesk = true;
                 this.ChangeBorder(Brushes.Black,1);
                 Game.SetCardOnDesk(this,Game.TurnIsEnemy);
+                Game.UpdateHand();
                 Game.EnemyMoves();
             }
             else

@@ -18,9 +18,6 @@ using System.Windows.Resources;
 
 namespace CardGameUI
 {
-    /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private static Canvas windowUI = new Canvas();
@@ -30,6 +27,7 @@ namespace CardGameUI
             InitializeComponent();
             CreateWindowUI();
             Game.GameWindow = windowUI;
+            Game.EndGameEvent += CloseApp;
             Content = windowUI;
             Game.Start();
         }
@@ -52,6 +50,11 @@ namespace CardGameUI
 
             windowUI.Height = 689;
             windowUI.Width = 1272;
+        }
+
+        private void CloseApp()
+        {
+            Application.Current.Shutdown();
         }
     }
 }
