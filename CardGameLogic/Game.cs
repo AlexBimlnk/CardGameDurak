@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Data;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
-using System.Windows.Data;
 
 namespace CardGameLogic
 {
@@ -453,21 +447,29 @@ namespace CardGameLogic
         private static void BtnTakeClick(object sender, RoutedEventArgs e)
         {
             if (!turnIsEnemy)
+            {
+                MessageBox.Show("Сейчас ваш ход.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
 
             for (int i = enemyList.Count - 1; i >= 0; i--)
             {
                 if (enemyList[i].IsOnDesk)
                 {
                     enemyList[i].IsCloseOnDesk = false;
-                    ChangeCardEvents(enemyList[i]);
                     handList.Add(enemyList[i]);
                     enemyList.RemoveAt(i);
                 }
             }
 
             for (int i = 0; i < handList.Count; i++)
-                handList[i].IsOnDesk = false;
+            {
+                if (handList[i].IsOnDesk)
+                {
+                    handList[i].IsOnDesk = false;
+                    ChangeCardEvents(handList[i]);
+                }
+            }
 
             deskLeftVariable = deskMarginLeft;
             deskIsClear = true;
