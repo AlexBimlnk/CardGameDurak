@@ -126,10 +126,12 @@ namespace CardGameLogic
             Game.ColorHandField = null;
             Canvas.SetZIndex(this, this.zIndex);
             //Если хотим оставить в руке
-            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop)
+            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop || Game.CountAddedCardOnDesk == 6)
                 Game.UpdateHand();
             else if(Game.CanDrop(this))
             {
+                if(!Game.TurnIsEnemy)
+                    Game.CountAddedCardOnDesk++;
                 this.isOnDesk = true;
                 this.ChangeBorder(Brushes.Black,1);
                 Game.SetCardOnDesk(this,Game.TurnIsEnemy);

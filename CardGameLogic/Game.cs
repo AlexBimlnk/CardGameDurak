@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows;
@@ -57,7 +58,7 @@ namespace CardGameLogic
         private static int zIndex = 1;
         
         //Количество "подкинутых для побития карт" во время хода
-        private static int countAddedCardOnDesk = 0;
+        public static int CountAddedCardOnDesk = 0;
 
         public static void Start()
         {
@@ -220,6 +221,7 @@ namespace CardGameLogic
         {
             deskLeftVariable = deskMarginLeft;
             turnIsEnemy = !turnIsEnemy;
+            CountAddedCardOnDesk = 0;
             ClearDesk();
             CheckWin();
             if (turnIsEnemy)
@@ -265,7 +267,7 @@ namespace CardGameLogic
                 else
                     for (int j = 0; j < enemyList.Count; j++)
                     {
-                        if (countAddedCardOnDesk == 6)
+                        if (CountAddedCardOnDesk == 6)
                             break;
                         if (!enemyList[j].IsOnDesk && !enemyList[j].TrumpCard)
                         {
@@ -274,7 +276,6 @@ namespace CardGameLogic
                                 if (i.IsOnDesk && enemyList[j].Rank == i.Rank)
                                 {
                                     index = j;
-                                    countAddedCardOnDesk++;
                                     find = true;
                                     break;
                                 }
@@ -283,7 +284,6 @@ namespace CardGameLogic
                                     if (i.IsOnDesk && enemyList[j].Rank == i.Rank)
                                     {
                                         index = j;
-                                        countAddedCardOnDesk++;
                                         break;
                                     }
                         }
@@ -295,6 +295,7 @@ namespace CardGameLogic
                     enemyList[index].IsOnDesk = true;
                     SetCardOnDesk(enemyList[index]);
                     enemyList[index].LoadImage(enemyList[index].ImageName);
+                    CountAddedCardOnDesk++;
                 }
                 else
                 {
@@ -403,7 +404,7 @@ namespace CardGameLogic
             if (deskIsClear)
                 return true;
 
-            if (enemyList.Count == 0)
+            if (enemyList.All((x) => x.IsOnDesk))
                 return false;
 
             //Если игрок отбивается

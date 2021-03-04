@@ -44,7 +44,7 @@ namespace CardGameUI
 
         private void CloseApp()
         {
-            Application.Current.Shutdown();
+            Application.Current?.Shutdown();
         }
     }
 }
