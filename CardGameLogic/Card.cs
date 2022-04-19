@@ -11,129 +11,125 @@ namespace CardGameLogic
 {
     public class Card : Label
     {
-        public enum Suits
-        {
-            Clubs,      //Трефы
-            Diamonds,   //Буби
-            Hearts,     //Червы
-            Spades      //Пики
-        }
+        private ImageBrush _brush;
+        private DoubleAnimation _animation = new DoubleAnimation();
 
-        private ImageBrush brush;
-        private DoubleAnimation animation = new DoubleAnimation();
+        private Point? _movePoint;
 
-        public Point? movePoint;
+        private readonly int _width = 130;
+        private readonly int _height = 180;
 
-        private int rank;                   //сила 
-        private int width = 130;
-        private int height = 180;
-        private int zIndex;
 
-        private string suit;                //масть 
-        private string imageName;
         public const string CardBackImageName = "_CardBack.jpg";
 
-        private bool isOnDesk = false;      
-        private bool isCloseOnDesk = false; //Карта, выложенная на стол, побита
-        private bool haveInHand = false;    //Может быть не нужно и надо убрать в будущем
-        private bool trumpCard = false;     //Козырная масть
 
-        public Card(Suits _suit, int _rank, string _imageName)
+        public Card(Suit suit, int rank, string imageName)
         {
-            suit = _suit.ToString();
-            rank = _rank;
-            imageName = _imageName;
+            Suit = suit;
+            Rank = rank;
+            ImageName = imageName;
             LoadDefaultSettings();
         }
 
-        public void LoadImage(string _imageName)
-        {
-            string path = $"Resources/{_imageName}";
 
-            #region Создание картинки для карты
-            Uri resourceUri = new Uri(path, UriKind.Relative);
-            StreamResourceInfo stream_info = Application.GetResourceStream(resourceUri);
-            BitmapFrame temp = BitmapFrame.Create(stream_info.Stream);
-            brush = new ImageBrush();
-            brush.ImageSource = temp;
+        public int ZIndex { get; private set; }
+        public int Rank { get; private set; }       // Сила карты
 
-            this.Background = brush;
-            #endregion
-        }
+        public Suit Suit { get; private set; }
+        public string ImageName { get; private set; }
+
+        public bool IsOnDesk { get; set; }
+        public bool IsCloseOnDesk { get; set; }     //Карта, выложенная на стол, побита
+        public bool IsHaveInHand { get; set; }      //Может быть не нужно и надо убрать в будущем
+        public bool IsTrumpCard { get; set; }       //Козырная масть
+
 
         private void LoadDefaultSettings()
         {
             //default settings UI-------------------------------------
-            Width = width;
-            Height = height;
+            Width = _width;
+            Height = _height;
             ChangeBorder(Brushes.Black, 1);
             HorizontalAlignment = HorizontalAlignment.Left;
-            this.MouseEnter += new MouseEventHandler(MouseEnterFunc);
-            this.MouseLeave += new MouseEventHandler(MouseLeaveFunc);
-            this.MouseDown += new MouseButtonEventHandler(MouseDownFunc);
-            this.MouseMove += new MouseEventHandler(MouseMoveFunc);
-            this.MouseUp += new MouseButtonEventHandler(MouseUpFunc);
+            MouseEnter += new MouseEventHandler(MouseEnterFunc);
+            MouseLeave += new MouseEventHandler(MouseLeaveFunc);
+            MouseDown += new MouseButtonEventHandler(MouseDownFunc);
+            MouseMove += new MouseEventHandler(MouseMoveFunc);
+            MouseUp += new MouseButtonEventHandler(MouseUpFunc);
         }
-
 
         //Придает рамке карты соответствующий цвет и ширину
-        private void ChangeBorder(SolidColorBrush _color, int _tWidth)
+        private void ChangeBorder(SolidColorBrush color, int tWidth)
         {
-            this.BorderBrush = _color;
-            this.BorderThickness = new Thickness(_tWidth, _tWidth, _tWidth, _tWidth);
+            BorderBrush = color;
+            BorderThickness = new Thickness(tWidth, tWidth, tWidth, tWidth);
         }
 
-        //Задать параметры анимации
-        private void ChangeAnimation(double _from, double _to, TimeSpan _time)
+        //Задает параметры анимации
+        private void ChangeAnimation(double from, double to, TimeSpan time)
         {
-            animation.From = _from;
-            animation.To = _to;
-            animation.Duration = _time;
+            _animation.From = from;
+            _animation.To = to;
+            _animation.Duration = time;
         }
 
 
-        #region События
+        public void LoadImage(string imageName)
+        {
+            string path = $"Resources/{imageName}";
+
+            // Создание картинки для карты
+            Uri resourceUri = new Uri(path, UriKind.Relative);
+            StreamResourceInfo stream_info = Application.GetResourceStream(resourceUri);
+            BitmapFrame temp = BitmapFrame.Create(stream_info.Stream);
+            _brush = new ImageBrush() { ImageSource = temp };
+
+            Background = _brush;
+        }
+
+
+        #region Обработчики событий для карты
         public void MouseEnterFunc(object sender, MouseEventArgs e)
         {
             ChangeBorder(Brushes.Purple, 2);
-            ChangeAnimation(Game.MarginTopHand, Game.MarginTopHand - this.height / 2, TimeSpan.FromSeconds(0.3));
-            this.BeginAnimation(Canvas.TopProperty, animation);
+            ChangeAnimation(Game.MARGIN_TOP_HAND, Game.MARGIN_TOP_HAND - _height / 2, TimeSpan.FromSeconds(0.3));
+            BeginAnimation(Canvas.TopProperty, _animation);
         }
 
         public void MouseLeaveFunc(object sender, MouseEventArgs e)
         {
             ChangeBorder(Brushes.Black, 1);
-            ChangeAnimation(Canvas.GetTop(this), Game.MarginTopHand, TimeSpan.FromSeconds(0.3));
-            this.BeginAnimation(Canvas.TopProperty, animation);
+            ChangeAnimation(Canvas.GetTop(this), Game.MARGIN_TOP_HAND, TimeSpan.FromSeconds(0.3));
+            BeginAnimation(Canvas.TopProperty, _animation);
         }
 
         public void MouseDownFunc(object sender, MouseEventArgs e)
         {
-            movePoint = e.GetPosition(this);
-            this.CaptureMouse();
-            this.BeginAnimation(Canvas.TopProperty, null);
+            _movePoint = e.GetPosition(this);
+            CaptureMouse();
+            BeginAnimation(Canvas.TopProperty, null);
 
             Game.ColorHandField = Brushes.NavajoWhite;
-            this.zIndex = Canvas.GetZIndex(this);
+            ZIndex = Canvas.GetZIndex(this);
             Canvas.SetZIndex(this, 100);
         }
 
         public void MouseUpFunc(object sender, MouseEventArgs e)
         {
-            movePoint = null;
-            this.ReleaseMouseCapture();
+            _movePoint = null;
+            ReleaseMouseCapture();
 
             Game.ColorHandField = null;
-            Canvas.SetZIndex(this, this.zIndex);
+            Canvas.SetZIndex(this, ZIndex);
             //Если хотим оставить в руке
-            if(Canvas.GetTop(this)+this.height >= Game.HandFieldTop || Game.CountAddedCardOnDesk == 6)
+            if(Canvas.GetTop(this)+_height >= Game.HAND_FIELD_TOP || Game.CountAddedCardOnDesk == 6)
                 Game.UpdateHand();
             else if(Game.CanDrop(this))
             {
                 if(!Game.TurnIsEnemy)
                     Game.CountAddedCardOnDesk++;
-                this.isOnDesk = true;
-                this.ChangeBorder(Brushes.Black,1);
+                IsOnDesk = true;
+                ChangeBorder(Brushes.Black,1);
                 Game.SetCardOnDesk(this,Game.TurnIsEnemy);
                 Game.UpdateHand();
                 Game.EnemyMoves();
@@ -147,58 +143,13 @@ namespace CardGameLogic
 
         public void MouseMoveFunc(object sender, MouseEventArgs e)
         {
-            if (movePoint == null)
+            if (_movePoint is null)
                 return;
-            var p = e.GetPosition(Game.GameWindow) - (Vector)movePoint.Value;
+            var p = e.GetPosition(Game.GameWindow) - (Vector)_movePoint.Value;
             Canvas.SetLeft(this, p.X);
             Canvas.SetTop(this, p.Y);
         }
 
-        #endregion
-
-        #region Свойства
-
-
-        public int GetZIndex
-        {
-            get { return zIndex; }
-        }
-        public int Rank
-        {
-            get { return rank; }
-        }
-
-        public string Suit
-        {
-            get { return suit; }
-        }
-        public string ImageName
-        {
-            get { return imageName; }
-        }
-
-        //BOOL----------------------------
-
-        public bool IsOnDesk
-        {
-            get { return isOnDesk; }
-            set { isOnDesk = value; }
-        }
-        public bool IsCloseOnDesk
-        {
-            get { return isCloseOnDesk; }
-            set { isCloseOnDesk = value; }
-        }
-        public bool HaveInHand
-        {
-            get { return haveInHand; }
-            set { haveInHand = value; }
-        }
-        public bool TrumpCard
-        {
-            get { return trumpCard; }
-            set { trumpCard = value; }
-        }
         #endregion
     }
 }

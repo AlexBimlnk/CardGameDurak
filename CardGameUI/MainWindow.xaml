@@ -9,4 +9,10 @@
     <Window.Background>
         <ImageBrush/>
     </Window.Background>
+    <Canvas x:Name="window" Width="1272" Height="689">
+        <Canvas.Background>
+            <ImageBrush ImageSource="/Resources/_Desk.jpg"/>
+        </Canvas.Background>
+
+    </Canvas>
 </Window>

@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace CardGameLogic
 {
+    public enum Suit
+    {
+        Clubs,      //Трефы
+        Diamonds,   //Буби
+        Hearts,     //Червы
+        Spades      //Пики
+    }
+
     public enum Players
     {
         Bot,
