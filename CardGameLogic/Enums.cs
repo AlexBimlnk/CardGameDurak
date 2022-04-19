@@ -14,7 +14,7 @@ namespace CardGameLogic
         Spades      //Пики
     }
 
-    public enum Players
+    public enum Player
     {
         Bot,
         Human

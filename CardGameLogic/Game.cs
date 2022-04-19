@@ -49,7 +49,7 @@ namespace CardGameLogic
         private static List<Card> _handList = new List<Card>();
         private static List<Card> _enemyList = new List<Card>();
 
-        private static Players _turnPlayer = Players.Human;
+        private static Player _turnPlayer = Player.Human;
         private static bool _deskIsClear = true;
 
         private static int _zIndex = 1;
@@ -62,7 +62,7 @@ namespace CardGameLogic
         public static event EndGameHandler EndGameEvent;
 
         public static Canvas GameWindow { get; set; }
-        public static bool TurnIsEnemy => _turnPlayer == Players.Bot ? true : false;
+        public static bool TurnIsEnemy => _turnPlayer == Player.Bot ? true : false;
         public static SolidColorBrush ColorHandField
         {
             set { _handField.Background = value; }
@@ -140,7 +140,7 @@ namespace CardGameLogic
 
             //Выдаем по 6 карт
             DropCard(_handList);
-            DropCard(_enemyList, Players.Bot);
+            DropCard(_enemyList, Player.Bot);
         }
 
         public static void SetCardOnDesk(Card element, bool forDefense = false)
@@ -149,23 +149,23 @@ namespace CardGameLogic
             if (forDefense)
             {
                 SetCanvasPosition(element, _deskLeftVariable - DESK_INTERVAL, DESK_MARGIN_TOP - 90);
-                if (_turnPlayer == Players.Bot)
+                if (_turnPlayer == Player.Bot)
                     ChangeCardEvents(element, true);
             }
             else
             {
                 SetCanvasPosition(element, _deskLeftVariable, DESK_MARGIN_TOP);
                 _deskLeftVariable += DESK_INTERVAL;
-                if (_turnPlayer == Players.Human)
+                if (_turnPlayer == Player.Human)
                     ChangeCardEvents(element, true);
                 UpdateHand(_turnPlayer);
             }
         }
 
-        public static void UpdateHand(Players player = Players.Human)
+        public static void UpdateHand(Player player = Player.Human)
         {
             int step;
-            int cardCount = player == Players.Bot ? _enemyList.Count : _handList.Count;
+            int cardCount = player == Player.Bot ? _enemyList.Count : _handList.Count;
 
             if (cardCount <= 9)
                 step = 140;
@@ -180,9 +180,9 @@ namespace CardGameLogic
 
 
             int leftPos = MARGIN_LEFT;
-            int topPos = player == Players.Bot ? MARGIN_TOP_ENEMY : MARGIN_TOP_HAND;
+            int topPos = player == Player.Bot ? MARGIN_TOP_ENEMY : MARGIN_TOP_HAND;
             byte zIndex = 50;
-            foreach (Card i in player == Players.Bot ? _enemyList : _handList)
+            foreach (Card i in player == Player.Bot ? _enemyList : _handList)
                 if (!i.IsOnDesk)
                 {
                     Canvas.SetZIndex(i, zIndex);
@@ -195,7 +195,7 @@ namespace CardGameLogic
         //-------------------------------------------------------------------------
 
 
-        private static void DropCard(List<Card> cardList, Players player = Players.Human)
+        private static void DropCard(List<Card> cardList, Player player = Player.Human)
         {
             Random rnd = new Random();
 
@@ -206,7 +206,7 @@ namespace CardGameLogic
 
                 card.LoadImage(card.ImageName);
 
-                if (player == Players.Bot)
+                if (player == Player.Bot)
                 {
                     card.LoadImage(Card.CardBackImageName);
                     ChangeCardEvents(card, true);
@@ -215,7 +215,7 @@ namespace CardGameLogic
                 else
                     card.IsHaveInHand = true;
 
-                AddContorl(card, MARGIN_LEFT, player == Players.Bot ? MARGIN_TOP_ENEMY : MARGIN_TOP_HAND, ref _zIndex);
+                AddContorl(card, MARGIN_LEFT, player == Player.Bot ? MARGIN_TOP_ENEMY : MARGIN_TOP_HAND, ref _zIndex);
 
                 cardList.Add(card);
                 _deck.RemoveAt(cardIndex);
@@ -230,19 +230,19 @@ namespace CardGameLogic
         private static void Turn()
         {
             _deskLeftVariable = DESK_MARGIN_LEFT;
-            _turnPlayer = _turnPlayer == Players.Bot ? Players.Human : Players.Bot;
+            _turnPlayer = _turnPlayer == Player.Bot ? Player.Human : Player.Bot;
             CountAddedCardOnDesk = 0;
             ClearDesk();
             CheckWin();
-            if (_turnPlayer == Players.Bot)
+            if (_turnPlayer == Player.Bot)
             {
                 DropCard(_handList);
-                DropCard(_enemyList, Players.Bot);
+                DropCard(_enemyList, Player.Bot);
                 EnemyMoves();
             }
             else
             {
-                DropCard(_enemyList, Players.Bot);
+                DropCard(_enemyList, Player.Bot);
                 DropCard(_handList);
             }
         }
@@ -253,7 +253,7 @@ namespace CardGameLogic
         public static void EnemyMoves()
         {
             //Противник ходит
-            if (_turnPlayer == Players.Bot)
+            if (_turnPlayer == Player.Bot)
             {
                 int index = -1;
                 
@@ -362,7 +362,7 @@ namespace CardGameLogic
                             Canvas.SetZIndex(_enemyList[index], _handList[i].ZIndex + 1);
                             SetCardOnDesk(_enemyList[index], true);
                             _enemyList[index].LoadImage(_enemyList[index].ImageName);
-                            UpdateHand(Players.Bot);
+                            UpdateHand(Player.Bot);
                         }                
                         else
                             break;
@@ -400,7 +400,7 @@ namespace CardGameLogic
             _deskIsClear = true;
             CountAddedCardOnDesk = 0;
             CheckWin();
-            UpdateHand(Players.Bot);
+            UpdateHand(Player.Bot);
             DropCard(_handList);
         }
 
@@ -419,7 +419,7 @@ namespace CardGameLogic
                 return false;
 
             //Если игрок отбивается
-            if (_turnPlayer == Players.Bot)
+            if (_turnPlayer == Player.Bot)
             {
                 foreach (var i in _enemyList)
                     if (i.IsOnDesk)
@@ -450,7 +450,7 @@ namespace CardGameLogic
 
         private static void BtnBitoClick(object sender, RoutedEventArgs e)
         {
-            if (_turnPlayer == Players.Human && !_deskIsClear)
+            if (_turnPlayer == Player.Human && !_deskIsClear)
                 Turn();
             else
                 MessageBox.Show("Сейчас не ваш ход или нет карт на столе.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -458,7 +458,7 @@ namespace CardGameLogic
 
         private static void BtnTakeClick(object sender, RoutedEventArgs e)
         {
-            if (_turnPlayer == Players.Human)
+            if (_turnPlayer == Player.Human)
             {
                 MessageBox.Show("Сейчас ваш ход.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
@@ -488,7 +488,7 @@ namespace CardGameLogic
             CountAddedCardOnDesk = 0;
             CheckWin();
             UpdateHand();
-            DropCard(_enemyList, Players.Bot);
+            DropCard(_enemyList, Player.Bot);
             EnemyMoves();
         }
 
