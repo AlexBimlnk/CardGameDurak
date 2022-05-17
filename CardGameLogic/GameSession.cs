@@ -12,6 +12,8 @@ namespace CardGameLogic
     {
         private const int MAX_DESK_CAPACITY = 36;
         private List<Card> _deck = new List<Card>(MAX_DESK_CAPACITY);
+        private Random _random = new Random();
+        private bool _isGameStarder = false;
 
         private IPlayer _turnPlayer;
 
@@ -19,8 +21,6 @@ namespace CardGameLogic
 
         //Количество "подкинутых для побития карт" во время хода
         private int _countAddedCardOnDesk = 0;
-
-        public event EventHandler EndGameEvent;
 
         public GameSession(SessionId sessionId, GameMode gameMode, Canvas canvasTemplate)
         {
@@ -32,6 +32,7 @@ namespace CardGameLogic
                       : new List<IPlayer>() { new Player(), new Bot() };
             _turnPlayer = Players[new Random().Next(0,2)];
             TrumpSuit = Game.Suits[new Random().Next(0, 4)];
+            _isGameStarder = true;
         }
 
         public SessionId Id { get; }
@@ -39,8 +40,9 @@ namespace CardGameLogic
         public Canvas GameWindow { get; }
         public IReadOnlyList<IPlayer> Players { get; }
         public Suit TrumpSuit { get; }
-
         public int ZIndex { get; private set; } = 1;
+
+        public event EventHandler EndGameEvent;
 
         private void CheckWin()
         {
@@ -53,14 +55,13 @@ namespace CardGameLogic
                     IPlayer winPlayer = Players.Where(x => x.CountCards > 0).Single();
                     MessageBox.Show($"Выиграл игрок {winPlayer}", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                EndGameEvent?.Invoke();
+                EndGameEvent?.Invoke(this, null);
             }
         }
 
         public void Start()
         {
             //Заполнение колоды
-            var random = new Random();
             int minCardRank = 6;
             int maxCardRank = 14;
             foreach (var suit in Game.Suits)
@@ -85,6 +86,34 @@ namespace CardGameLogic
             Canvas.SetZIndex(element, ZIndex);
             GameWindow.Children.Add(element);
             ZIndex++;
+        }
+
+        public IEnumerable<Card> TryGetCards(int countCards)
+        {
+            IEnumerable<Card> _()
+            {
+                for (int i = 0; i < countCards; i++)
+                {
+                    if (_deck.Count > 0)
+                        yield return _deck[_random.Next(0, _deck.Count)];
+                    else
+                        break;
+                }
+            };
+
+            if (_isGameStarder)
+            {
+                //Todo: проверки на возможность взять карты
+
+                return _();
+            }
+
+            return _();
+        }
+
+        public void Turn(IPlayer player)
+        {
+
         }
     }
 }

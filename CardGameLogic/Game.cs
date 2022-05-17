@@ -488,20 +488,6 @@ namespace CardGameLogic
         #endregion
 
 
-        private static void CheckWin()
-        {
-            if(_deck.Count == 0 && (_handList.Count == 0 || _enemyList.Count == 0))
-            {
-                if(_handList.Count == 0 && _enemyList.Count == 0)
-                    MessageBox.Show("Ничья", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
-                else if(_handList.Count == 0 && _enemyList.Count!=0)
-                    MessageBox.Show("Вы выиграли", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
-                else if(_handList.Count!=0 && _enemyList.Count == 0)
-                    MessageBox.Show("Вы проиграли", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
-                EndGameEvent?.Invoke();
-            }
-        }
-
         private static void ClearDesk()
         {
             void DeleteFromGame(List<Card> list)
