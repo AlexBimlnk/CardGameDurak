@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace CardGameLogic
 {
-    public interface IPlayer
+    internal class Player : IPlayer
     {
-        int CountCards { get; }
+
     }
 }

@@ -49,15 +49,19 @@
   <ItemGroup>
     <Compile Include="Bot.cs" />
     <Compile Include="Card.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="Suit.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="HumanPlayer.cs" />
+    <Compile Include="GameMode.cs" />
+    <Compile Include="GameSession.cs" />
+    <Compile Include="IPlayer.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SessionId.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

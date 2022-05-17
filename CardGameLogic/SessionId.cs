@@ -9,7 +9,7 @@ namespace CardGameLogic
     /// <summary>
     /// Представляет сущность Id для сессии.
     /// </summary>
-    internal class SessionId
+    public sealed class SessionId
     {
         /// <summary>
         /// Конструктор.

@@ -19,31 +19,33 @@ namespace CardGameLogic
 
         #region Отступы, константы
         //В руках
-        private const int MARGIN_LEFT = 10;
-        private const int MARGIN_TOP_ENEMY = -90;
+        public const int MARGIN_LEFT = 10;
+        public const int MARGIN_TOP_ENEMY = -90;
         public const int MARGIN_TOP_HAND = 599;
 
         //На столе
-        private const int DESK_MARGIN_LEFT = 108;                   //Констатное начало для 1 карты на столе
-        private static int _deskLeftVariable = DESK_MARGIN_LEFT;    //Меняется в зависимости от кол-ва карт
-        private const int DESK_MARGIN_TOP = 258;
-        private const int DESK_INTERVAL = 145;
+        public const int DESK_MARGIN_LEFT = 108;                   //Констатное начало для 1 карты на столе
+        public static int _deskLeftVariable = DESK_MARGIN_LEFT;    //Меняется в зависимости от кол-ва карт
+        public const int DESK_MARGIN_TOP = 258;
+        public const int DESK_INTERVAL = 145;
 
         //Положение области, показывающей границы поля карт в руке
-        private const int HAND_FIELD_LEFT = 0;
+        public const int HAND_FIELD_LEFT = 0;
         public const int HAND_FIELD_TOP = 570;
 
         //Положение правой панели (кнопки, счетчик, коз. масть на столе)
-        private const int RIGHT_PANEL_MARGIN_LEFT = 1180;
-        private const int RIGHT_PANEL_MARGIN_TOP = 270;
+        public const int RIGHT_PANEL_MARGIN_LEFT = 1180;
+        public const int RIGHT_PANEL_MARGIN_TOP = 270;
 
         #endregion
 
-        private static Enum[] suitsNameList = { Suit.Clubs, Suit.Diamonds,
-                                                Suit.Hearts, Suit.Spades };
+        private static IReadOnlyList<Suit> _suitNamesList = new List<Suit> { Suit.Clubs, Suit.Diamonds,
+                                                                             Suit.Hearts, Suit.Spades };
 
-        private static Label _handField = new Label();
-        private static TextBlock _countDeck = new TextBlock();
+        private static Label _handFieldLabel = new Label();
+        private static TextBlock _countDeckTextBlock = new TextBlock();
+
+        private static List<GameSession> _sessions = new List<GameSession>();
 
         private static List<Card> _deck = new List<Card>();
         private static List<Card> _handList = new List<Card>();
@@ -57,64 +59,51 @@ namespace CardGameLogic
         //Количество "подкинутых для побития карт" во время хода
         public static int CountAddedCardOnDesk = 0;
 
-        
-        public delegate void EndGameHandler();
-        public static event EndGameHandler EndGameEvent;
+
+        public static IReadOnlyList<Suit> Suits => _suitNamesList;
 
         public static Canvas GameWindow { get; set; }
         public static bool TurnIsEnemy => _turnPlayer == Player.Bot ? true : false;
         public static SolidColorBrush ColorHandField
         {
-            set { _handField.Background = value; }
-            get { return (SolidColorBrush)_handField.Background; }
+            set { _handFieldLabel.Background = value; }
+            get { return (SolidColorBrush)_handFieldLabel.Background; }
         }
 
-
-        public static void Start()
+        private static BitmapFrame ReturnsImage(string path)
         {
-            BitmapFrame ReturnsImage(string _path)
-            {
-                Uri resourceUri = new Uri(_path, UriKind.Relative);
-                StreamResourceInfo stream_info = Application.GetResourceStream(resourceUri);
-                BitmapFrame temp = BitmapFrame.Create(stream_info.Stream);
+            Uri resourceUri = new Uri(path, UriKind.Relative);
+            StreamResourceInfo stream_info = Application.GetResourceStream(resourceUri);
+            BitmapFrame temp = BitmapFrame.Create(stream_info.Stream);
 
-                return temp;
-            }
+            return temp;
+        }
 
-            //Создаем поле, отражающее нашу руку
-            _handField.Height = 180;
-            _handField.Width = 1272;
-            AddContorl(_handField, HAND_FIELD_LEFT, HAND_FIELD_TOP, ref _zIndex);
+        public static void ConfigureGameObject(GameSession session)
+        {
+            //field label
+            var label = new Label();
+            label.Height = 180;
+            label.Width = 1272;
+            session.AddContorl(label, HAND_FIELD_LEFT, HAND_FIELD_TOP);
 
-
-            //Выбираем козырную масть
-            Random rnd = new Random();
-            int indexTrumpSuit = rnd.Next(0, 4);
-
-            //Создаем картинку козырной карты
-            Image trumpImage = new Image();
-            trumpImage.Source = ReturnsImage($"Resources/{suitsNameList[indexTrumpSuit].ToString()}Sym.jpg");
+            //Trump image
+            var trumpImage = new Image();
+            trumpImage.Source = ReturnsImage($"Resources/{session.TrumpSuit}Sym.jpg");
             trumpImage.Width = 70;
             trumpImage.Height = 70;
-            AddContorl(trumpImage, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP, ref _zIndex);
+            session.AddContorl(trumpImage, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP);
 
+            //Card counter
+            var countDeckTextBlock = new TextBlock();
+            countDeckTextBlock.Width = 70;
+            countDeckTextBlock.Height = 70;
+            countDeckTextBlock.Foreground = Brushes.Aqua;
+            countDeckTextBlock.FontSize = 30;
+            countDeckTextBlock.TextAlignment = TextAlignment.Center;
+            session.AddContorl(countDeckTextBlock, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP + 70);
 
-            //Заполняем колоду
-            foreach (Enum i in suitsNameList)
-                for(int j = 6; j<=14; j++)
-                    _deck.Add(new Card((Suit)i, j, $"{i}{j}.jpg") { IsTrumpCard = i == suitsNameList[indexTrumpSuit] ? true : false});
-
-
-            //Cчетчик карт в колоде
-            _countDeck.Width = 70;
-            _countDeck.Height = 70;
-            _countDeck.Foreground = Brushes.Aqua;
-            _countDeck.FontSize = 30;
-            _countDeck.TextAlignment = TextAlignment.Center;
-            AddContorl(_countDeck, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP + 70, ref _zIndex);
-
-
-            //Кнопка "бито"
+            //Button "Bito"
             Button btnBito = new Button();
             btnBito.Width = 80;
             btnBito.Height = 70;
@@ -123,10 +112,9 @@ namespace CardGameLogic
             btnBito.FontSize = 30;
             btnBito.Content = "Бито";
             btnBito.Click += new RoutedEventHandler(BtnBitoClick);
-            AddContorl(btnBito, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP + 120, ref _zIndex);
+            session.AddContorl(btnBito, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP + 120);
 
-
-            //Кнопка "взять"
+            //Button "Take"
             Button btnTake = new Button();
             btnTake.Width = 80;
             btnTake.Height = 70;
@@ -135,13 +123,18 @@ namespace CardGameLogic
             btnTake.FontSize = 30;
             btnTake.Content = "Взять";
             btnTake.Click += new RoutedEventHandler(BtnTakeClick);
-            AddContorl(btnTake, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP + 190, ref _zIndex);
-
-
-            //Выдаем по 6 карт
-            DropCard(_handList);
-            DropCard(_enemyList, Player.Bot);
+            session.AddContorl(btnTake, RIGHT_PANEL_MARGIN_LEFT, RIGHT_PANEL_MARGIN_TOP + 190);
         }
+
+        public static GameSession StartNewSession(GameMode gameMode)
+        {
+            var session = new GameSession(new SessionId(_sessions.Count + 1), gameMode, GameWindow);
+            _sessions.Add(session);
+            session.Start();
+            return session;
+        }
+
+
 
         public static void SetCardOnDesk(Card element, bool forDefense = false)
         {
@@ -221,7 +214,7 @@ namespace CardGameLogic
                 _deck.RemoveAt(cardIndex);
             }
             
-            _countDeck.Text = _deck.Count.ToString();
+            _countDeckTextBlock.Text = _deck.Count.ToString();
 
             UpdateHand(player);
         }

@@ -14,13 +14,9 @@ namespace CardGameUI
         {
             InitializeComponent();
             Game.GameWindow = window;
-            Game.EndGameEvent += CloseApp;
-            Game.Start();
+            Game.StartNewSession(GameMode.SinglePlayer).EndGameEvent += CloseApp; ;
         }
 
-        private void CloseApp()
-        {
-            Application.Current?.Shutdown();
-        }
+        private void CloseApp(object sender, EventArgs e) => Application.Current?.Shutdown();
     }
 }

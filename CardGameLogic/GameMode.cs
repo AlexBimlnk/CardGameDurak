@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CardGameLogic
 {
-    internal enum GameMode
+    public enum GameMode
     {
         SinglePlayer,
         MultiPlayer

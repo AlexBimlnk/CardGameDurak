@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CardGameLogic
 {
-    internal class Bot
+    internal class Bot : IPlayer
     {
     }
 }
