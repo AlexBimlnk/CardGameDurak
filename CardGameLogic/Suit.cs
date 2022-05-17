@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace CardGameLogic
 {
-    internal class HumanPlayer
+    public enum Suit
     {
+        Clubs,      //Трефы
+        Diamonds,   //Буби
+        Hearts,     //Червы
+        Spades      //Пики
     }
 }
