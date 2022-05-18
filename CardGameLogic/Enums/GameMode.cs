@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardGameLogic
+namespace CardGameLogic.Enums
 {
-    internal class Bot : IPlayer
+    public enum GameMode
     {
+        SinglePlayer,
+        MultiPlayer
     }
 }

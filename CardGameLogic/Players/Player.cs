@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace CardGameLogic
+namespace CardGameLogic.Players
 {
     internal class Player : IPlayer
     {

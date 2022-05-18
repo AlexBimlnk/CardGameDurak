@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardGameLogic
+namespace CardGameLogic.Enums
 {
-    public enum GameMode
+    public enum CardEventsPolicy
     {
-        SinglePlayer,
-        MultiPlayer
+        ReadOnly,
+        Manage
     }
 }

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardGameLogic
+namespace CardGameLogic.Players
 {
-    public enum CardEventsPolicy
+    internal class Bot : IPlayer
     {
-        ReadOnly,
-        Manage
     }
 }
