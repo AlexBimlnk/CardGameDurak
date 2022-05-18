@@ -6,10 +6,11 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
+using CardGameLogic.Enums;
 
 namespace CardGameLogic
 {
-    public class Card : Label
+    public class Card : Label, IEquatable<Card>
     {
         private ImageBrush _brush;
         private readonly DoubleAnimation _animation = new DoubleAnimation();
@@ -77,5 +78,7 @@ namespace CardGameLogic
 
             Background = _brush;
         }
+
+        public bool Equals(Card other) => Suit == other.Suit && Rank == other.Rank;
     }
 }

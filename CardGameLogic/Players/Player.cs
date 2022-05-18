@@ -36,10 +36,7 @@ namespace CardGameLogic.Players
         private void CardMouseDownHandler(object sender, MouseEventArgs e)
         {
             if (sender is Card card)
-            {
-
                 OnPlayerCardDropped?.Invoke(this, card);
-            }
         }
 
         private void TryDrop(object sender, MouseEventArgs e)

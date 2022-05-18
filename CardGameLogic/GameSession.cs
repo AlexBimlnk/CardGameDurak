@@ -16,8 +16,10 @@ namespace CardGameLogic
 
     public sealed class GameSession
     {
-        private const int MAX_DESK_CAPACITY = 36;
-        private List<Card> _deck = new List<Card>(MAX_DESK_CAPACITY);
+        private const int MAX_DECK_CAPACITY = 36;
+        private const int MAX_BOARD_CAPACITY = 12;
+        private List<Card> _deck = new List<Card>(MAX_DECK_CAPACITY);
+        private List<Card> _board = new List<Card>(MAX_BOARD_CAPACITY);
         private Random _random = new Random();
         private bool _isGameStarted = false;
 
@@ -54,6 +56,11 @@ namespace CardGameLogic
 
         public event EventHandler EndGameEvent;
         
+        private void ViewMessage(string message)
+        {
+            MessageBox.Show(message, "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         private void ConfigurePlayerEvents(IReadOnlyList<IPlayer> players)
         {
             foreach (var player in players)
@@ -62,9 +69,21 @@ namespace CardGameLogic
 
         private void PlayerCardDroppped(object sender, Card card)
         {
-            if (sender is IPlayer player && player == _turnPlayer)
+            if (sender is Player player)
             {
-                //Todo: Player try drop card
+                //Если сейчас ход игрока
+                if (_turnPlayer == player)
+                {
+                    if (_board.Count == 0)
+                        _board.Add(card);
+
+                }
+                //Если сейчас ход противника (игрок защищается)
+                else
+                {
+
+                }
+                //Todo: Sort cards (update in hand)
             }
         }
 
@@ -88,7 +107,6 @@ namespace CardGameLogic
                 card.BeginAnimation(Canvas.TopProperty, card.Animation);
             }
         }
-
         private void MouseDownFunc(object sender, MouseEventArgs e)
         {
             if (sender is Card card)
@@ -101,6 +119,17 @@ namespace CardGameLogic
                 card.ZIndex = Canvas.GetZIndex(card);
                 Canvas.SetZIndex(card, 100);
             }   
+        }
+        public void MouseMoveFunc(object sender, MouseEventArgs e)
+        {
+            if (sender is Card card)
+            {
+                if (_movePoint is null)
+                    return;
+                var p = e.GetPosition(Game.GameWindow) - (Vector)_movePoint.Value;
+                Canvas.SetLeft(card, p.X);
+                Canvas.SetTop(card, p.Y);
+            }
         }
         //Уедет частично в player
         private void MouseUpFunc(object sender, MouseEventArgs e)
@@ -140,17 +169,7 @@ namespace CardGameLogic
             }
         }
 
-        public void MouseMoveFunc(object sender, MouseEventArgs e)
-        {
-            if (sender is Card card)
-            {
-                if (_movePoint is null)
-                    return;
-                var p = e.GetPosition(Game.GameWindow) - (Vector)_movePoint.Value;
-                Canvas.SetLeft(card, p.X);
-                Canvas.SetTop(card, p.Y);
-            }
-        }
+
         #endregion
 
         private void CheckWin()
@@ -158,24 +177,14 @@ namespace CardGameLogic
             if (_deck.Count == 0 && Players.Any(player => player.CountCards == 0))
             {
                 if (Players.All(player => player.CountCards == 0))
-                    MessageBox.Show("Ничья", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ViewMessage("Игра закончена, ничья.");
                 else
                 {
                     IPlayer winPlayer = Players.Where(x => x.CountCards > 0).Single();
-                    MessageBox.Show($"Выиграл игрок {winPlayer}", "Игра закончена", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ViewMessage($"Игра закончена, выиграл игрок: {winPlayer}");
                 }
                 EndGameEvent?.Invoke(this, null);
             }
-        }
-        private Card ConfigureCard(Card card)
-        {
-            card.MouseEnter += new MouseEventHandler(MouseEnterFunc);
-            card.MouseLeave += new MouseEventHandler(MouseLeaveFunc);
-            card.MouseDown += new MouseButtonEventHandler(MouseDownFunc);
-            card.MouseMove += new MouseEventHandler(MouseMoveFunc);
-            card.MouseUp += new MouseButtonEventHandler(MouseUpFunc);
-
-            return card;
         }
 
         private void ChangeCardEvents(Card card, CardEventsPolicy policy)
@@ -207,9 +216,13 @@ namespace CardGameLogic
             {
                 for (int rank = minCardRank; rank <= maxCardRank; rank++)
                 {
-                    Card card = ConfigureCard(new Card(suit, rank, $"{suit}{rank}.jpg")
-                        { IsTrumpCard = suit == TrumpSuit ? true : false }
-                    );
+                    var card = new Card(suit, rank, $"{suit}{rank}.jpg") 
+                    { 
+                        IsTrumpCard = suit == TrumpSuit ? true : false 
+                    };
+
+                    ChangeCardEvents(card, CardEventsPolicy.Manage);
+
                     _deck.Add(card);
                 }
             }
