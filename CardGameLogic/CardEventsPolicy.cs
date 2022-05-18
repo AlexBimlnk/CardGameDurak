@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CardGameLogic
 {
-    public interface IPlayer
+    public enum CardEventsPolicy
     {
-        event EventHandler<Card> OnPlayerCardDropped;
-        int CountCards { get; }
+        ReadOnly,
+        Manage
     }
 }

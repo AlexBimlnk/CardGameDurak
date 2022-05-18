@@ -506,39 +506,10 @@ namespace CardGameLogic
             _deskIsClear = true;
         }
 
-        private static void AddContorl(UIElement element, int left, int top, ref int zIndex)
-        {
-            Canvas.SetLeft(element, left);
-            Canvas.SetTop(element, top);
-            Canvas.SetZIndex(element, zIndex);
-            GameWindow.Children.Add(element);
-            zIndex++;
-        }
-
         private static void SetCanvasPosition(UIElement element, int left, int top)
         {
             Canvas.SetLeft(element, left);
             Canvas.SetTop(element, top);
-        }
-
-        private static void ChangeCardEvents(Card card, bool forEnemy = false)
-        {
-            if (forEnemy)      //Если карта для врага
-            {
-                card.MouseEnter -= new MouseEventHandler(card.MouseEnterFunc);
-                card.MouseLeave -= new MouseEventHandler(card.MouseLeaveFunc);
-                card.MouseDown -= new MouseButtonEventHandler(card.MouseDownFunc);
-                card.MouseMove -= new MouseEventHandler(card.MouseMoveFunc);
-                card.MouseUp -= new MouseButtonEventHandler(card.MouseUpFunc);
-            }
-            else
-            {
-                card.MouseEnter += new MouseEventHandler(card.MouseEnterFunc);
-                card.MouseLeave += new MouseEventHandler(card.MouseLeaveFunc);
-                card.MouseDown += new MouseButtonEventHandler(card.MouseDownFunc);
-                card.MouseMove += new MouseEventHandler(card.MouseMoveFunc);
-                card.MouseUp += new MouseButtonEventHandler(card.MouseUpFunc);
-            }
         }
     }
 }

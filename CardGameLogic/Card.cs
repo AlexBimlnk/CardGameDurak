@@ -12,13 +12,10 @@ namespace CardGameLogic
     public class Card : Label
     {
         private ImageBrush _brush;
-        private DoubleAnimation _animation = new DoubleAnimation();
-
-        private Point? _movePoint;
+        private readonly DoubleAnimation _animation = new DoubleAnimation();
 
         private readonly int _width = 130;
         private readonly int _height = 180;
-
 
         public const string CardBackImageName = "_CardBack.jpg";
 
@@ -28,11 +25,14 @@ namespace CardGameLogic
             Suit = suit;
             Rank = rank;
             ImageName = imageName;
+            Width = _width;
+            Height = _height;
             LoadDefaultSettings();
         }
 
+        public DoubleAnimation Animation => _animation;
 
-        public int ZIndex { get; private set; }
+        public int ZIndex { get; set; }
         public int Rank { get; private set; }       // Сила карты
 
         public Suit Suit { get; private set; }
@@ -46,33 +46,24 @@ namespace CardGameLogic
 
         private void LoadDefaultSettings()
         {
-            //default settings UI-------------------------------------
-            Width = _width;
-            Height = _height;
             ChangeBorder(Brushes.Black, 1);
             HorizontalAlignment = HorizontalAlignment.Left;
-            MouseEnter += new MouseEventHandler(MouseEnterFunc);
-            MouseLeave += new MouseEventHandler(MouseLeaveFunc);
-            MouseDown += new MouseButtonEventHandler(MouseDownFunc);
-            MouseMove += new MouseEventHandler(MouseMoveFunc);
-            MouseUp += new MouseButtonEventHandler(MouseUpFunc);
         }
 
         //Придает рамке карты соответствующий цвет и ширину
-        private void ChangeBorder(SolidColorBrush color, int tWidth)
+        public void ChangeBorder(SolidColorBrush color, int tWidth)
         {
             BorderBrush = color;
             BorderThickness = new Thickness(tWidth, tWidth, tWidth, tWidth);
         }
 
         //Задает параметры анимации
-        private void ChangeAnimation(double from, double to, TimeSpan time)
+        public void ChangeAnimation(double from, double to, TimeSpan time)
         {
             _animation.From = from;
             _animation.To = to;
             _animation.Duration = time;
         }
-
 
         public void LoadImage(string imageName)
         {
@@ -86,70 +77,5 @@ namespace CardGameLogic
 
             Background = _brush;
         }
-
-
-        #region Обработчики событий для карты
-        public void MouseEnterFunc(object sender, MouseEventArgs e)
-        {
-            ChangeBorder(Brushes.Purple, 2);
-            ChangeAnimation(Game.MARGIN_TOP_HAND, Game.MARGIN_TOP_HAND - _height / 2, TimeSpan.FromSeconds(0.3));
-            BeginAnimation(Canvas.TopProperty, _animation);
-        }
-
-        public void MouseLeaveFunc(object sender, MouseEventArgs e)
-        {
-            ChangeBorder(Brushes.Black, 1);
-            ChangeAnimation(Canvas.GetTop(this), Game.MARGIN_TOP_HAND, TimeSpan.FromSeconds(0.3));
-            BeginAnimation(Canvas.TopProperty, _animation);
-        }
-
-        public void MouseDownFunc(object sender, MouseEventArgs e)
-        {
-            _movePoint = e.GetPosition(this);
-            CaptureMouse();
-            BeginAnimation(Canvas.TopProperty, null);
-
-            Game.ColorHandField = Brushes.NavajoWhite;
-            ZIndex = Canvas.GetZIndex(this);
-            Canvas.SetZIndex(this, 100);
-        }
-
-        public void MouseUpFunc(object sender, MouseEventArgs e)
-        {
-            _movePoint = null;
-            ReleaseMouseCapture();
-
-            Game.ColorHandField = null;
-            Canvas.SetZIndex(this, ZIndex);
-            //Если хотим оставить в руке
-            if(Canvas.GetTop(this)+_height >= Game.HAND_FIELD_TOP || Game.CountAddedCardOnDesk == 6)
-                Game.UpdateHand();
-            else if(Game.CanDrop(this))
-            {
-                if(!Game.TurnIsEnemy)
-                    Game.CountAddedCardOnDesk++;
-                IsOnDesk = true;
-                ChangeBorder(Brushes.Black,1);
-                Game.SetCardOnDesk(this,Game.TurnIsEnemy);
-                Game.UpdateHand();
-                Game.EnemyMoves();
-            }
-            else
-            {
-                Game.UpdateHand();
-                MessageBox.Show("Сейчас невозможно положить эту карту на стол.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        public void MouseMoveFunc(object sender, MouseEventArgs e)
-        {
-            if (_movePoint is null)
-                return;
-            var p = e.GetPosition(Game.GameWindow) - (Vector)_movePoint.Value;
-            Canvas.SetLeft(this, p.X);
-            Canvas.SetTop(this, p.Y);
-        }
-
-        #endregion
     }
 }

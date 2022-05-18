@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Bot.cs" />
     <Compile Include="Card.cs" />
+    <Compile Include="CardEventsPolicy.cs" />
     <Compile Include="Suit.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameMode.cs" />
