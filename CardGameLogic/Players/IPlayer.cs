@@ -8,7 +8,6 @@ namespace CardGameLogic.Players
 {
     public interface IPlayer
     {
-        event EventHandler<Card> OnPlayerCardDropped;
         int CountCards { get; }
     }
 }

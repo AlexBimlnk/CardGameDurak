@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Resources;
+using CardGameLogic.Enums;
 
 namespace CardGameLogic
 {
@@ -70,7 +71,7 @@ namespace CardGameLogic
             get { return (SolidColorBrush)_handFieldLabel.Background; }
         }
 
-        private static BitmapFrame ReturnsImage(string path)
+        public static BitmapFrame ReturnsImage(string path)
         {
             Uri resourceUri = new Uri(path, UriKind.Relative);
             StreamResourceInfo stream_info = Application.GetResourceStream(resourceUri);
@@ -201,7 +202,7 @@ namespace CardGameLogic
 
                 if (player == Player.Bot)
                 {
-                    card.LoadImage(Card.CardBackImageName);
+                    card.LoadImage(Card.CARD_BACK_IMAGE_NAME);
                     ChangeCardEvents(card, true);
                 }
 
@@ -377,7 +378,7 @@ namespace CardGameLogic
                 {
                     _handList[i].IsCloseOnDesk = false;
                     ChangeCardEvents(_handList[i], true);
-                    _handList[i].LoadImage(Card.CardBackImageName);
+                    _handList[i].LoadImage(Card.CARD_BACK_IMAGE_NAME);
                     _enemyList.Add(_handList[i]);
                     _handList.RemoveAt(i);
                 }
@@ -386,7 +387,7 @@ namespace CardGameLogic
             for (int i = 0; i < _enemyList.Count; i++)
             {
                 _enemyList[i].IsOnDesk = false;
-                _enemyList[i].LoadImage(Card.CardBackImageName);
+                _enemyList[i].LoadImage(Card.CARD_BACK_IMAGE_NAME);
             }
 
             _deskLeftVariable = DESK_MARGIN_LEFT;

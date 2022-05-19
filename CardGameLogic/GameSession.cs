@@ -18,34 +18,33 @@ namespace CardGameLogic
     {
         private const int MAX_DECK_CAPACITY = 36;
         private const int MAX_BOARD_CAPACITY = 12;
+
+        private Point? _movePoint;
+
         private List<Card> _deck = new List<Card>(MAX_DECK_CAPACITY);
         private List<Card> _board = new List<Card>(MAX_BOARD_CAPACITY);
+
         private Random _random = new Random();
         private bool _isGameStarted = false;
 
         private IPlayer _turnPlayer;
+        private Bot _botPlayer;
 
-        private Point? _movePoint;
-
-        private bool _deskIsClear = true;
-
-
-        //Количество "подкинутых для побития карт" во время хода
-        private int _countAddedCardOnDesk = 0;
-
+        
         public GameSession(SessionId sessionId, GameMode gameMode, Canvas canvasTemplate)
         {
             Id = sessionId ?? throw new ArgumentNullException(nameof(sessionId));
             GameMode = gameMode;
             GameWindow = canvasTemplate;
+            _botPlayer = new Bot(this);
             Players = gameMode == GameMode.MultiPlayer
                       ? new List<IPlayer>() { new Player(this), new Player(this) }
-                      : new List<IPlayer>() { new Player(this), new Bot() };
-            ConfigurePlayerEvents(Players);
+                      : new List<IPlayer>() { new Player(this), _botPlayer };
             _turnPlayer = Players[_random.Next(0, 2)];
             TrumpSuit = Game.Suits[_random.Next(0, 4)];
             _isGameStarted = true;
         }
+
 
         public SessionId Id { get; }
         public GameMode GameMode { get; }
@@ -54,38 +53,9 @@ namespace CardGameLogic
         public Suit TrumpSuit { get; }
         public int ZIndex { get; private set; } = 1;
 
+
         public event EventHandler EndGameEvent;
-        
-        private void ViewMessage(string message)
-        {
-            MessageBox.Show(message, "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
 
-        private void ConfigurePlayerEvents(IReadOnlyList<IPlayer> players)
-        {
-            foreach (var player in players)
-                player.OnPlayerCardDropped += PlayerCardDroppped;
-        }
-
-        private void PlayerCardDroppped(object sender, Card card)
-        {
-            if (sender is Player player)
-            {
-                //Если сейчас ход игрока
-                if (_turnPlayer == player)
-                {
-                    if (_board.Count == 0)
-                        _board.Add(card);
-
-                }
-                //Если сейчас ход противника (игрок защищается)
-                else
-                {
-
-                }
-                //Todo: Sort cards (update in hand)
-            }
-        }
 
         #region Обработчики событий для карты
 
@@ -118,7 +88,7 @@ namespace CardGameLogic
                 Game.ColorHandField = Brushes.NavajoWhite;
                 card.ZIndex = Canvas.GetZIndex(card);
                 Canvas.SetZIndex(card, 100);
-            }   
+            }
         }
         public void MouseMoveFunc(object sender, MouseEventArgs e)
         {
@@ -142,7 +112,7 @@ namespace CardGameLogic
                 Game.ColorHandField = null;
                 Canvas.SetZIndex(card, ZIndex);
                 //Если хотим оставить в руке
-                if (Canvas.GetTop(card) + card.Height >= Game.HAND_FIELD_TOP || _countAddedCardOnDesk == 6)
+                if (Canvas.GetTop(card) + card.Height >= Game.HAND_FIELD_TOP)
                 {
                     //ToDo: Оставили карту в руке
                 }
@@ -168,9 +138,33 @@ namespace CardGameLogic
                 //}
             }
         }
-
-
         #endregion
+
+
+        private void ViewMessage(string message)
+        {
+            MessageBox.Show(message, "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private bool CanDropCardWhenPlayerAttack(Card card)
+        {
+            if (_board.Count == 0)
+                return true;
+
+            return _board.Any(x => x.Rank == card.Rank);
+        }
+        private bool CanDropCardWhenPlayerDefence(Card card, out Card closedCard)
+        {
+            closedCard = _board.Where(x => x.Owner == _turnPlayer)
+                               .Where(x => !x.IsCloseOnDesk)
+                               .Where(x => x.Suit == card.Suit)
+                               .Where(x => x.Rank < card.Rank)
+                               .First();
+
+            return !(closedCard is null);
+        }
+
+        
 
         private void CheckWin()
         {
@@ -248,14 +242,18 @@ namespace CardGameLogic
             ZIndex++;
         }
 
-        public IEnumerable<Card> TryGetCards(int countCards)
+        public IEnumerable<Card> TryGetCards(IPlayer player, int countCards)
         {
             IEnumerable<Card> _()
             {
                 for (int i = 0; i < countCards; i++)
                 {
                     if (_deck.Count > 0)
-                        yield return _deck[_random.Next(0, _deck.Count)];
+                    {
+                        Card card = _deck[_random.Next(0, _deck.Count)];
+                        card.Owner = player;
+                        yield return card;
+                    }
                     else
                         break;
                 }
@@ -269,6 +267,42 @@ namespace CardGameLogic
             }
 
             return _();
+        }
+
+        public bool TryDropCard(IPlayer player, Card card)
+        {
+            if (Canvas.GetTop(card) + card.Height >= Game.HAND_FIELD_TOP || 
+                _board.Count == MAX_BOARD_CAPACITY)
+                return false;
+
+            Card closedCard = default;
+            bool isCanDropped = player == _turnPlayer
+                                ? CanDropCardWhenPlayerAttack(card)
+                                : CanDropCardWhenPlayerDefence(card, out closedCard);
+
+
+            //
+            if (isCanDropped)
+            {
+                _board.Add(card);
+
+                if (closedCard != null)
+                    closedCard.IsCloseOnDesk = true;
+
+                if(GameMode == GameMode.SinglePlayer)
+                {
+
+                }
+                else
+                {
+                    //Todo: MultiPlayer
+                }
+            }
+
+            if (!isCanDropped)
+                ViewMessage("Сейчас эту карту положить невозможно.");
+
+            return isCanDropped;
         }
 
         public void Turn(IPlayer player)
