@@ -20,6 +20,7 @@ namespace CardGameLogic
         private const int MAX_BOARD_CAPACITY = 12;
 
         private Point? _movePoint;
+        private int _zIndex = 1;
 
         private List<Card> _deck = new List<Card>(MAX_DECK_CAPACITY);
         private List<Card> _board = new List<Card>(MAX_BOARD_CAPACITY);
@@ -51,7 +52,7 @@ namespace CardGameLogic
         public Canvas GameWindow { get; }
         public IReadOnlyList<IPlayer> Players { get; }
         public Suit TrumpSuit { get; }
-        public int ZIndex { get; private set; } = 1;
+        
 
 
         public event EventHandler EndGameEvent;
@@ -110,7 +111,7 @@ namespace CardGameLogic
                 card.ReleaseMouseCapture();
 
                 Game.ColorHandField = null;
-                Canvas.SetZIndex(card, ZIndex);
+                Canvas.SetZIndex(card, _zIndex);
                 //Если хотим оставить в руке
                 if (Canvas.GetTop(card) + card.Height >= Game.HAND_FIELD_TOP)
                 {
@@ -237,9 +238,9 @@ namespace CardGameLogic
         {
             Canvas.SetLeft(element, left);
             Canvas.SetTop(element, top);
-            Canvas.SetZIndex(element, ZIndex);
+            Canvas.SetZIndex(element, _zIndex);
             GameWindow.Children.Add(element);
-            ZIndex++;
+            _zIndex++;
         }
 
         public IEnumerable<Card> TryGetCards(IPlayer player, int countCards)
