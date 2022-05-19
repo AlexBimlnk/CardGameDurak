@@ -159,7 +159,7 @@ namespace CardGameLogic
                                .Where(x => !x.IsCloseOnDesk)
                                .Where(x => x.Suit == card.Suit)
                                .Where(x => x.Rank < card.Rank)
-                               .First();
+                               .FirstOrDefault();
 
             return !(closedCard is null);
         }
