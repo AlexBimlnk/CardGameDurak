@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using CardGameLogic;
 using System.Windows.Resources;
+using CardGameLogic.Enums;
 
 namespace CardGameUI
 {

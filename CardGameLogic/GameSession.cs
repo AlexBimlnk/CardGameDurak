@@ -253,6 +253,7 @@ namespace CardGameLogic
                     {
                         Card card = _deck[_random.Next(0, _deck.Count)];
                         card.Owner = player;
+                        _deck.Remove(card);
                         yield return card;
                     }
                     else
