@@ -1,4 +1,4 @@
 ﻿namespace CardGameDurak.Logic.Abstractions;
-internal interface IPlayer
+public interface IPlayer
 {
 }
