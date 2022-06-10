@@ -4,7 +4,7 @@ using CardGameDurak.Logic.Enums;
 namespace CardGameDurak.Logic;
 
 /// <summary xml:lang = "ru">
-/// Игровальная карта.
+/// Игральная карта.
 /// </summary>
 public class Card
 {
