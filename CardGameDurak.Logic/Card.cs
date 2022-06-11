@@ -6,7 +6,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Игральная карта.
 /// </summary>
-public class Card
+public class Card : ICard
 {
     /// <summary xml:lang = "ru">
     /// Создает новый экземпляр класса <see cref="Card"/>.
@@ -23,18 +23,12 @@ public class Card
         Rank = rank;
     }
 
-    /// <summary xml:lang = "ru">
-    /// Сила карты.
-    /// </summary>
+    /// <inheritdoc/>
     public int Rank { get; }
 
-    /// <summary xml:lang = "ru">
-    /// Масть карты.
-    /// </summary>
+    /// <inheritdoc/>
     public Suit Suit { get; }
 
-    /// <summary xml:lang = "ru">
-    /// Владелец катры.
-    /// </summary>
+    /// <inheritdoc/>
     public IPlayer? Owner { get; set; }
 }
