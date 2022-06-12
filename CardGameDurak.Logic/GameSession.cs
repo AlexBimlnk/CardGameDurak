@@ -34,6 +34,9 @@ public class GameSession
     /// <exception cref="ArgumentNullException" xml:lang = "ru">
     /// Если любой из входных параметров равен <see langword="null"/>.
     /// </exception>
+    /// <exception cref="ArgumentException" xml:lnag = "ru">
+    /// Когда кол-во игроков меньше двух.
+    /// </exception>
     public GameSession(
         GameSessionId id,
         IEnumerable<ICard> deck, 
@@ -41,10 +44,10 @@ public class GameSession
     {
         _id = id ?? throw new ArgumentNullException(nameof(id));
         _deck.AddRange(deck ?? throw new ArgumentNullException(nameof(deck)));
-        _players.AddRange(
-            (players?.Count() ?? throw new ArgumentNullException(nameof(players))) < 2
-            ? throw new ArgumentException("Count of players can't be less 2.", nameof(players))
-            : players);
+        _players.AddRange(players ?? throw new ArgumentNullException(nameof(players)));
+
+        if (_players.Count < 2)
+            throw new ArgumentException("Count of players can't be less 2.", nameof(players));
     }
 
     /// <summary xml:lang = "ru">
