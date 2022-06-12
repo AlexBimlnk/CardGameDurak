@@ -11,6 +11,7 @@ public class GameSession
     private const int DEFAULT_AMOUNT_PLAYERS = 2;
     private const int MAX_AMOUNT_CARD_ON_DESKTOP = 12;
     private const int MAX_AMOUNT_CARD_TO_GIVE = 6;
+    private const int MIN_AMOUNT_CARD_TO_GIVE = 1;
 
     private readonly List<ICard> _deck = new(DEFAULT_SIZE_DECK);
     private readonly List<IPlayer> _players = new(DEFAULT_AMOUNT_PLAYERS);
@@ -69,7 +70,7 @@ public class GameSession
     /// </exception>
     public IEnumerable<ICard> GiveCards(int count)
     {
-        if (count < 1 || count > MAX_AMOUNT_CARD_TO_GIVE)
+        if (count < MIN_AMOUNT_CARD_TO_GIVE || count > MAX_AMOUNT_CARD_TO_GIVE)
             throw new ArgumentOutOfRangeException(nameof(count));
 
         IEnumerable<ICard> _()
