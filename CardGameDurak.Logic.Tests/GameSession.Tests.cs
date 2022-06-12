@@ -166,7 +166,7 @@ public class GameSessionTests
         // Act
 
         // Assert
-
+        Assert.True(false);
     }
     #endregion
 }
