@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using CardGameDurak.Abstractions;
 
@@ -13,6 +14,25 @@ namespace CardGameDurak.Logic.Tests;
 
 public class GameSessionTests
 {
+    public readonly static TheoryData<int, int, int> GiveCardsData = new()
+    {
+        {
+            5,
+            3,
+            3
+        },
+        {
+            5,
+            6,
+            5
+        },
+        {
+            3,
+            5,
+            3
+        }
+    };
+    
     #region Конструкторы
 
     [Fact(DisplayName = "Can be created.")]
@@ -86,6 +106,31 @@ public class GameSessionTests
     #endregion
 
     #region Методы
+
+    [Theory(DisplayName = "Can give cards.")]
+    [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))]
+    [Trait("Category", "Properties")]
+    public void CanGiveCards(int deckSize, int countCards, int expectedCountCards)
+    {
+        // Arrange
+        var id = new GameSessionId(1);
+        var players = new List<IPlayer>()
+        {
+            Mock.Of<IPlayer>(MockBehavior.Strict),
+            Mock.Of<IPlayer>(MockBehavior.Strict)
+        };
+        var deck = new List<ICard>(deckSize);
+        foreach (var i in Enumerable.Range(0, deckSize))
+            deck.Add(Mock.Of<ICard>(MockBehavior.Strict));
+
+        var session = new GameSession(id, deck, players);
+
+        // Act
+        var result = session.GiveCards(countCards);
+
+        // Assert
+        result.Count().Should().Be(expectedCountCards);
+    }
 
     #endregion
 }
