@@ -1,5 +1,5 @@
-﻿using CardGameDurak.Logic.Abstractions;
-using CardGameDurak.Logic.Enums;
+﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Enums;
 
 namespace CardGameDurak.Logic;
 

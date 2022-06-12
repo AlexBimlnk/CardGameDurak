@@ -1,6 +1,5 @@
-﻿using CardGameDurak.Logic.Abstractions;
+﻿namespace CardGameDurak.Logic;
 
-namespace CardGameDurak.Logic;
 internal class Player : PlayerBase
 {
 
