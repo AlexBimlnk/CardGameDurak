@@ -20,4 +20,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CardGameDurak.Abstractions\CardGameDurak.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>
