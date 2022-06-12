@@ -60,11 +60,21 @@ public class GameSessionTests
     public void CanNotBeCreatedWhenArgumnetsIsNull()
     {
         // Arrange
+        var id = new GameSessionId(1);
+        var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
+        var players = new List<IPlayer>()
+        {
+            Mock.Of<IPlayer>(MockBehavior.Strict),
+            Mock.Of<IPlayer>(MockBehavior.Strict)
+        };
 
         // Act
+        var exception1 = Record.Exception(() => new GameSession(null!, deck, players));
+        var exception2 = Record.Exception(() => new GameSession(id, null!, players));
+        var exception3 = Record.Exception(() => new GameSession(id, deck, null!));
 
         // Assert
-        Assert.True(false);
+        new[] { exception1, exception2, exception3 }.Should().AllBeOfType<ArgumentNullException>();
     }
 
     [Fact(DisplayName = "Can't be created when players count less 2.")]
@@ -72,11 +82,18 @@ public class GameSessionTests
     public void CanNotBeCreatedWhenCountPlayersLessTwo()
     {
         // Arrange
+        var id = new GameSessionId(1);
+        var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
+        var players = new List<IPlayer>()
+        {
+            Mock.Of<IPlayer>(MockBehavior.Strict),
+        };
 
         // Act
+        var exception = Record.Exception(() => new GameSession(id, deck, players));
 
         // Assert
-        Assert.True(false);
+        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
     }
     #endregion
 

@@ -35,5 +35,5 @@ public static class GameControllerFactory
     /// <returns xml:lang = "ru">
     /// Игровой контроллер типа <see cref="IGameController"/>.
     /// </returns>
-    public static IGameController CreateSingleGameController(IPlayer bot) => new SingleGameController(bot);
+    public static IGameController CreateSingleGameController(IBot bot) => new SingleGameController(bot);
 }
