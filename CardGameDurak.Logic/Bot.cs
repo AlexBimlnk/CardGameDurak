@@ -1,5 +1,11 @@
-﻿namespace CardGameDurak.Logic;
+﻿using CardGameDurak.Abstractions;
 
-internal class Bot : PlayerBase
+namespace CardGameDurak.Logic;
+
+internal class Bot : PlayerBase, IBot
 {
+    public Bot(string name) : base(name) { }
+
+    public ICard Attak(IReadOnlyCollection<ICard> desktopCards) => throw new NotImplementedException();
+    public ICard Defence(IReadOnlyCollection<ICard> desktopCards) => throw new NotImplementedException();
 }

@@ -3,7 +3,7 @@
 namespace CardGameDurak.Network;
 internal class SingleGameController : IGameController
 {
-    private readonly IPlayer _bot;
-    public SingleGameController(IPlayer bot) => 
+    private readonly IBot _bot;
+    public SingleGameController(IBot bot) => 
         _bot = bot ?? throw new ArgumentNullException(nameof(bot));
 }
