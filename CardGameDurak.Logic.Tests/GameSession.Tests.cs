@@ -132,5 +132,24 @@ public class GameSessionTests
         result.Count().Should().Be(expectedCountCards);
     }
 
+    [Fact(DisplayName = "Can't give cards when argunment is invalid.")]
+    [Trait("Category", "Properties")]
+    public void CanNotGiveCardsWhenArgumentIsInvalid()
+    {
+        // Arrange
+        var id = new GameSessionId(1);
+        var players = new List<IPlayer>()
+        {
+            Mock.Of<IPlayer>(MockBehavior.Strict),
+            Mock.Of<IPlayer>(MockBehavior.Strict)
+        };
+        var deck = new List<ICard>();
+        var session = new GameSession(id, deck, players);
+
+        // Act
+
+        // Assert
+
+    }
     #endregion
 }
