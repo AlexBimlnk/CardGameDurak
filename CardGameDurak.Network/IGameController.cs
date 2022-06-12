@@ -1,6 +1,5 @@
 ﻿namespace CardGameDurak.Network;
 
-public class GameController
+public interface IGameController
 {
-
 }
