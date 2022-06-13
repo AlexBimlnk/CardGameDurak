@@ -9,12 +9,16 @@ public class GamesCoordinator : IGamesCoordinator
     private long _currentGameId = 1;
     private readonly Dictionary<GameSessionId,GameSession> _sessions = new();
     private readonly List<Player> _players = new();
+    private readonly ILogger<GamesCoordinator> _logger;
+
+    public GamesCoordinator(ILogger<GamesCoordinator> logger) =>
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public string Name => "I SINGLE COORDINATOR";
 
     private List<ICard> CreateDeck() => throw new NotImplementedException();
 
-    private bool TryHostGame()
+    private bool TryHostGames()
     {
         var playerGroupsToNewGame = _players
             .GroupBy(p => p.AwaitPlayersCount)
@@ -32,15 +36,17 @@ public class GamesCoordinator : IGamesCoordinator
         playerGroupsToNewGame.ForEach(group =>
         {
             var sessionId = new GameSessionId(_currentGameId++);
-            _sessions.Add(
-                sessionId,
-                new GameSession(
-                    sessionId, 
-                    CreateDeck(), 
-                    group.Players));
+            var session = new GameSession(
+                sessionId, 
+                CreateDeck(), 
+                group.Players);
+
+            _sessions.Add(sessionId, session);
 
             foreach (Player player in group.Players)
                 _players.Remove(player);
+
+            _logger.LogInformation("Start new session: {Session}", session);
         });
 
         return true;
@@ -49,7 +55,13 @@ public class GamesCoordinator : IGamesCoordinator
     public void AddToQueue(Player player)
     {
         _players.Add(player ?? throw new ArgumentNullException(nameof(player)));
-        TryHostGame();
+
+        _logger.LogInformation("Added new player:{Player} to await start game", player);
+
+        _logger.LogDebug("Try start new game");
+
+        if (!TryHostGames())
+            _logger.LogDebug("Failed to host any games");
     }
 
     public Task<long> JoinToGame(Player player)
