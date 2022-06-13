@@ -12,7 +12,7 @@ public class GamesCoordinator : IGamesCoordinator
 
     public string Name => "I SINGLE COORDINATOR";
 
-    private List<ICard> CreateDeck() => new List<ICard>();
+    private List<ICard> CreateDeck() => throw new NotImplementedException();
 
     private bool TryHostGame()
     {
