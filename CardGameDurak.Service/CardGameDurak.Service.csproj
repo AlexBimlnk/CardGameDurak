@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CardGameDurak.Abstractions\CardGameDurak.Abstractions.csproj" />
+    <ProjectReference Include="..\CardGameDurak.Logic\CardGameDurak.Logic.csproj" />
   </ItemGroup>
 
 </Project>

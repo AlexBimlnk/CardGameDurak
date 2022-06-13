@@ -1,3 +1,3 @@
-﻿namespace CardGameDurak.Logic;
+﻿namespace CardGameDurak.Abstractions;
 
 public record GameSessionId(long Value);
