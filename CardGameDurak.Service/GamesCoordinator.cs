@@ -7,8 +7,8 @@ namespace CardGameDurak.Service;
 public class GamesCoordinator : IGamesCoordinator
 {
     private long _currentGameId = 1;
-    private readonly List<GameSession> _sessions = new List<GameSession>();
-    private readonly List<Player> _players = new List<Player>();
+    private readonly Dictionary<GameSessionId,GameSession> _sessions = new();
+    private readonly List<Player> _players = new();
 
     public string Name => "I SINGLE COORDINATOR";
 
@@ -31,15 +31,17 @@ public class GamesCoordinator : IGamesCoordinator
 
         playerGroupsToNewGame.ForEach(group =>
         {
-            _sessions.Add(new GameSession(
-                new GameSessionId(_currentGameId),
-                CreateDeck(),
-                group.Players));
+            var sessionId = new GameSessionId(_currentGameId++);
+            _sessions.Add(
+                sessionId,
+                new GameSession(
+                    sessionId, 
+                    CreateDeck(), 
+                    group.Players));
 
             foreach (Player player in group.Players)
                 _players.Remove(player);
         });
-        _currentGameId++;
 
         return true;
     }
