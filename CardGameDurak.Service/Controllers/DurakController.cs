@@ -7,9 +7,9 @@ using CardGameDurak.Service.Models.Messages;
 
 namespace CardGameDurak.Service.Controllers;
 
+[Route("api/[controller]")]
 [ApiController]
-[Route("[controller]")]
-internal class DurakController : Controller
+public class DurakController : ControllerBase
 {
     private readonly ILogger<DurakController> _logger;
     private readonly IGamesCoordinator _gamesCoordinator;
@@ -20,6 +20,8 @@ internal class DurakController : Controller
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _gamesCoordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
+
+        _logger.LogDebug($"Created {nameof(DurakController)}");
     }
 
     [HttpGet]
@@ -37,6 +39,8 @@ internal class DurakController : Controller
     [HttpGet("join")]
     public async Task<IRegistrationMessage> JoinToGameAsync(IJoinMessage message)
     {
+        _logger.LogDebug("Receive join message");
+
         var tcs = new TaskCompletionSource();
 
         var awaitablePlayer = new AwaitPlayer(message);
@@ -45,8 +49,13 @@ internal class DurakController : Controller
 
         var sessionId = await _gamesCoordinator.JoinToGame(awaitablePlayer);
 
+        _logger.LogDebug("Send registration message");
+
         return new RegistrationMessage(
             new GameSessionId(sessionId),
             awaitablePlayer.Player.Id);
     }
+
+    [HttpGet("update")]
+    public void UpdateGame(IEventMessage message) => throw new NotImplementedException();
 }

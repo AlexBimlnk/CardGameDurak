@@ -6,7 +6,7 @@ namespace CardGameDurak.Service.Models;
 /// <summary xml:lang = "ru">
 /// Игрок.
 /// </summary>
-internal class AwaitPlayer
+public class AwaitPlayer
 {
     private const int MIN_AWAIT_PLAYERS_COUNT = 2;
 
@@ -29,7 +29,7 @@ internal class AwaitPlayer
         if (message.AwaitPlayersCount < MIN_AWAIT_PLAYERS_COUNT)
             throw new ArgumentOutOfRangeException(nameof(message.AwaitPlayersCount));
 
-        Player = message.Player ?? throw new ArgumentNullException(nameof(message.Player));
+        Player = message.Sender ?? throw new ArgumentNullException(nameof(message.Sender));
         AwaitPlayersCount = message.AwaitPlayersCount;
     }
 

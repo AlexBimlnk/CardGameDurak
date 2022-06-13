@@ -17,6 +17,9 @@ internal abstract class PlayerBase : IPlayer
     /// <inheritdoc/>
     public int CountCards => _cards.Count;
 
+    /// <inheritdoc/>
+    public int? Id { get; set; }
+
     /// <summary xml:lang = "ru">
     /// Принимает карты, которые ему выдают.
     /// </summary>

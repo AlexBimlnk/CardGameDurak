@@ -1,4 +1,6 @@
-﻿namespace CardGameDurak.Service;
+﻿using Serilog;
+
+namespace CardGameDurak.Service;
 
 public static class Registrations
 {

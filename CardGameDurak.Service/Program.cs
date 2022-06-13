@@ -1,3 +1,4 @@
+using Serilog;
 using CardGameDurak.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,12 +7,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddGameCoorditanor();
+builder.Host.UseSerilog((ctx, cfg) => cfg.ReadFrom.Configuration(ctx.Configuration));
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+
+
 
 app.UseAuthorization();
 

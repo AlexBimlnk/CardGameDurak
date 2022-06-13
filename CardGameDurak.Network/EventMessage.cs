@@ -2,13 +2,18 @@
 using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.Messages;
 
-namespace CardGameDurak.Service.Models.Messages;
+namespace CardGameDurak.Network;
 
 internal class EventMessage : IEventMessage
 {
-    public EventMessage(AwaitPlayer sender, GameEvent playerEvent, ICard card)
+    public EventMessage(
+        GameSessionId sessionId,
+        IPlayer sender, 
+        GameEvent playerEvent, 
+        ICard card)
     {
-        Sender = sender?.Player ?? throw new ArgumentNullException(nameof(sender));
+        SessionId = sessionId ?? throw new ArgumentNullException(nameof(sessionId));
+        Sender = sender ?? throw new ArgumentNullException(nameof(sender));
         PlayerEvent = playerEvent switch
         {
             var pEnvet =>
@@ -20,6 +25,9 @@ internal class EventMessage : IEventMessage
         };
         Card = card;
     }
+
+    /// <inheritdoc/>
+    public GameSessionId SessionId { get; }
 
     /// <inheritdoc/>
     public IPlayer Sender { get; }

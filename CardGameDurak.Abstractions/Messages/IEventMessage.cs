@@ -8,6 +8,11 @@ namespace CardGameDurak.Abstractions.Messages;
 public interface IEventMessage
 {
     /// <summary xml:lang = "ru">
+    /// Идентификатор игровой сессии.
+    /// </summary>
+    public GameSessionId SessionId { get; }
+
+    /// <summary xml:lang = "ru">
     /// Игрок, отправивший сообщение.
     /// </summary>
     public IPlayer Sender { get; }

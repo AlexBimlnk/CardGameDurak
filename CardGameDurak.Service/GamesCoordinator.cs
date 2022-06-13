@@ -1,7 +1,7 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Messages;
 using CardGameDurak.Logic;
 using CardGameDurak.Service.Models;
-using CardGameDurak.Service.Models.Messages;
 
 namespace CardGameDurak.Service;
 
@@ -25,10 +25,10 @@ internal class GamesCoordinator : IGamesCoordinator
             .GroupBy(p => p.AwaitPlayersCount)
             .Where(g => g.Key <= g.Count())
             .Select(g => new
-                {
-                    PlayersCount = g.Key,
-                    Players = g.Select(p => p)
-                })
+            {
+                PlayersCount = g.Key,
+                Players = g.Select(p => p)
+            })
             .ToList();
 
         if (playerGroupsToNewGame.Count == 0)
@@ -40,8 +40,8 @@ internal class GamesCoordinator : IGamesCoordinator
 
             var sessionId = new GameSessionId(_currentGameId++);
             var session = new GameSession(
-                sessionId, 
-                CreateDeck(), 
+                sessionId,
+                CreateDeck(),
                 players);
 
             _sessions.Add(sessionId, session);
@@ -72,5 +72,5 @@ internal class GamesCoordinator : IGamesCoordinator
 
     public Task<long> JoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
 
-    public Task UpdateSession(GameSessionId id, EventMessage message) => throw new NotImplementedException();
+    public Task UpdateSession(GameSessionId id, IEventMessage message) => throw new NotImplementedException();
 }
