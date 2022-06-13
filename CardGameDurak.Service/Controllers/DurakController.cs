@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+using CardGameDurak.Service.Models;
+using CardGameDurak.Abstractions.Messages;
+using CardGameDurak.Service.Models.Messages;
+
 namespace CardGameDurak.Service.Controllers;
 
 [ApiController]
@@ -19,4 +23,17 @@ public class DurakController : Controller
 
     [HttpGet]
     public string Get() => _gamesCoordinator.Name;
+
+    [HttpGet("join")]
+    public async Task<StartGameMessage> JoinToGameAsync(IJoinMessage message)
+    {
+        var tcs = new TaskCompletionSource();
+
+        _gamesCoordinator.AddToQueue(
+            new Player(
+                message.Player.Name, 
+                message.AwaitPlayersCount));
+
+        throw new NotImplementedException();
+    }
 }

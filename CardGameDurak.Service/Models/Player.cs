@@ -24,7 +24,7 @@ public class Player : IPlayer
     /// <exception cref="ArgumentOutOfRangeException" xml:lang = "ru">
     /// Если количество ожидаемых игроков выходит за пределы допустимого.
     /// </exception>
-    public Player(long id, string name, int awaitPlayersCount)
+    public Player(string name, int awaitPlayersCount)
     {
         if (awaitPlayersCount < MIN_AWAIT_PLAYERS_COUNT)
             throw new ArgumentOutOfRangeException(nameof(awaitPlayersCount));
@@ -34,7 +34,6 @@ public class Player : IPlayer
             true => throw new ArgumentNullException(nameof(name)),
             false => name
         };
-        Id = id;
         AwaitPlayersCount = awaitPlayersCount;
     }
 
@@ -53,7 +52,4 @@ public class Player : IPlayer
 
     /// <inheritdoc/>
     public int CountCards => throw new NotImplementedException();
-
-    /// <inheritdoc/>
-    public void ReceiveCards(params ICard[] cards) => throw new NotImplementedException();
 }

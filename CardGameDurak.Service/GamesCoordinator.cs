@@ -1,6 +1,7 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Logic;
 using CardGameDurak.Service.Models;
+using CardGameDurak.Service.Models.Messages;
 
 namespace CardGameDurak.Service;
 
@@ -8,7 +9,7 @@ public class GamesCoordinator : IGamesCoordinator
 {
     private long _currentGameId = 1;
     private readonly Dictionary<GameSessionId,GameSession> _sessions = new();
-    private readonly List<Player> _players = new();
+    private readonly List<Player> _awaiterPlayers = new();
     private readonly ILogger<GamesCoordinator> _logger;
 
     public GamesCoordinator(ILogger<GamesCoordinator> logger) =>
@@ -20,7 +21,7 @@ public class GamesCoordinator : IGamesCoordinator
 
     private bool TryHostGames()
     {
-        var playerGroupsToNewGame = _players
+        var playerGroupsToNewGame = _awaiterPlayers
             .GroupBy(p => p.AwaitPlayersCount)
             .Where(g => g.Key <= g.Count())
             .Select(g => new
@@ -44,7 +45,7 @@ public class GamesCoordinator : IGamesCoordinator
             _sessions.Add(sessionId, session);
 
             foreach (Player player in group.Players)
-                _players.Remove(player);
+                _awaiterPlayers.Remove(player);
 
             _logger.LogInformation("Start new session: {Session}", session);
         });
@@ -54,7 +55,7 @@ public class GamesCoordinator : IGamesCoordinator
 
     public void AddToQueue(Player player)
     {
-        _players.Add(player ?? throw new ArgumentNullException(nameof(player)));
+        _awaiterPlayers.Add(player ?? throw new ArgumentNullException(nameof(player)));
 
         _logger.LogInformation("Added new player:{Player} to await start game", player);
 
@@ -70,5 +71,5 @@ public class GamesCoordinator : IGamesCoordinator
         return tcs.Task;
     }
 
-    public Task UpdateSession(GameSessionId id, Message message) => throw new NotImplementedException();
+    public Task UpdateSession(GameSessionId id, EventMessage message) => throw new NotImplementedException();
 }

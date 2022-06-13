@@ -3,7 +3,7 @@
 /// <summary xml:lang = "ru">
 /// События которые может произвести игрок.
 /// </summary>
-public enum PlayerEvent
+public enum GameEvent
 {
     /// <summary xml:lang = "ru">
     /// Положил карту на стол.
