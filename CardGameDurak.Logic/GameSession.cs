@@ -45,16 +45,24 @@ public class GameSession
     {
         _id = id ?? throw new ArgumentNullException(nameof(id));
         _deck.AddRange(deck ?? throw new ArgumentNullException(nameof(deck)));
-        _players.AddRange(players ?? throw new ArgumentNullException(nameof(players)));
-
-        if (_players.Count < 2)
-            throw new ArgumentException("Count of players can't be less 2.", nameof(players));
+        AddPlayers(players ?? throw new ArgumentNullException(nameof(players)));
     }
 
     /// <summary xml:lang = "ru">
     /// Идентификатор игровой сессии.
     /// </summary>
     public long Id => _id.Value;
+
+    private void AddPlayers(IEnumerable<IPlayer> players)
+    {
+        _players.AddRange(players);
+
+        if (_players.Count < 2)
+            throw new ArgumentException("Count of players can't be less 2.", nameof(players));
+
+        foreach (var i in Enumerable.Range(0, _players.Count))
+            _players[i].Id = i + 1;
+    }
 
     /// <summary xml:lang = "ru">
     /// Выдает карты по требованию.

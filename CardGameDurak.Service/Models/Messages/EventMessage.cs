@@ -4,11 +4,11 @@ using CardGameDurak.Abstractions.Messages;
 
 namespace CardGameDurak.Service.Models.Messages;
 
-public class EventMessage : IEventMessage
+internal class EventMessage : IEventMessage
 {
-    public EventMessage(Player sender, GameEvent playerEvent, ICard card)
+    public EventMessage(AwaitPlayer sender, GameEvent playerEvent, ICard card)
     {
-        Sender = sender ?? throw new ArgumentNullException(nameof(sender));
+        Sender = sender?.Player ?? throw new ArgumentNullException(nameof(sender));
         PlayerEvent = playerEvent switch
         {
             var pEnvet =>

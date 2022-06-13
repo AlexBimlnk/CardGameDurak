@@ -5,11 +5,11 @@ using CardGameDurak.Service.Models.Messages;
 
 namespace CardGameDurak.Service;
 
-public class GamesCoordinator : IGamesCoordinator
+internal class GamesCoordinator : IGamesCoordinator
 {
     private long _currentGameId = 1;
-    private readonly Dictionary<GameSessionId,GameSession> _sessions = new();
-    private readonly List<Player> _awaiterPlayers = new();
+    private readonly Dictionary<GameSessionId, GameSession> _sessions = new();
+    private readonly List<AwaitPlayer> _awaiterPlayers = new();
     private readonly ILogger<GamesCoordinator> _logger;
 
     public GamesCoordinator(ILogger<GamesCoordinator> logger) =>
@@ -36,16 +36,21 @@ public class GamesCoordinator : IGamesCoordinator
 
         playerGroupsToNewGame.ForEach(group =>
         {
+            var players = group.Players.Select(p => p.Player);
+
             var sessionId = new GameSessionId(_currentGameId++);
             var session = new GameSession(
                 sessionId, 
                 CreateDeck(), 
-                group.Players);
+                players);
 
             _sessions.Add(sessionId, session);
 
-            foreach (Player player in group.Players)
+            foreach (AwaitPlayer player in group.Players)
+            {
                 _awaiterPlayers.Remove(player);
+                player.JoinTCS.SetResult(sessionId.Value);
+            }
 
             _logger.LogInformation("Start new session: {Session}", session);
         });
@@ -53,7 +58,7 @@ public class GamesCoordinator : IGamesCoordinator
         return true;
     }
 
-    public void AddToQueue(Player player)
+    public void AddToQueue(AwaitPlayer player)
     {
         _awaiterPlayers.Add(player ?? throw new ArgumentNullException(nameof(player)));
 
@@ -65,11 +70,7 @@ public class GamesCoordinator : IGamesCoordinator
             _logger.LogDebug("Failed to host any games");
     }
 
-    public Task<long> JoinToGame(Player player)
-    {
-        var tcs = new TaskCompletionSource<long>();
-        return tcs.Task;
-    }
+    public Task<long> JoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
 
     public Task UpdateSession(GameSessionId id, EventMessage message) => throw new NotImplementedException();
 }

@@ -6,6 +6,11 @@
 public interface IPlayer
 {
     /// <summary xml:lang = "ru">
+    /// Идентификатор игрока в игре.
+    /// </summary>
+    public int? Id { get; set; }
+
+    /// <summary xml:lang = "ru">
     /// Имя игрока.
     /// </summary>
     public string Name { get; }
