@@ -79,6 +79,6 @@ public class DurakController : ControllerBase
 
         _logger.LogDebug("Receive event message");
 
-        return null!;
+        throw new NotImplementedException();
     }
 }
