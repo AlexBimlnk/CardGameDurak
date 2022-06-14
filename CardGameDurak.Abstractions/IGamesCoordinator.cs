@@ -6,6 +6,10 @@ namespace CardGameDurak.Abstractions;
 /// Контракт, описывающий игровой координатор, 
 /// который хранит и обновляет игровые сессии.
 /// </summary>
+/// <typeparam name="TAwaitPlayer" xml:lang = "ru">
+/// Объект типа <see cref="IAwaitPlayer"/>, который будет выступать
+/// в качестве ожидаемого игрока.
+/// </typeparam>
 public interface IGamesCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlayer
 {
     public string Name { get; }
