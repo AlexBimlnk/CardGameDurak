@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-using CardGameDurak.Service.Models;
+﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Messages;
-using CardGameDurak.Abstractions;
+using CardGameDurak.Service.Models;
 using CardGameDurak.Service.Models.Messages;
+
+using Microsoft.AspNetCore.Mvc;
 
 namespace CardGameDurak.Service.Controllers;
 
@@ -37,11 +37,11 @@ public class DurakController : ControllerBase
     /// Сообщение типа <see cref="IRegistrationMessage"/> о регистрации в игре.
     /// </returns>
     [HttpGet("join")]
-    public async Task<IRegistrationMessage> JoinToGameAsync(IJoinMessage message)
+    public async Task<ActionResult<IRegistrationMessage>> JoinToGameAsync(IJoinMessage message)
     {
-        _logger.LogDebug("Receive join message");
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
 
-        var tcs = new TaskCompletionSource();
+        _logger.LogDebug("Receive join message");
 
         var awaitablePlayer = new AwaitPlayer(message);
 
@@ -57,5 +57,26 @@ public class DurakController : ControllerBase
     }
 
     [HttpGet("update")]
-    public void UpdateGame(IEventMessage message) => throw new NotImplementedException();
+    public IGameSession UpdateSession(GameSessionId sessionId)
+    {
+        ArgumentNullException.ThrowIfNull(sessionId, nameof(sessionId));
+
+        _logger.LogDebug("Receive update request");
+
+        var session = _gamesCoordinator.GetSession(sessionId);
+
+        _logger.LogDebug("Get update for session:{@Session}", session);
+
+        return session;
+    }
+
+    [HttpPost("event")]
+    public Task PostEvent(IEventMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+        _logger.LogDebug("Receive event message");
+
+        return null!;
+    }
 }

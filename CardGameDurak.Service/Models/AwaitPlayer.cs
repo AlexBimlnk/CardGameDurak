@@ -4,7 +4,7 @@ using CardGameDurak.Abstractions.Messages;
 namespace CardGameDurak.Service.Models;
 
 /// <summary xml:lang = "ru">
-/// Игрок.
+/// Игрок ожидающий игру.
 /// </summary>
 public class AwaitPlayer
 {
