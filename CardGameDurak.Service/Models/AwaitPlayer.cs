@@ -6,7 +6,7 @@ namespace CardGameDurak.Service.Models;
 /// <summary xml:lang = "ru">
 /// Игрок ожидающий игру.
 /// </summary>
-public class AwaitPlayer
+public class AwaitPlayer : IAwaitPlayer
 {
     private const int MIN_AWAIT_PLAYERS_COUNT = 2;
 
@@ -33,18 +33,12 @@ public class AwaitPlayer
         AwaitPlayersCount = message.AwaitPlayersCount;
     }
 
-    /// <summary xml:lang = "ru">
-    /// Количество игроков, ожидаемых в игре.
-    /// </summary>
+    /// <inheritdoc/>
     public int AwaitPlayersCount { get; }
 
-    /// <summary xml:lang = "ru">
-    /// TCS на присоединение к игре.
-    /// </summary>
+    /// <inheritdoc/>
     public TaskCompletionSource<long> JoinTCS { get; } = new();
 
-    /// <summary xml:lang = "ru">
-    /// Игрок.
-    /// </summary>
+    /// <inheritdoc/>
     public IPlayer Player { get; }
 }

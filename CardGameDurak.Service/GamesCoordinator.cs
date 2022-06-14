@@ -7,20 +7,35 @@ using CardGameDurak.Service.Models;
 
 namespace CardGameDurak.Service;
 
-internal class GamesCoordinator : IGamesCoordinator
+internal class GamesCoordinator : IGamesCoordinator<AwaitPlayer>
 {
     private long _currentGameId = 1;
     private readonly ConcurrentDictionary<GameSessionId, GameSession> _sessions = new();
+    private readonly ConcurrentDictionary<GameSessionId, TaskCompletionSource<IGameSession>> _updateSessionsTCS = new();
     private readonly List<AwaitPlayer> _awaiterPlayers = new();
     private readonly ILogger<GamesCoordinator> _logger;
 
-    public GamesCoordinator(ILogger<GamesCoordinator> logger) =>
+    public GamesCoordinator(ILogger<GamesCoordinator> logger) => 
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
 
     public string Name => "I SINGLE COORDINATOR";
 
     private List<ICard> CreateDeck() => throw new NotImplementedException();
 
+    private Task<IGameSession> CreateTaskOnUpdate(GameSessionId sessionId)
+    {
+        if (_updateSessionsTCS.TryGetValue(sessionId, out var updateTCS))
+            return updateTCS.Task;
+
+        var tcs = new TaskCompletionSource<IGameSession>();
+
+        return _updateSessionsTCS.TryAdd(sessionId, tcs) switch
+        {
+            true => tcs.Task,
+            false => _updateSessionsTCS[sessionId].Task
+        };
+    }
     private bool TryHostGames()
     {
         var playerGroupsToNewGame = _awaiterPlayers
@@ -55,10 +70,10 @@ internal class GamesCoordinator : IGamesCoordinator
                     player.JoinTCS.SetResult(sessionId.Value);
                 }
 
-                _logger.LogInformation("Start new session: {@Session}", session);
+                _logger.LogInformation("Start new session {@Session}", session);
             }
             else
-                _logger.LogDebug("Fail add new session: {@Session}", session);
+                _logger.LogDebug("Fail add new session {@Session}", session);
         });
 
         return true;
@@ -69,7 +84,7 @@ internal class GamesCoordinator : IGamesCoordinator
     {
         _awaiterPlayers.Add(player ?? throw new ArgumentNullException(nameof(player)));
 
-        _logger.LogInformation("Added new player:{@Player} to await start game", player);
+        _logger.LogInformation("Added new player {@Player} to await start game", player);
 
         _logger.LogDebug("Try start new game");
 
@@ -78,21 +93,46 @@ internal class GamesCoordinator : IGamesCoordinator
     }
 
     /// <inheritdoc/>
-    public Task<long> PromisJoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
+    public Task<long> JoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
 
     /// <inheritdoc/>
     public Task UpdateSession(IEventMessage message)
     {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
-        throw new NotImplementedException();
+        if (_sessions.TryGetValue(message.SessionId, out var session))
+        {
+            return Task.Run(() => {
+                //Todo: update session state
+                if (_updateSessionsTCS.TryGetValue(message.SessionId, out var tcs))
+                {
+                    tcs.SetResult(session);
+                    if (_updateSessionsTCS.TryRemove(message.SessionId, out tcs))
+                        _logger.LogDebug("Remove tcs on update for session with id {@Id}",
+                            message.SessionId);
+                }
+                _logger.LogDebug("Updated session with id {@Id}", message.SessionId);
+            });
+        }
+        else
+            throw new KeyNotFoundException();
     }
     
     /// <inheritdoc/>
-    public Task<IGameSession> PromisUpdateSession(IGameSession session)
+    public Task<IGameSession> GetUpdateForSession(IGameSession session)
     {
         ArgumentNullException.ThrowIfNull(session, nameof(session));
 
-        throw new NotImplementedException();
+        if (_sessions.TryGetValue(session.Id, out var serviceSession))
+        {
+            return serviceSession.Equals(session) switch
+            {
+                // Если сессия уже успела обновиться возвращаем результат.
+                false => Task.FromResult<IGameSession>(serviceSession),
+                true => CreateTaskOnUpdate(serviceSession.Id)
+            };
+        }
+        else
+            throw new KeyNotFoundException();
     }
 }

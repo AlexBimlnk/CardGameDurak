@@ -47,7 +47,7 @@ public class DurakController : ControllerBase
 
         _gamesCoordinator.AddToQueue(awaitablePlayer);
 
-        var sessionId = await _gamesCoordinator.PromisJoinToGame(awaitablePlayer);
+        var sessionId = await _gamesCoordinator.JoinToGame(awaitablePlayer);
 
         _logger.LogDebug("Send registration message");
 
@@ -63,9 +63,9 @@ public class DurakController : ControllerBase
 
         _logger.LogDebug("Receive update request");
 
-        var updateSession = await _gamesCoordinator.PromisUpdateSession(session);
+        var updateSession = await _gamesCoordinator.GetUpdateForSession(session);
 
-        _logger.LogDebug("Get update session from:{@OldSession} to:{@UpdateSession}", 
+        _logger.LogDebug("Get update session from {@OldSession} to {@UpdateSession}", 
             session,
             updateSession);
 
@@ -73,11 +73,13 @@ public class DurakController : ControllerBase
     }
 
     [HttpPost("event")]
-    public Task PostEvent(IEventMessage message)
+    public async Task PostEventAsync(IEventMessage message)
     {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         _logger.LogDebug("Receive event message");
+
+        await _gamesCoordinator.UpdateSession(message);
 
         throw new NotImplementedException();
     }
