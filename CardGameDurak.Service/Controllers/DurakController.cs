@@ -47,7 +47,7 @@ public class DurakController : ControllerBase
 
         _gamesCoordinator.AddToQueue(awaitablePlayer);
 
-        var sessionId = await _gamesCoordinator.JoinToGame(awaitablePlayer);
+        var sessionId = await _gamesCoordinator.PromisJoinToGame(awaitablePlayer);
 
         _logger.LogDebug("Send registration message");
 
@@ -63,7 +63,7 @@ public class DurakController : ControllerBase
 
         _logger.LogDebug("Receive update request");
 
-        var updateSession = await _gamesCoordinator.GetUpdateForSession(session);
+        var updateSession = await _gamesCoordinator.PromisUpdateSession(session);
 
         _logger.LogDebug("Get update session from:{@OldSession} to:{@UpdateSession}", 
             session,

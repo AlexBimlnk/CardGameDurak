@@ -78,7 +78,7 @@ internal class GamesCoordinator : IGamesCoordinator
     }
 
     /// <inheritdoc/>
-    public Task<long> JoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
+    public Task<long> PromisJoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
 
     /// <inheritdoc/>
     public Task UpdateSession(IEventMessage message)
@@ -89,7 +89,7 @@ internal class GamesCoordinator : IGamesCoordinator
     }
     
     /// <inheritdoc/>
-    public Task<IGameSession> GetUpdateForSession(IGameSession session)
+    public Task<IGameSession> PromisUpdateSession(IGameSession session)
     {
         ArgumentNullException.ThrowIfNull(session, nameof(session));
 
