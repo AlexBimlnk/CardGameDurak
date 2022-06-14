@@ -1,4 +1,5 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Enums;
 
 namespace CardGameDurak.Logic;
 
@@ -86,4 +87,5 @@ public class GameSession
 
         return _();
     }
+    public Suit SetTrumpCard() => _deck[_random.Next(0, _deck.Count)].Suit;
 }
