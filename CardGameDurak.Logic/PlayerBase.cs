@@ -18,6 +18,14 @@ internal abstract class PlayerBase : IPlayer
     public int CountCards => _cards.Count;
 
     /// <inheritdoc/>
+    public int? Id { get; set; }
+
+    /// <summary xml:lang = "ru">
+    /// Принимает карты, которые ему выдают.
+    /// </summary>
+    /// <param name="cards" xml:lang = "ru">
+    /// Список карт, который нужно добавить в руку.
+    /// </param>
     public void ReceiveCards(params ICard[] cards) =>
         _cards.AddRange(cards ?? throw new ArgumentNullException(nameof(cards)));
 }

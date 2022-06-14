@@ -5,7 +5,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Игровая сессия.
 /// </summary>
-public class GameSession
+public class GameSession : IGameSession
 {
     private const int DEFAULT_SIZE_DECK = 36;
     private const int DEFAULT_AMOUNT_PLAYERS = 2;
@@ -17,7 +17,6 @@ public class GameSession
     private readonly List<IPlayer> _players = new(DEFAULT_AMOUNT_PLAYERS);
     private readonly List<ICard> _desktop = new(MAX_AMOUNT_CARD_ON_DESKTOP);
 
-    private readonly GameSessionId _id;
     private readonly Random _random = new();
 
     /// <summary xml:lang = "ru">
@@ -43,18 +42,30 @@ public class GameSession
         IEnumerable<ICard> deck, 
         IEnumerable<IPlayer> players)
     {
-        _id = id ?? throw new ArgumentNullException(nameof(id));
+        Id = id ?? throw new ArgumentNullException(nameof(id));
         _deck.AddRange(deck ?? throw new ArgumentNullException(nameof(deck)));
-        _players.AddRange(players ?? throw new ArgumentNullException(nameof(players)));
+        AddPlayers(players ?? throw new ArgumentNullException(nameof(players)));
+    }
+
+    /// <inheritdoc/>
+    public GameSessionId Id { get; }
+
+    /// <inheritdoc/>
+    public IReadOnlyCollection<IPlayer> Players => _players;
+
+    /// <inheritdoc/>
+    public IReadOnlyCollection<ICard> Desktop => _desktop;
+
+    private void AddPlayers(IEnumerable<IPlayer> players)
+    {
+        _players.AddRange(players);
 
         if (_players.Count < 2)
             throw new ArgumentException("Count of players can't be less 2.", nameof(players));
-    }
 
-    /// <summary xml:lang = "ru">
-    /// Идентификатор игровой сессии.
-    /// </summary>
-    public long Id => _id.Value;
+        foreach (var i in Enumerable.Range(0, _players.Count))
+            _players[i].Id = i + 1;
+    }
 
     /// <summary xml:lang = "ru">
     /// Выдает карты по требованию.
