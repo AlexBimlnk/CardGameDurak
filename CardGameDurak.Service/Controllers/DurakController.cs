@@ -57,15 +57,17 @@ public class DurakController : ControllerBase
     }
 
     [HttpGet("update")]
-    public IGameSession UpdateSession(GameSessionId sessionId)
+    public async Task<IGameSession> UpdateSessionAsync(IGameSession session)
     {
-        ArgumentNullException.ThrowIfNull(sessionId, nameof(sessionId));
+        ArgumentNullException.ThrowIfNull(session, nameof(session));
 
         _logger.LogDebug("Receive update request");
 
-        var session = _gamesCoordinator.GetSession(sessionId);
+        var updateSession = await _gamesCoordinator.GetUpdateForSession(session);
 
-        _logger.LogDebug("Get update for session:{@Session}", session);
+        _logger.LogDebug("Get update session from:{@OldSession} to:{@UpdateSession}", 
+            session,
+            updateSession);
 
         return session;
     }

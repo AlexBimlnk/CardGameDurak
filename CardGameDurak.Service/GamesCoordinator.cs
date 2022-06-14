@@ -81,17 +81,18 @@ internal class GamesCoordinator : IGamesCoordinator
     public Task<long> JoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
 
     /// <inheritdoc/>
-    public Task UpdateSession(IEventMessage message) => throw new NotImplementedException();
+    public Task UpdateSession(IEventMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+        throw new NotImplementedException();
+    }
     
     /// <inheritdoc/>
-    public IGameSession GetSession(GameSessionId sessionId)
+    public Task<IGameSession> GetUpdateForSession(IGameSession session)
     {
-        ArgumentNullException.ThrowIfNull(sessionId, nameof(sessionId));
+        ArgumentNullException.ThrowIfNull(session, nameof(session));
 
-        return _sessions.TryGetValue(sessionId, out var session) switch
-        {
-            true => session,
-            false => throw new KeyNotFoundException()
-        };
+        throw new NotImplementedException();
     }
 }

@@ -44,11 +44,11 @@ public interface IGamesCoordinator
     /// <summary xml:lang = "ru">
     /// 
     /// </summary>
-    /// <param name="sessionId" xml:lang = "ru">
+    /// <param name="session" xml:lang = "ru">
     /// 
     /// </param>
     /// <returns xml:lang = "ru">
     /// 
     /// </returns>
-    public IGameSession GetSession(GameSessionId sessionId);
+    public Task<IGameSession> GetUpdateForSession(IGameSession session);
 }
