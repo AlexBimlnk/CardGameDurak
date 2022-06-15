@@ -22,8 +22,6 @@ public class DurakController : ControllerBase
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _gamesCoordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
-
-        _logger.LogDebug($"Created {nameof(DurakController)}");
     }
 
     [HttpGet]
