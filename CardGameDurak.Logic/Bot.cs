@@ -4,9 +4,6 @@ namespace CardGameDurak.Logic;
 public class Bot : PlayerBase, IBot
 {
     public Bot(string name) : base(name) { }
-
-    public ICard Attak(IReadOnlyCollection<ICard> desktopCards) => throw new NotImplementedException();
-    public ICard Defence(IReadOnlyCollection<ICard> desktopCards) => throw new NotImplementedException();
     public ICard? Attaсk(IReadOnlyCollection<ICard> desktopCards)
     {
         if (desktopCards.Count() == 0)
