@@ -11,11 +11,6 @@ public interface IAwaitPlayer
     public int AwaitPlayersCount { get; }
 
     /// <summary xml:lang = "ru">
-    /// TCS на присоединение к игре.
-    /// </summary>
-    public TaskCompletionSource<long> JoinTCS { get; }
-
-    /// <summary xml:lang = "ru">
     /// Игрок.
     /// </summary>
     public IPlayer Player { get; }

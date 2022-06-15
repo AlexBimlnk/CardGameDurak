@@ -10,7 +10,7 @@ namespace CardGameDurak.Abstractions;
 /// Объект типа <see cref="IAwaitPlayer"/>, который будет выступать
 /// в качестве ожидаемого игрока.
 /// </typeparam>
-public interface IGamesCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlayer
+public interface IGameCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlayer
 {
     public string Name { get; }
 

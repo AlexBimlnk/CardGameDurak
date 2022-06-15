@@ -12,11 +12,11 @@ namespace CardGameDurak.Service.Controllers;
 public class DurakController : ControllerBase
 {
     private readonly ILogger<DurakController> _logger;
-    private readonly IGamesCoordinator _gamesCoordinator;
+    private readonly IGameCoordinator<AwaitPlayer> _gamesCoordinator;
 
     public DurakController(
         ILogger<DurakController> logger,
-        IGamesCoordinator coordinator)
+        IGameCoordinator<AwaitPlayer> coordinator)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _gamesCoordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));

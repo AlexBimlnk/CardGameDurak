@@ -36,7 +36,9 @@ public class AwaitPlayer : IAwaitPlayer
     /// <inheritdoc/>
     public int AwaitPlayersCount { get; }
 
-    /// <inheritdoc/>
+    /// <summary xml:lang = "ru">
+    /// TCS на присоединение к игре.
+    /// </summary>
     public TaskCompletionSource<long> JoinTCS { get; } = new();
 
     /// <inheritdoc/>
