@@ -1,8 +1,17 @@
-﻿    using CardGameDurak.Abstractions;
+﻿using CardGameDurak.Abstractions;
 
 namespace CardGameDurak.Logic;
+/// <summary xml:lang = "ru">
+/// Класс бота.
+/// </summary>
 public class Bot : PlayerBase, IBot
 {
+    /// <summary xml:lang = "ru">
+    /// Создает новый экземпляр класса <see cref="Bot"/>.
+    /// </summary>
+    /// <param name="name" xml:lang = "ru">
+    /// Имя бота.
+    /// </param>
     public Bot(string name) : base(name) { }
     public ICard? Attaсk(IReadOnlyCollection<ICard> desktopCards)
     {

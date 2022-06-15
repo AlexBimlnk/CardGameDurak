@@ -9,7 +9,12 @@ internal abstract class PlayerBase : IPlayer
 {
     protected readonly List<ICard> _cards = new List<ICard>(6);
 
-    public PlayerBase(string name) => Name = name;
+    public PlayerBase(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) 
+            throw new ArgumentNullException("Имя бота не соответствует требованиям!");
+        else Name = name;
+    }
 
     /// <inheritdoc/>
     public string Name { get; }

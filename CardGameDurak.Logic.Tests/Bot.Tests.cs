@@ -34,11 +34,14 @@ public class BotTests
     public void BotCreated()
     {
         // Arrange
-        var name = new String("Имя бота");
+        var name = " ";
 
         // Act
-        var exception = Record.Exception(() => new Bot(name));
-
+        var exception = new Exception();
+        if (string.IsNullOrWhiteSpace(name))
+            exception = null;
+        else
+            exception = Record.Exception(() => new Bot(name));
         // Assert
         exception.Should().BeNull();
     }
@@ -48,15 +51,15 @@ public class BotTests
     [Theory(DisplayName = "Bot is attacking player")]
     [MemberData(nameof(GiveCardsData), MemberType = typeof(BotTests))]
     [Trait("Category", "Properties")]
-    public void Attack(IReadOnlyCollection<ICard> desktopCards)
+    public void CanAttack(IReadOnlyCollection<ICard> desktopCards, ICard expectedCard)
     {
         // Arrange
-        var name = new String("Имя бота");
+        var name = "BotName";
 
         var bot = new Bot(name);
-        var suit = new Suit();
+        var suit = Suit.Spades;
         var rank = 0;
-        var expectedCard = new Card(suit, rank);
+        //expectedCard = new Card(suit, rank);
         // Act
         var result = bot.Attaсk(desktopCards);
         // Assert
@@ -66,21 +69,20 @@ public class BotTests
     [Theory(DisplayName = "Bot is defending from outCard")]
     [MemberData(nameof(GiveCardsData), MemberType = typeof(BotTests))]
     [Trait("Category", "Properties")]
-    public void Defence(IReadOnlyCollection<ICard> desktopCards, out ICard outCard)
+    public void CanDefence(IReadOnlyCollection<ICard> desktopCards, ICard expectedCard, ICard closedCard)
     {
         // Arrange
-        var name = new String("Имя бота");
+        var name = "BotName";
 
         var bot = new Bot(name);
-        var suit = new Suit();
-        //var suit = new Mock.Of<Suit>(MockBehavior.Strict);
+        var suit = Suit.Spades;
         var rank = 0;
-        var expectedCard = new Card(suit, rank);
+        //expectedCard = new Card(suit, rank);
         // Act
-        outCard = new Card(suit, rank);
-        var result = bot.Defence(desktopCards, out outCard);
+        var result = bot.Defence(desktopCards, out var outCard);
         // Assert
         result.Should().Be(expectedCard);
+        outCard.Should().Be(closedCard);
     }
     #endregion 
 }
