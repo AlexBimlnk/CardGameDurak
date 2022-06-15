@@ -22,7 +22,7 @@ public class AwaitPlayer : IAwaitPlayer
     /// <exception cref="ArgumentNullException" xml:lang = "ru">
     /// Когда сообщение или игрок <see langword="null"/>.
     /// </exception>
-    public AwaitPlayer(IJoinMessage message)
+    public AwaitPlayer(IJoinMessage<Player> message)
     {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 

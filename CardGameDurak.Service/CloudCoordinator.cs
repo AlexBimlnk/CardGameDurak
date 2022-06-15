@@ -45,7 +45,9 @@ internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
                 {
                     if (_tcsOnUpdateSessions.TryRemove(key, out tcs))
                         _logger.LogDebug("Removed updated version {Version} " +
-                            "of session with {@Id}", key.sessionVersion, key.sessionId);
+                            "of session with {Id}", 
+                            key.sessionVersion, 
+                            key.sessionId.Value);
 
                 });
 
@@ -107,7 +109,7 @@ internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
             _awaiterPlayers.Add(player ?? throw new ArgumentNullException(nameof(player)));
         }
 
-        _logger.LogInformation("Added new player {@Player} to await start game", player);
+        _logger.LogInformation("Added new player {Player} to await start game", player);
 
         _logger.LogDebug("Try start new game");
 
@@ -134,7 +136,7 @@ internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
                 {
                     tcs.SetResult(session);
                 }
-                _logger.LogDebug("Updated session with id {@Id}", message.SessionId);
+                _logger.LogDebug("Updated session with id {Id}", message.SessionId.Value);
             });
         }
         else

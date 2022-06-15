@@ -1,5 +1,7 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Messages;
+using CardGameDurak.Logic;
+using CardGameDurak.Network.Messages;
 using CardGameDurak.Service.Models;
 using CardGameDurak.Service.Models.Messages;
 
@@ -37,7 +39,7 @@ public class DurakController : ControllerBase
     /// Сообщение типа <see cref="IRegistrationMessage"/> о регистрации в игре.
     /// </returns>
     [HttpGet("join")]
-    public async Task<ActionResult<IRegistrationMessage>> JoinToGameAsync(IJoinMessage message)
+    public async Task<ActionResult<IRegistrationMessage>> JoinToGameAsync([FromBody] JoinMessage<Player> message)
     {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
@@ -57,7 +59,7 @@ public class DurakController : ControllerBase
     }
 
     [HttpGet("update")]
-    public async Task<IGameSession> UpdateSessionAsync(IGameSession session)
+    public async Task<IGameSession> UpdateSessionAsync([FromBody] GameSession session)
     {
         ArgumentNullException.ThrowIfNull(session, nameof(session));
 
