@@ -10,76 +10,66 @@ using Xunit;
 namespace CardGameDurak.Logic.Tests;
 public class BotTests
 {
-    public readonly static TheoryData<int, int, int> GiveCardsData = new()
-    {
-        {
-            5,
-            3,
-            3
-        },
-        {
-            5,
-            6,
-            5
-        },
-        {
-            3,
-            5,
-            3
-        }
-    };
     #region Конструкторы
-    [Fact(DisplayName = "Bot is Created.")]
+    [Fact(DisplayName = "Bot can be created.")]
     [Trait("Category", "Constructors")]
-    public void BotCreated()
+    public void BotCanBeCreated()
     {
         // Arrange
-        var name = " ";
+        var name = "BotName";
 
         // Act
-        var exception = new Exception();
-        if (string.IsNullOrWhiteSpace(name))
-            exception = null;
-        else
-            exception = Record.Exception(() => new Bot(name));
+        var exception = Record.Exception(() => new Bot(name));
+
         // Assert
         exception.Should().BeNull();
+    }
+
+    [InlineData(null!)]
+    [InlineData("")]
+    [InlineData("  ")]
+    [InlineData(" \t\r \n ")]
+    [Theory(DisplayName = "Bot can't be created when name is null or empty.")]
+    [Trait("Category", "Constructors")]
+    public void BotCanNotBeCreatedWhenNameIsMissing(string name)
+    {
+        // Act
+        var exception = Record.Exception(() => new Bot(name));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
     #endregion
 
     #region Методы
-    [Theory(DisplayName = "Bot is attacking player")]
-    [MemberData(nameof(GiveCardsData), MemberType = typeof(BotTests))]
+    [Theory(DisplayName = "Bot can attacking player.")]
+    [MemberData(nameof(BotTestsData.CanDefenceData), MemberType = typeof(BotTestsData))]
     [Trait("Category", "Properties")]
     public void CanAttack(IReadOnlyCollection<ICard> desktopCards, ICard expectedCard)
     {
         // Arrange
         var name = "BotName";
-
         var bot = new Bot(name);
-        var suit = Suit.Spades;
-        var rank = 0;
-        //expectedCard = new Card(suit, rank);
+
         // Act
         var result = bot.Attaсk(desktopCards);
+
         // Assert
         result.Should().Be(expectedCard);
     }
 
-    [Theory(DisplayName = "Bot is defending from outCard")]
-    [MemberData(nameof(GiveCardsData), MemberType = typeof(BotTests))]
+    [Theory(DisplayName = "Bot can defending from outCard")]
+    [MemberData(nameof(BotTestsData.CanAttackData), MemberType = typeof(BotTestsData))]
     [Trait("Category", "Properties")]
     public void CanDefence(IReadOnlyCollection<ICard> desktopCards, ICard expectedCard, ICard closedCard)
     {
         // Arrange
         var name = "BotName";
-
         var bot = new Bot(name);
-        var suit = Suit.Spades;
-        var rank = 0;
-        //expectedCard = new Card(suit, rank);
+
         // Act
         var result = bot.Defence(desktopCards, out var outCard);
+
         // Assert
         result.Should().Be(expectedCard);
         outCard.Should().Be(closedCard);

@@ -5,15 +5,21 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Базовый класс для всех игроков.
 /// </summary>
-internal abstract class PlayerBase : IPlayer
+public abstract class PlayerBase : IPlayer
 {
-    protected readonly List<ICard> _cards = new List<ICard>(6);
+    private const int DEFAULT_COUNT_CARDS_IN_HAND = 6;
+
+    /// <summary xml:lang = "ru">
+    /// Карты, находящиеся в руке у игрока.
+    /// </summary>
+    protected readonly List<ICard> _cards = new (DEFAULT_COUNT_CARDS_IN_HAND);
 
     public PlayerBase(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) 
-            throw new ArgumentNullException("Имя бота не соответствует требованиям!");
-        else Name = name;
+            throw new ArgumentNullException(nameof(name), "Имя игрока не может быть пустым.");
+        
+        Name = name;
     }
 
     /// <inheritdoc/>
@@ -31,6 +37,9 @@ internal abstract class PlayerBase : IPlayer
     /// <param name="cards" xml:lang = "ru">
     /// Список карт, который нужно добавить в руку.
     /// </param>
+    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// Когда массив выданных карт равен <see langword="null"/>.  
+    /// </exception>
     public void ReceiveCards(params ICard[] cards) =>
         _cards.AddRange(cards ?? throw new ArgumentNullException(nameof(cards)));
 }

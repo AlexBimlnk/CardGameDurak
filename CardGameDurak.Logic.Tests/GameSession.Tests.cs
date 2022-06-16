@@ -14,7 +14,7 @@ namespace CardGameDurak.Logic.Tests;
 
 public class GameSessionTests
 {
-    public readonly static TheoryData<int, int, int> GiveCardsData = new()
+    public static readonly TheoryData<int, int, int> GiveCardsData = new()
     {
         {
             5,
