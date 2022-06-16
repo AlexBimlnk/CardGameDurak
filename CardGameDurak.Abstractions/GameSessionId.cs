@@ -6,4 +6,4 @@
 /// <param name="Value" xml:lang = "ru">
 /// Значение.
 /// </param>
-public record GameSessionId(long Value);
+public record struct GameSessionId(long Value);
