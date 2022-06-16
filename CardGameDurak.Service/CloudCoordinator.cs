@@ -7,12 +7,12 @@ using CardGameDurak.Service.Models;
 
 namespace CardGameDurak.Service;
 
-internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
+internal class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 {
     private readonly ConcurrentDictionary<GameSessionId, GameSession> _sessions = new();
     private readonly ConcurrentDictionary<ValueTuple<GameSessionId, int>, TaskCompletionSource<IGameSession>> _tcsOnUpdateSessions = new();
     
-    private readonly List<AwaitPlayer> _awaiterPlayers = new();
+    private readonly List<CloudAwaitPlayer> _awaiterPlayers = new();
 
     private readonly object _hostGuard = new();
     private const int STORE_UPDATED_IN_SECONDS = 30;
@@ -85,7 +85,7 @@ internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
                 if (_sessions.TryAdd(sessionId, session))
                 {
 
-                    foreach (AwaitPlayer player in group.Players)
+                    foreach (CloudAwaitPlayer player in group.Players)
                     {
                         _awaiterPlayers.Remove(player);
                         player.JoinTCS.SetResult(sessionId.Value);
@@ -102,7 +102,7 @@ internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
     }
 
     /// <inheritdoc/>
-    public void AddToQueue(AwaitPlayer player)
+    public void AddToQueue(CloudAwaitPlayer player)
     {
         lock (_hostGuard)
         {
@@ -118,14 +118,14 @@ internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
     }
 
     /// <inheritdoc/>
-    public Task<long> JoinToGame(AwaitPlayer player) => player.JoinTCS.Task;
+    public Task<IGameSession> JoinToGame(CloudAwaitPlayer player) => player.JoinTCS.Task;
 
     /// <inheritdoc/>
-    public Task UpdateSession(IEventMessage message)
+    public Task UpdateSession(IKeyableMessage<GameSessionId, int, IPlayer> message)
     {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
-        if (_sessions.TryGetValue(message.SessionId, out var session))
+        if (_sessions.TryGetValue(message.Key, out var session))
         {
             return Task.Run(() => {
                 var oldVersion = session.Version;
@@ -136,7 +136,7 @@ internal class CloudCoordinator : IGameCoordinator<AwaitPlayer>
                 {
                     tcs.SetResult(session);
                 }
-                _logger.LogDebug("Updated session with id {Id}", message.SessionId.Value);
+                _logger.LogDebug("Updated session with id {Id}", session.Id.Value);
             });
         }
         else

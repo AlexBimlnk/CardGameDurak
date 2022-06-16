@@ -3,7 +3,6 @@ using CardGameDurak.Abstractions.Messages;
 using CardGameDurak.Logic;
 using CardGameDurak.Network.Messages;
 using CardGameDurak.Service.Models;
-using CardGameDurak.Service.Models.Messages;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +14,16 @@ public class DurakController : ControllerBase
 {
     private readonly ILogger<DurakController> _logger;
     private readonly IGameCoordinator<AwaitPlayer> _gamesCoordinator;
+    private readonly ICloudSender _cloudSender;
 
     public DurakController(
         ILogger<DurakController> logger,
-        IGameCoordinator<AwaitPlayer> coordinator)
+        IGameCoordinator<AwaitPlayer> coordinator,
+        ICloudSender cloudSender)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _gamesCoordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
+        _cloudSender = cloudSender ?? throw new ArgumentNullException(nameof(cloudSender));
     }
 
     [HttpGet]
@@ -34,26 +36,22 @@ public class DurakController : ControllerBase
     /// Сообщение на присоединение к игре.
     /// </param>
     /// <returns xml:lang = "ru">
-    /// Сообщение типа <see cref="IRegistrationMessage"/> о регистрации в игре.
+    /// Сообщение типа <see cref="RegistrationMessage{TValue, TSender}"/> о регистрации в игре.
     /// </returns>
     [HttpGet("join")]
-    public async Task<ActionResult<IRegistrationMessage>> JoinToGameAsync([FromBody] JoinMessage<Player> message)
+    public async Task<ActionResult<IMessage<IGameSession, ISender>>> JoinToGameAsync([FromBody] JoinMessage<CloudAwaitPlayer> message)
     {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         _logger.LogDebug("Receive join message");
 
-        var awaitablePlayer = new AwaitPlayer(message);
+        _gamesCoordinator.AddToQueue(message.Sender);
 
-        _gamesCoordinator.AddToQueue(awaitablePlayer);
-
-        var sessionId = await _gamesCoordinator.JoinToGame(awaitablePlayer);
+        var session = await _gamesCoordinator.JoinToGame(message.Sender);
 
         _logger.LogDebug("Send registration message");
 
-        return new RegistrationMessage(
-            new GameSessionId(sessionId),
-            awaitablePlayer.Player.Id);
+        return new RegistrationMessage<IGameSession, ISender>(session, _cloudSender);
     }
 
     [HttpGet("update")]
@@ -65,7 +63,7 @@ public class DurakController : ControllerBase
 
         var updateSession = await _gamesCoordinator.GetUpdateForSession(session);
 
-        _logger.LogDebug("Get update session from {@OldSession} to {@UpdateSession}", 
+        _logger.LogDebug("Get update session from {@OldSession} to {@UpdateSession}",
             session,
             updateSession);
 

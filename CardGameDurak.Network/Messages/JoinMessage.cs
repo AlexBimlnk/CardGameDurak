@@ -6,11 +6,11 @@ namespace CardGameDurak.Network.Messages;
 /// <summary xml:lang = "ru">
 /// Сообщение о присоединении.
 /// </summary>
-/// <typeparam name="TPlayer" xml:lang = "ru">
+/// <typeparam name="TSender" xml:lang = "ru">
 /// Тип игрока, отправившего запрос на присоединение.
 /// </typeparam>
-public sealed class JoinMessage<TPlayer> : IJoinMessage<TPlayer>
-    where TPlayer : IPlayer
+public sealed class JoinMessage<TSender> : IMessage<int, TSender>
+    where TSender : IAwaitPlayer, ISender
 {
     /// <summary xml:lang = "ru">
     /// Создает новый экземпляр типа <see cref="JoinMessage{TPlayer}"/>.
@@ -24,15 +24,13 @@ public sealed class JoinMessage<TPlayer> : IJoinMessage<TPlayer>
     /// <exception cref="ArgumentNullException" xml:lang = "ru">
     /// Когда отправитель равен <see langword="null"/>.
     /// </exception>
-    public JoinMessage(int awaitPlayersCount, TPlayer sender)
-    {
-        AwaitPlayersCount = awaitPlayersCount;
-        Sender = sender ?? throw new ArgumentNullException(nameof(sender));
-    }
+    public JoinMessage(TSender sender) => Sender = sender ?? throw new ArgumentNullException(nameof(sender));
+
+    /// <summary xml:lang = "ru">
+    /// Отправитель сообщения типа <typeparamref name="TSender"/>.
+    /// </summary>
+    public TSender Sender { get; }
 
     /// <inheritdoc/>
-    public int AwaitPlayersCount { get; set; }
-
-    /// <inheritdoc/>
-    public TPlayer Sender { get; set; }
+    public int Value => Sender.AwaitPlayersCount;
 }
