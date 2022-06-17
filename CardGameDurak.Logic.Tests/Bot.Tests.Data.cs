@@ -18,12 +18,13 @@ public class BotTestsData
     static BotTestsData()
     {
         s_playerStub1.Setup(x => x.Id).Returns(1);
+        s_playerStub1.Setup(x => x.Equals(It.IsAny<IBot>())).Returns(true);
         s_playerStub2.Setup(x => x.Id).Returns(2);
     }
 
 
     //Todo: Тестовые данные для проверки логики бота.
-    public static readonly TheoryData<IReadOnlyCollection<ICard>, ICard> CanAttackData = new()
+    public static readonly TheoryData<List<ICard>, ICard[], ICard> CanAttackData = new()
     {
         {
             // Карты на столе.
@@ -40,6 +41,17 @@ public class BotTestsData
                     IsCloseOnDesktop = false,
                     IsTrump = false,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
@@ -78,6 +90,17 @@ public class BotTestsData
                     IsCloseOnDesktop = false,
                     IsTrump = true,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
@@ -131,6 +154,17 @@ public class BotTestsData
                 }
             },
 
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
             // Ожидаемая карта
             new Card(Suit.Hearts, 12)
             {
@@ -140,7 +174,7 @@ public class BotTestsData
             }
         }
     };
-    public static readonly TheoryData<IReadOnlyCollection<ICard>, ICard, ICard> CanDefenceData = new()
+    public static readonly TheoryData<List<ICard>, ICard[], ICard, ICard> CanDefenceData = new()
     {
         {
             // Карты на столе.
@@ -163,6 +197,17 @@ public class BotTestsData
                     IsCloseOnDesktop = false,
                     IsTrump = false,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
@@ -206,6 +251,17 @@ public class BotTestsData
                 }
             },
 
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
             // Побитая карта
             new Card(Suit.Spades, 10)
             {
@@ -243,6 +299,17 @@ public class BotTestsData
                     IsCloseOnDesktop = false,
                     IsTrump = false,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
@@ -307,6 +374,17 @@ public class BotTestsData
                     IsCloseOnDesktop = true,
                     IsTrump = true,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 

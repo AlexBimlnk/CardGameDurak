@@ -40,6 +40,6 @@ public abstract class PlayerBase : IPlayer
     /// <exception cref="ArgumentNullException" xml:lang = "ru">
     /// Когда массив выданных карт равен <see langword="null"/>.  
     /// </exception>
-    public void ReceiveCards(params ICard[] cards) =>
+    public void ReceiveCards(IEnumerable<ICard> cards) =>
         _cards.AddRange(cards ?? throw new ArgumentNullException(nameof(cards)));
 }

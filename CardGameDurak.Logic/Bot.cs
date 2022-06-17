@@ -26,7 +26,7 @@ public class Bot : PlayerBase, IBot
 
         return _cards.Where(owner => owner.Owner.Id == Id)
                      .Where(card => desktopCards.Any(x => x.Rank == card.Rank))
-                     .Min();
+                     .MinBy(card => card.Rank);
     }
 
     /// <summary>
