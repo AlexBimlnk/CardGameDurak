@@ -25,7 +25,7 @@ public interface ICard
     /// <summary xml:lang = "ru">
     /// Является ли карты козырной?
     /// </summary>
-    public bool IsTrump { get; }
+    public bool IsTrump { get; set; }
 
     /// <summary xml:lang = "ru">
     /// Побита ли карта на столе?

@@ -31,6 +31,6 @@ public class Card : ICard
 
     /// <inheritdoc/>
     public IPlayer? Owner { get; set; }
-    public bool IsTrump { get; }
+    public bool IsTrump { get; set; }
     public bool IsCloseOnDesktop { get; set; }
 }

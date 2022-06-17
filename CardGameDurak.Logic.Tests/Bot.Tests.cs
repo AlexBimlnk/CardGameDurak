@@ -43,7 +43,7 @@ public class BotTests
 
     #region Методы
     [Theory(DisplayName = "Bot can attacking player.")]
-    [MemberData(nameof(BotTestsData.CanDefenceData), MemberType = typeof(BotTestsData))]
+    [MemberData(nameof(BotTestsData.CanAttackData), MemberType = typeof(BotTestsData))]
     [Trait("Category", "Properties")]
     public void CanAttack(IReadOnlyCollection<ICard> desktopCards, ICard expectedCard)
     {
@@ -59,14 +59,13 @@ public class BotTests
     }
 
     [Theory(DisplayName = "Bot can defending from outCard")]
-    [MemberData(nameof(BotTestsData.CanAttackData), MemberType = typeof(BotTestsData))]
+    [MemberData(nameof(BotTestsData.CanDefenceData), MemberType = typeof(BotTestsData))]
     [Trait("Category", "Properties")]
-    public void CanDefence(IReadOnlyCollection<ICard> desktopCards, ICard expectedCard, ICard closedCard)
+    public void CanDefence(IReadOnlyCollection<ICard> desktopCards, ICard closedCard, ICard expectedCard)
     {
         // Arrange
         var name = "BotName";
         var bot = new Bot(name);
-
         // Act
         var result = bot.Defence(desktopCards, out var outCard);
 
