@@ -1,4 +1,5 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.Messages;
 using CardGameDurak.Logic;
 using CardGameDurak.Network.Messages;
@@ -55,30 +56,49 @@ public class DurakController : ControllerBase
     }
 
     [HttpGet("update")]
-    public async Task<IGameSession> UpdateSessionAsync([FromBody] GameSession session)
+    public async Task<SessionMessage<IEnumerable<ICard>, ISender>> UpdateSessionAsync([FromBody] UpdateMessage<int, Player> message)
     {
-        ArgumentNullException.ThrowIfNull(session, nameof(session));
+        ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         _logger.LogDebug("Receive update request");
 
-        var updateSession = await _gamesCoordinator.GetUpdateForSession(session);
+        var updateSession = await _gamesCoordinator.GetUpdateForSession(message.Key, message.Value, message.Sender);
 
-        _logger.LogDebug("Get update session from {@OldSession} to {@UpdateSession}",
-            session,
-            updateSession);
+        _logger.LogDebug("Get update session with id {Id} from {OldVersio} " +
+            "version to {NewVersion}",
+            message.Key.Value,
+            message.Value,
+            updateSession.Version);
 
-        return session;
+        return new SessionMessage<IEnumerable<ICard>, ISender>(
+            new Tuple<IGameSession, IEnumerable<ICard>>(updateSession, null!), 
+            _cloudSender);
     }
 
+    //[HttpPost("event")]
+    //public async Task PostEventAsync([FromBody] UpdateMessage<GameEvent, Player> message)
+    //{
+    //    ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+    //    _logger.LogDebug("Receive event message");
+
+    //    await _gamesCoordinator.UpdateSession(
+    //        message.Key, 
+    //        message.Value, 
+    //        message.Sender);
+    //}
+
     [HttpPost("event")]
-    public async Task PostEventAsync(IEventMessage message)
+    public async Task PostEventAsync([FromBody] UpdateMessage<Tuple<GameEvent, Card>, Player> message)
     {
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         _logger.LogDebug("Receive event message");
 
-        await _gamesCoordinator.UpdateSession(message);
-
-        throw new NotImplementedException();
+        await _gamesCoordinator.UpdateSession(
+            message.Key, 
+            message.Value.Item1,
+            message.Sender,
+            message.Value.Item2);
     }
 }

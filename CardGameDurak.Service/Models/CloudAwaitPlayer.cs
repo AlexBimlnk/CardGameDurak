@@ -7,7 +7,7 @@ namespace CardGameDurak.Service.Models;
 /// <summary xml:lang = "ru">
 /// Игрок ожидающий игру на сервисе.
 /// </summary>
-public class CloudAwaitPlayer : AwaitPlayer, ISender
+public sealed class CloudAwaitPlayer : AwaitPlayer, ISender
 {
     /// <summary xml:lang = "ru">
     /// Создает новый экземпляр типа <see cref="CloudAwaitPlayer"/>.

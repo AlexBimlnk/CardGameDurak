@@ -14,6 +14,7 @@
 /// </typeparam>
 public interface IKeyableMessage<TKey, TValue, TSender> : IMessage<TValue, TSender> 
     where TKey : struct
+    where TSender : ISender
 {
     /// <summary xml:lang = "ru">
     /// Ключ сообщения типа <typeparamref name="TKey"/>.

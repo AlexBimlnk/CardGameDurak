@@ -1,13 +1,14 @@
 ﻿using System.Collections.Concurrent;
 
 using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.Messages;
 using CardGameDurak.Logic;
 using CardGameDurak.Service.Models;
 
 namespace CardGameDurak.Service;
 
-internal class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
+internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 {
     private readonly ConcurrentDictionary<GameSessionId, GameSession> _sessions = new();
     private readonly ConcurrentDictionary<ValueTuple<GameSessionId, int>, TaskCompletionSource<IGameSession>> _tcsOnUpdateSessions = new();
@@ -88,7 +89,7 @@ internal class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
                     foreach (CloudAwaitPlayer player in group.Players)
                     {
                         _awaiterPlayers.Remove(player);
-                        player.JoinTCS.SetResult(sessionId.Value);
+                        player.JoinTCS.SetResult(session);
                     }
 
                     _logger.LogInformation("Start new session {@Session}", session);
@@ -121,22 +122,22 @@ internal class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
     public Task<IGameSession> JoinToGame(CloudAwaitPlayer player) => player.JoinTCS.Task;
 
     /// <inheritdoc/>
-    public Task UpdateSession(IKeyableMessage<GameSessionId, int, IPlayer> message)
+    public Task UpdateSession(GameSessionId sessionId, GameEvent @event, IPlayer player, ICard card = default!)
     {
-        ArgumentNullException.ThrowIfNull(message, nameof(message));
+        ArgumentNullException.ThrowIfNull(player, nameof(player));
 
-        if (_sessions.TryGetValue(message.Key, out var session))
+        if (_sessions.TryGetValue(sessionId, out var session))
         {
             return Task.Run(() => {
                 var oldVersion = session.Version;
 
                 //Todo: update session state
 
-                if (_tcsOnUpdateSessions.TryGetValue((session.Id, oldVersion), out var tcs))
+                if (_tcsOnUpdateSessions.TryGetValue((sessionId, oldVersion), out var tcs))
                 {
                     tcs.SetResult(session);
                 }
-                _logger.LogDebug("Updated session with id {Id}", session.Id.Value);
+                _logger.LogDebug("Updated session with id {Id}", sessionId.Value);
             });
         }
         else
@@ -144,17 +145,17 @@ internal class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
     }
     
     /// <inheritdoc/>
-    public Task<IGameSession> GetUpdateForSession(IGameSession session)
+    public Task<IGameSession> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player)
     {
-        ArgumentNullException.ThrowIfNull(session, nameof(session));
+        ArgumentNullException.ThrowIfNull(player, nameof(player));
 
-        if (_sessions.TryGetValue(session.Id, out var serviceSession))
+        if (_sessions.TryGetValue(sessionId, out var serviceSession))
         {
-            return serviceSession.Equals(session) switch
+            return serviceSession.Version.Equals(version) switch
             {
                 // Если сессия уже успела обновиться возвращаем результат.
                 false => Task.FromResult<IGameSession>(serviceSession),
-                true => CreateTaskOnUpdate(serviceSession.Id, serviceSession.Version)
+                true => CreateTaskOnUpdate(sessionId, version)
             };
         }
         else

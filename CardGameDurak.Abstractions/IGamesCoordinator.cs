@@ -1,4 +1,5 @@
-﻿using CardGameDurak.Abstractions.Messages;
+﻿using CardGameDurak.Abstractions.Enums;
+using CardGameDurak.Abstractions.Messages;
 
 namespace CardGameDurak.Abstractions;
 
@@ -38,24 +39,39 @@ public interface IGameCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlaye
     /// <summary xml:lang = "ru">
     /// Обноаляет игровую сессию.
     /// </summary>
-    /// <param name="message" xml:lang = "ru">
-    /// Сообщение, содержащие новое событие в игре.
+    /// <param name="sessionId" xml:lang = "ru">
+    /// Идентификатор сессии.
+    /// </param>
+    /// <param name="event" xml:lang = "ru">
+    /// Событие, произошедшее в игре.
+    /// </param>
+    /// <param name="player" xml:lang = "ru">
+    /// Игрок, отправивший сообщение о событии.
+    /// </param>
+    /// <param name="card" xml:lang = "ru">
+    /// Прикрепленная к событию карта.
     /// </param>
     /// <returns xml:lang = "ru">
     /// Задачу, которая завершится после обновления сессии.
     /// </returns>
-    public Task UpdateSession(IKeyableMessage<GameSessionId, int, IPlayer> message);
+    public Task UpdateSession(GameSessionId sessionId, GameEvent @event, IPlayer player, ICard card = default!);
 
     /// <summary xml:lang = "ru">
     /// Создает задачу на обновление игровой сессии, которая
     /// выполнится когда поступит обновление.
     /// </summary>
-    /// <param name="session" xml:lang = "ru">
-    /// Игровая сессия, которую нужно будет обновить.
+    /// <param name="sessionId" xml:lang = "ru">
+    /// Идентификатор сессии.
+    /// </param>
+    /// <param name="version" xml:lang = "ru">
+    /// Версия сессии.
+    /// </param>
+    /// <param name="player" xml:lang = "ru">
+    /// Игрок, запросивший обновление.
     /// </param>
     /// <returns xml:lang = "ru">
     /// Задачу типа <see cref="Task{TResult}"/>, результатом
     /// которой будет модель игровой сессии типа <see cref="IGameSession"/>.
     /// </returns>
-    public Task<IGameSession> GetUpdateForSession(IGameSession session);
+    public Task<IGameSession> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player);
 }

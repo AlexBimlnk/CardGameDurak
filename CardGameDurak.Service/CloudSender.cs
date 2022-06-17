@@ -1,5 +1,5 @@
 ﻿namespace CardGameDurak.Service;
 
-public class CloudSender : ICloudSender
+public sealed class CloudSender : ICloudSender
 {
 }

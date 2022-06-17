@@ -6,15 +6,15 @@ namespace CardGameDurak.Network.Messages;
 /// <summary xml:lang = "ru">
 /// Сообщение о состоянии игры.
 /// </summary>
-/// <typeparam name="TValue" xml:lang = "ru">
+/// <typeparam name="TLinkedValue" xml:lang = "ru">
 /// Тип значения сообщения прикрепленного к игровой сессии.
 /// </typeparam>
 /// <typeparam name="TSender" xml:lang = "ru">
 /// Тип отправителя сообщения.
 /// </typeparam>
-public sealed class SessionMessage<TValue, TSender> 
-    : IMessage<Tuple<IGameSession, TValue>, TSender>
-    where TValue : class
+public sealed class SessionMessage<TLinkedValue, TSender> 
+    : IMessage<Tuple<IGameSession, TLinkedValue>, TSender>
+    where TLinkedValue : class
     where TSender : ISender
 {
     /// <summary>
@@ -29,7 +29,7 @@ public sealed class SessionMessage<TValue, TSender>
     /// <exception cref="ArgumentNullException"> 
     /// Если один из входных параметров равен <see langword="null"/>. 
     /// </exception>
-    public SessionMessage(Tuple<IGameSession, TValue> value, TSender sender)
+    public SessionMessage(Tuple<IGameSession, TLinkedValue> value, TSender sender)
     {
         Value = value ?? throw new ArgumentNullException(nameof(value));
         Sender = sender ?? throw new ArgumentNullException(nameof(sender));
@@ -40,9 +40,9 @@ public sealed class SessionMessage<TValue, TSender>
     /// <summary xml:lang = "ru">
     /// Тело сообщение содержит кортеж из двух элементов - 
     /// игровой сессии типа <see cref="IGameSession"/> и
-    /// приклепленное к ней значение типа <typeparamref name="TValue"/>.
+    /// приклепленное к ней значение типа <typeparamref name="TLinkedValue"/>.
     /// </summary>
-    public Tuple<IGameSession, TValue> Value { get; }
+    public Tuple<IGameSession, TLinkedValue> Value { get; }
 
     /// <inheritdoc/>
     public TSender Sender { get; }
