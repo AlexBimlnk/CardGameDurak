@@ -121,7 +121,6 @@ public class DurakController : ControllerBase
         var body = await ReadRequestBodyAsync();
         var message = JsonConvert.DeserializeObject<UpdateMessage<Tuple<GameEvent, Card>, Player>>(body);
 
-        var m = JsonConvert.SerializeObject(new Tuple<GameEvent, Card>(GameEvent.Take, null!));
 
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
