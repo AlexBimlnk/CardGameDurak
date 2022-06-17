@@ -3,7 +3,10 @@
 /// <summary xml:lang = "ru">
 /// Контракт, описывающий сообщение на присоединение к игре.
 /// </summary>
-public interface IJoinMessage
+/// <typeparam name="TSender" xml:lang = "ru">
+/// Тип игрока.
+/// </typeparam>
+public interface IJoinMessage<TSender>
 {
     /// <summary xml:lang = "ru">
     /// Ожидаемое число игроков в игре.
@@ -11,7 +14,7 @@ public interface IJoinMessage
     public int AwaitPlayersCount { get; }
 
     /// <summary xml:lang = "ru">
-    /// Отправитель.
+    /// Отправитель типа <typeparamref name="TSender"/>.
     /// </summary>
-    public IPlayer Sender { get; }
+    public TSender Sender { get; }
 }

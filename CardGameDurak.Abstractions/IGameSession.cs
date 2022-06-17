@@ -11,6 +11,11 @@ public interface IGameSession
     public GameSessionId Id { get; }
 
     /// <summary xml:lang = "ru">
+    /// Состояние игровой сессии.
+    /// </summary>
+    public int Version { get; }
+
+    /// <summary xml:lang = "ru">
     /// Список игроков в игре.
     /// </summary>
     public IReadOnlyCollection<IPlayer> Players { get; }

@@ -43,13 +43,16 @@ public class GameSession : IGameSession
         IEnumerable<ICard> deck, 
         IEnumerable<IPlayer> players)
     {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
+        Id = id;
         _deck.AddRange(deck ?? throw new ArgumentNullException(nameof(deck)));
         AddPlayers(players ?? throw new ArgumentNullException(nameof(players)));
     }
 
     /// <inheritdoc/>
     public GameSessionId Id { get; }
+
+    /// <inheritdoc/>
+    public int Version { get; }
 
     /// <inheritdoc/>
     public IReadOnlyCollection<IPlayer> Players => _players;
