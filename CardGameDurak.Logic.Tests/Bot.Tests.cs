@@ -52,7 +52,7 @@ public class BotTests
     {
         // Arrange
         var name = "BotName";
-        var bot = new Bot(name) { Id = 1};
+        var bot = new Bot(name) { Id = 1 };
         bot.ReceiveCards(botCards);
 
         // Act
