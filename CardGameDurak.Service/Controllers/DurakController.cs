@@ -97,6 +97,8 @@ public class DurakController : ControllerBase
             message.Value,
             updateSession.Version);
 
+        throw new NotImplementedException();
+
         return new SessionMessage<IEnumerable<ICard>, ISender>(
             new Tuple<IGameSession, IEnumerable<ICard>>(updateSession, null!), 
             _cloudSender);
