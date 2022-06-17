@@ -27,7 +27,7 @@ public class BotTestsData
     {
         {
             // Карты на столе.
-            new[]
+            new List<ICard>()
             {
                 new Card(Suit.Clubs, 6)
                 {
@@ -53,7 +53,7 @@ public class BotTestsData
         },
         {
             // Карты на столе.
-            new[]
+            new List<ICard>()
             {
                 new Card(Suit.Diamonds, 6)
                 {
@@ -91,7 +91,7 @@ public class BotTestsData
         },
         {
             // Карты на столе.
-            new[]
+            new List<ICard>()
             {
                 new Card(Suit.Spades, 8)
                 {
@@ -144,7 +144,7 @@ public class BotTestsData
     {
         {
             // Карты на столе.
-            new[]
+            new List<ICard>()
             {
                 new Card(Suit.Clubs, 6)
                 {
@@ -184,7 +184,7 @@ public class BotTestsData
         },
         {
             // Карты на столе.
-            new[]
+            new List<ICard>()
             {
                 new Card(Suit.Clubs, 10)
                 {
@@ -224,7 +224,7 @@ public class BotTestsData
         },
         {
             // Карты на столе.
-            new[]
+            new List<ICard>()
             {
                 new Card(Suit.Clubs, 6)
                 {
@@ -264,7 +264,7 @@ public class BotTestsData
         },
         {
             // Карты на столе.
-            new[]
+            new List<ICard>()
             {
                 new Card(Suit.Diamonds, 6)
                 {
