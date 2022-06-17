@@ -7,6 +7,8 @@ using CardGameDurak.Service.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
+using Newtonsoft.Json;
+
 namespace CardGameDurak.Service.Controllers;
 
 [Route("api/[controller]")]
@@ -14,17 +16,25 @@ namespace CardGameDurak.Service.Controllers;
 public class DurakController : ControllerBase
 {
     private readonly ILogger<DurakController> _logger;
-    private readonly IGameCoordinator<AwaitPlayer> _gamesCoordinator;
+    private readonly IGameCoordinator<CloudAwaitPlayer> _gamesCoordinator;
     private readonly ICloudSender _cloudSender;
 
     public DurakController(
         ILogger<DurakController> logger,
-        IGameCoordinator<AwaitPlayer> coordinator,
+        IGameCoordinator<CloudAwaitPlayer> coordinator,
         ICloudSender cloudSender)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _gamesCoordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
         _cloudSender = cloudSender ?? throw new ArgumentNullException(nameof(cloudSender));
+    }
+
+    private async Task<string> ReadRequestBodyAsync()
+    {
+        using (var reader = new StreamReader(Request.Body))
+        {
+            return await reader.ReadToEndAsync();
+        }
     }
 
     [HttpGet]
@@ -33,15 +43,19 @@ public class DurakController : ControllerBase
     /// <summary xml:lang = "ru">
     /// Добавляет игрока в очередь и ждёт его регистрации в игре.
     /// </summary>
-    /// <param name="message" xml:lang = "ru">
-    /// Сообщение на присоединение к игре.
-    /// </param>
     /// <returns xml:lang = "ru">
     /// Сообщение типа <see cref="RegistrationMessage{TValue, TSender}"/> о регистрации в игре.
     /// </returns>
+    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// Когда сообщение равно или не может быть дессериализовано.
+    /// </exception>
     [HttpGet("join")]
-    public async Task<ActionResult<IMessage<IGameSession, ISender>>> JoinToGameAsync([FromBody] JoinMessage<CloudAwaitPlayer> message)
+    public async Task<ActionResult<IMessage<IGameSession, ISender>>> JoinToGameAsync()
     {
+        var body = await ReadRequestBodyAsync();
+        var message = JsonConvert.DeserializeObject<JoinMessage<CloudAwaitPlayer>>(body);
+
+
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         _logger.LogDebug("Receive join message");
@@ -55,9 +69,22 @@ public class DurakController : ControllerBase
         return new RegistrationMessage<IGameSession, ISender>(session, _cloudSender);
     }
 
+    /// <summary xml:lang = "ru">
+    /// Обновляет игровую сессию игрока.
+    /// </summary>
+    /// <returns xml:lang = "ru">
+    /// Сообщение типа о состоянии запрашиваемой игровой сессии.
+    /// </returns>
+    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// Когда сообщение равно или не может быть дессериализовано.
+    /// </exception>
     [HttpGet("update")]
-    public async Task<SessionMessage<IEnumerable<ICard>, ISender>> UpdateSessionAsync([FromBody] UpdateMessage<int, Player> message)
+    public async Task<ActionResult<IMessage<Tuple<IGameSession, IEnumerable<ICard>>, ISender>>> UpdateSessionAsync()
     {
+        var body = await ReadRequestBodyAsync();
+        var message = JsonConvert.DeserializeObject<UpdateMessage<int, Player>>(body);
+
+
         ArgumentNullException.ThrowIfNull(message, nameof(message));
 
         _logger.LogDebug("Receive update request");
@@ -75,29 +102,42 @@ public class DurakController : ControllerBase
             _cloudSender);
     }
 
-    //[HttpPost("event")]
-    //public async Task PostEventAsync([FromBody] UpdateMessage<GameEvent, Player> message)
-    //{
-    //    ArgumentNullException.ThrowIfNull(message, nameof(message));
-
-    //    _logger.LogDebug("Receive event message");
-
-    //    await _gamesCoordinator.UpdateSession(
-    //        message.Key, 
-    //        message.Value, 
-    //        message.Sender);
-    //}
-
+    /// <summary xml:lang = "ru">
+    /// Принимает сообщение о новом игровом событии.
+    /// </summary>
+    /// <returns xml:lang = "ru">
+    /// Задачу, которая завершится после обновления игровой сессии.
+    /// </returns>
+    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// Когда сообщение равно или не может быть дессериализовано.
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException" xml:lang = "ru">
+    /// Если данные о игровом событии выходят за рамки 
+    /// допустимого перечисления <see cref="GameEvent"/>.
+    /// </exception>
     [HttpPost("event")]
-    public async Task PostEventAsync([FromBody] UpdateMessage<Tuple<GameEvent, Card>, Player> message)
+    public async Task PostEventAsync()
     {
+        var body = await ReadRequestBodyAsync();
+        var message = JsonConvert.DeserializeObject<UpdateMessage<Tuple<GameEvent, Card>, Player>>(body);
+
+        var m = JsonConvert.SerializeObject(new Tuple<GameEvent, Card>(GameEvent.Take, null!));
+
         ArgumentNullException.ThrowIfNull(message, nameof(message));
+
+        var @event = message.Value.Item1 switch
+        {
+            GameEvent.DropOnDesktop => GameEvent.DropOnDesktop,
+            GameEvent.Take => GameEvent.Take,
+            GameEvent.MoveTurn => GameEvent.MoveTurn,
+            _ => throw new ArgumentOutOfRangeException(nameof(message.Value.Item1))
+        };
 
         _logger.LogDebug("Receive event message");
 
         await _gamesCoordinator.UpdateSession(
             message.Key, 
-            message.Value.Item1,
+            @event,
             message.Sender,
             message.Value.Item2);
     }

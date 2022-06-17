@@ -8,7 +8,7 @@ using CardGameDurak.Service.Models;
 
 namespace CardGameDurak.Service;
 
-internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
+public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 {
     private readonly ConcurrentDictionary<GameSessionId, GameSession> _sessions = new();
     private readonly ConcurrentDictionary<ValueTuple<GameSessionId, int>, TaskCompletionSource<IGameSession>> _tcsOnUpdateSessions = new();

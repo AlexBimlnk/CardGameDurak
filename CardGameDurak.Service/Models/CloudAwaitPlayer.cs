@@ -1,6 +1,7 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Messages;
-using CardGameDurak.Network.Messages;
+
+using Newtonsoft.Json;
 
 namespace CardGameDurak.Service.Models;
 
@@ -18,10 +19,11 @@ public sealed class CloudAwaitPlayer : AwaitPlayer, ISender
     /// <param name="player" xml:lang = "ru">
     /// Игрок.
     /// </param>
-    public CloudAwaitPlayer(int awaitPlayersCount, IPlayer player) : base(awaitPlayersCount, player) { }
+    public CloudAwaitPlayer(int awaitPlayersCount, Player player) : base(awaitPlayersCount, player) { }
 
     /// <summary xml:lang = "ru">
     /// TCS на присоединение к игре.
     /// </summary>
+    [JsonIgnore]
     public TaskCompletionSource<IGameSession> JoinTCS { get; } = new();
 }
