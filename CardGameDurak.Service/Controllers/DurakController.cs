@@ -1,7 +1,6 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.Messages;
-using CardGameDurak.Logic;
 using CardGameDurak.Network.Messages;
 using CardGameDurak.Service.Models;
 
@@ -127,7 +126,7 @@ public class DurakController : ControllerBase
         _logger.LogDebug("Receive event message");
 
         await _gamesCoordinator.UpdateSession(
-            message.Key, 
+            message.Key,
             message.Value,
             message.Sender);
     }

@@ -12,7 +12,7 @@ namespace CardGameDurak.Network.Messages;
 /// <typeparam name="TSender" xml:lang = "ru">
 /// Тип отправителя сообщения.
 /// </typeparam>
-public sealed class SessionMessage<TLinkedValue, TSender> 
+public sealed class SessionMessage<TLinkedValue, TSender>
     : IMessage<ISessionState<TLinkedValue>, TSender>
     where TLinkedValue : class
     where TSender : ISender

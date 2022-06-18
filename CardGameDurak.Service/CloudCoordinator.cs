@@ -1,8 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
 using CardGameDurak.Abstractions;
-using CardGameDurak.Abstractions.Enums;
-using CardGameDurak.Abstractions.Messages;
 using CardGameDurak.Logic;
 using CardGameDurak.Service.Models;
 
@@ -12,15 +10,15 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 {
     private readonly ConcurrentDictionary<GameSessionId, GameSession> _sessions = new();
     private readonly ConcurrentDictionary<ValueTuple<GameSessionId, int>, TaskCompletionSource<IGameSession>> _tcsOnUpdateSessions = new();
-    
+
     private readonly List<CloudAwaitPlayer> _awaiterPlayers = new();
 
     private readonly object _hostGuard = new();
     private const int STORE_UPDATED_IN_SECONDS = 30;
 
     private readonly ILogger<CloudCoordinator> _logger;
-    
-    public CloudCoordinator(ILogger<CloudCoordinator> logger) => 
+
+    public CloudCoordinator(ILogger<CloudCoordinator> logger) =>
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 
@@ -32,7 +30,7 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
         new SessionState((GameSession)session, (Card[])session.GetPlayerCards(player));
 
     private async Task<ISessionState<IEnumerable<ICard>>> CreateTaskOnUpdateAsync(
-        GameSessionId sessionId, 
+        GameSessionId sessionId,
         int sessionVersion,
         IPlayer player)
     {
@@ -60,7 +58,7 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 
         return GetSessionState(await updateTCS.Task, player);
     }
-    
+
     private bool TryHostGames()
     {
         lock (_hostGuard)
@@ -138,7 +136,8 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 
         if (_sessions.TryGetValue(sessionId, out var session))
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 var oldVersion = session.Version;
 
                 //Todo: update session state
@@ -153,7 +152,7 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
         else
             throw new KeyNotFoundException();
     }
-    
+
     /// <inheritdoc/>
     public Task<ISessionState<IEnumerable<ICard>>> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player)
     {
@@ -168,7 +167,7 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
                 true => CreateTaskOnUpdateAsync(sessionId, version, player)
             };
         }
-        
+
         throw new KeyNotFoundException();
     }
 }
