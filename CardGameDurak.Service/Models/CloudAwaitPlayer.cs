@@ -25,5 +25,5 @@ public sealed class CloudAwaitPlayer : AwaitPlayer, ISender
     /// TCS на присоединение к игре.
     /// </summary>
     [JsonIgnore]
-    public TaskCompletionSource<IGameSession> JoinTCS { get; } = new();
+    public TaskCompletionSource<ISessionState<IEnumerable<ICard>>> JoinTCS { get; } = new();
 }

@@ -13,7 +13,7 @@ namespace CardGameDurak.Network.Messages;
 /// Тип отправителя сообщения.
 /// </typeparam>
 public sealed class SessionMessage<TLinkedValue, TSender> 
-    : IMessage<Tuple<IGameSession, TLinkedValue>, TSender>
+    : IMessage<ISessionState<TLinkedValue>, TSender>
     where TLinkedValue : class
     where TSender : ISender
 {
@@ -29,20 +29,18 @@ public sealed class SessionMessage<TLinkedValue, TSender>
     /// <exception cref="ArgumentNullException"> 
     /// Если один из входных параметров равен <see langword="null"/>. 
     /// </exception>
-    public SessionMessage(Tuple<IGameSession, TLinkedValue> value, TSender sender)
+    public SessionMessage(ISessionState<TLinkedValue> value, TSender sender)
     {
         Value = value ?? throw new ArgumentNullException(nameof(value));
         Sender = sender ?? throw new ArgumentNullException(nameof(sender));
-        ArgumentNullException.ThrowIfNull(Value.Item2, nameof(Value.Item2));
     }
 
 
     /// <summary xml:lang = "ru">
-    /// Тело сообщение содержит кортеж из двух элементов - 
-    /// игровой сессии типа <see cref="IGameSession"/> и
-    /// приклепленное к ней значение типа <typeparamref name="TLinkedValue"/>.
+    /// Состояние игровой сессией с прикре приклепленному
+    /// к ней значение типа <typeparamref name="TLinkedValue"/>.
     /// </summary>
-    public Tuple<IGameSession, TLinkedValue> Value { get; }
+    public ISessionState<TLinkedValue> Value { get; }
 
     /// <inheritdoc/>
     public TSender Sender { get; }

@@ -100,4 +100,7 @@ public class GameSession : IGameSession
 
         return _();
     }
+
+    /// <inheritdoc/>
+    public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
 }

@@ -5,10 +5,10 @@ using CardGameDurak.Abstractions.Messages;
 namespace CardGameDurak.Network.Messages;
 
 /// <summary xml:lang = "ru">
-/// Сообщение о игровом событии.
+/// Сообщение, требующее обновление.
 /// </summary>
 /// <typeparam name="TValue" xml:lang = "ru">
-/// Тип значения сообщения прикрепленного к игровому событию.
+/// Тип значения которое нужно обновить.
 /// </typeparam>
 /// <typeparam name="TSender" xml:lang = "ru">
 /// Тип отправителя сообщения.
@@ -44,7 +44,7 @@ public sealed class UpdateMessage<TValue, TSender>
 
     /// <summary xml:lang = "ru">
     /// Тело сообщение содержит кортеж из двух элементов - 
-    /// игрового события <see cref="GameEvent"/> и
+    /// игрового события <see cref="PlayerEvent"/> и
     /// приклепленное к нему значение типа <typeparamref name="TValue"/>.
     /// </summary>
     public TValue Value { get; }

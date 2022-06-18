@@ -8,7 +8,7 @@ using CardGameDurak.Service.Models;
 
 namespace CardGameDurak.Service;
 
-public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
+internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 {
     private readonly ConcurrentDictionary<GameSessionId, GameSession> _sessions = new();
     private readonly ConcurrentDictionary<ValueTuple<GameSessionId, int>, TaskCompletionSource<IGameSession>> _tcsOnUpdateSessions = new();
@@ -28,14 +28,17 @@ public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
 
     private List<ICard> CreateDeck() => throw new NotImplementedException();
 
-    private Task<IGameSession> CreateTaskOnUpdate(
+    private ISessionState<IEnumerable<ICard>> GetSessionState(IGameSession session, IPlayer player) =>
+        new SessionState((GameSession)session, (Card[])session.GetPlayerCards(player));
+
+    private async Task<ISessionState<IEnumerable<ICard>>> CreateTaskOnUpdateAsync(
         GameSessionId sessionId, 
-        int sessionVersion)
+        int sessionVersion,
+        IPlayer player)
     {
         var key = (sessionId, sessionVersion);
-        if (_tcsOnUpdateSessions.TryGetValue(key, out var updateTCS))
-            return updateTCS.Task;
-        else
+
+        if (!_tcsOnUpdateSessions.TryGetValue(key, out var updateTCS))
         {
             var tcs = new TaskCompletionSource<IGameSession>();
 
@@ -46,14 +49,16 @@ public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
                 {
                     if (_tcsOnUpdateSessions.TryRemove(key, out tcs))
                         _logger.LogDebug("Removed updated version {Version} " +
-                            "of session with {Id}", 
-                            key.sessionVersion, 
+                            "of session with {Id}",
+                            key.sessionVersion,
                             key.sessionId.Value);
 
                 });
 
-            return tcs.Task;
+            updateTCS = tcs;
         }
+
+        return GetSessionState(await updateTCS.Task, player);
     }
     
     private bool TryHostGames()
@@ -89,7 +94,12 @@ public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
                     foreach (CloudAwaitPlayer player in group.Players)
                     {
                         _awaiterPlayers.Remove(player);
-                        player.JoinTCS.SetResult(session);
+
+                        var sessionState = new SessionState(
+                            session,
+                            (Card[])session.GetPlayerCards(player.Player));
+
+                        player.JoinTCS.SetResult(sessionState);
                     }
 
                     _logger.LogInformation("Start new session {@Session}", session);
@@ -119,10 +129,10 @@ public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
     }
 
     /// <inheritdoc/>
-    public Task<IGameSession> JoinToGame(CloudAwaitPlayer player) => player.JoinTCS.Task;
+    public Task<ISessionState<IEnumerable<ICard>>> JoinToGame(CloudAwaitPlayer player) => player.JoinTCS.Task;
 
     /// <inheritdoc/>
-    public Task UpdateSession(GameSessionId sessionId, GameEvent @event, IPlayer player, ICard card = default!)
+    public Task UpdateSession(GameSessionId sessionId, IGameEvent @event, IPlayer player)
     {
         ArgumentNullException.ThrowIfNull(player, nameof(player));
 
@@ -145,7 +155,7 @@ public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
     }
     
     /// <inheritdoc/>
-    public Task<IGameSession> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player)
+    public Task<ISessionState<IEnumerable<ICard>>> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player)
     {
         ArgumentNullException.ThrowIfNull(player, nameof(player));
 
@@ -154,11 +164,11 @@ public sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
             return serviceSession.Version.Equals(version) switch
             {
                 // Если сессия уже успела обновиться возвращаем результат.
-                false => Task.FromResult<IGameSession>(serviceSession),
-                true => CreateTaskOnUpdate(sessionId, version)
+                false => Task.FromResult(GetSessionState(serviceSession, player)),
+                true => CreateTaskOnUpdateAsync(sessionId, version, player)
             };
         }
-        else
-            throw new KeyNotFoundException();
+        
+        throw new KeyNotFoundException();
     }
 }

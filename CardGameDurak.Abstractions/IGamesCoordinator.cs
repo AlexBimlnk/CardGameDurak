@@ -30,11 +30,10 @@ public interface IGameCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlaye
     /// Игрок типа <typeparamref name="TAwaitPlayer"/>, ожидающий игру.
     /// </param>
     /// <returns xml:lang = "ru">
-    /// Задачу типа <see cref="Task{TResult}"/>, которая выполнится,
-    /// когда игрока подключат к игре. Результатом выполнения
-    /// является модель игровой сессии.
+    /// Задачу типа <see cref="Task{TResult}"/>, результатом
+    /// которой будет состояние игровой сессии типа <see cref="ISessionState{TLinkedValue}"/>.
     /// </returns>
-    public Task<IGameSession> JoinToGame(TAwaitPlayer player);
+    public Task<ISessionState<IEnumerable<ICard>>> JoinToGame(TAwaitPlayer player);
 
     /// <summary xml:lang = "ru">
     /// Обноаляет игровую сессию.
@@ -54,7 +53,7 @@ public interface IGameCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlaye
     /// <returns xml:lang = "ru">
     /// Задачу, которая завершится после обновления сессии.
     /// </returns>
-    public Task UpdateSession(GameSessionId sessionId, GameEvent @event, IPlayer player, ICard card = default!);
+    public Task UpdateSession(GameSessionId sessionId, IGameEvent @event, IPlayer player);
 
     /// <summary xml:lang = "ru">
     /// Создает задачу на обновление игровой сессии, которая
@@ -71,7 +70,7 @@ public interface IGameCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlaye
     /// </param>
     /// <returns xml:lang = "ru">
     /// Задачу типа <see cref="Task{TResult}"/>, результатом
-    /// которой будет модель игровой сессии типа <see cref="IGameSession"/>.
+    /// которой будет состояние игровой сессии типа <see cref="ISessionState{TLinkedValue}"/>.
     /// </returns>
-    public Task<IGameSession> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player);
+    public Task<ISessionState<IEnumerable<ICard>>> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player);
 }

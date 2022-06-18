@@ -15,9 +15,6 @@ public sealed class JoinMessage<TSender> : IMessage<int, TSender>
     /// <summary xml:lang = "ru">
     /// Создает новый экземпляр типа <see cref="JoinMessage{TPlayer}"/>.
     /// </summary>
-    /// <param name="awaitPlayersCount" xml:lang = "ru">
-    /// Ожидаемое кол-во игроков в игре.
-    /// </param>
     /// <param name="sender" xml:lang = "ru">
     /// Отправитель.
     /// </param>
@@ -26,11 +23,11 @@ public sealed class JoinMessage<TSender> : IMessage<int, TSender>
     /// </exception>
     public JoinMessage(TSender sender) => Sender = sender ?? throw new ArgumentNullException(nameof(sender));
 
+    /// <inheritdoc/>
+    public int Value => Sender.AwaitPlayersCount;
+
     /// <summary xml:lang = "ru">
     /// Отправитель сообщения типа <typeparamref name="TSender"/>.
     /// </summary>
     public TSender Sender { get; }
-
-    /// <inheritdoc/>
-    public int Value => Sender.AwaitPlayersCount;
 }

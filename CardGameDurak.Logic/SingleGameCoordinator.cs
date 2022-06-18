@@ -15,5 +15,5 @@ internal class SingleGameCoordinator : IGameCoordinator<AwaitPlayer>
     public void AddToQueue(AwaitPlayer player) => throw new NotImplementedException();
     public Task<IGameSession> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player) => throw new NotImplementedException();
     public Task<IGameSession> JoinToGame(AwaitPlayer player) => throw new NotImplementedException();
-    public Task UpdateSession(GameSessionId sessionId, GameEvent @event, IPlayer player, ICard card = null) => throw new NotImplementedException();
+    public Task UpdateSession(GameSessionId sessionId, PlayerEvent @event, IPlayer player, ICard card = null) => throw new NotImplementedException();
 }
