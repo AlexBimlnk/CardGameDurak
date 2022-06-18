@@ -45,7 +45,7 @@ public class GameSessionTests
     private static List<IPlayer> CreateMockPlayers()
     {
         var playerStub1 = new Mock<IPlayer>(MockBehavior.Strict);
-        playerStub1.SetupSet(x => x.Id = It.Is((int id) => 1<=id));
+        playerStub1.SetupSet(x => x.Id = It.Is((int id) => 1 <= id));
         var playerStub2 = new Mock<IPlayer>(MockBehavior.Strict);
         playerStub2.SetupSet(x => x.Id = It.Is((int id) => 1 <= id));
 

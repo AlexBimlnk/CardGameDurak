@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using CardGameDurak.Abstractions;
-using CardGameDurak.Abstractions.Enums;
+
 using FluentAssertions;
-using Moq;
+
 using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
@@ -46,8 +46,8 @@ public class BotTests
     [MemberData(nameof(BotTestsData.CanAttackData), MemberType = typeof(BotTestsData))]
     [Trait("Category", "Properties")]
     public void CanAttack(
-        IReadOnlyCollection<ICard> desktopCards, 
-        ICard[] botCards, 
+        IReadOnlyCollection<ICard> desktopCards,
+        ICard[] botCards,
         ICard expectedCard)
     {
         // Arrange
@@ -68,7 +68,7 @@ public class BotTests
     public void CanDefence(
         IReadOnlyCollection<ICard> desktopCards,
         ICard[] botCards,
-        ICard closedCard, 
+        ICard closedCard,
         ICard expectedCard)
     {
         // Arrange

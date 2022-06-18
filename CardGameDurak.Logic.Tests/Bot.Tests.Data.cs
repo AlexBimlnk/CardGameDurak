@@ -3,9 +3,9 @@
 using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
 
-using Xunit;
-
 using Moq;
+
+using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
 public class BotTestsData

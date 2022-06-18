@@ -12,13 +12,13 @@ public abstract class PlayerBase : IPlayer
     /// <summary xml:lang = "ru">
     /// Карты, находящиеся в руке у игрока.
     /// </summary>
-    protected readonly List<ICard> _cards = new (DEFAULT_COUNT_CARDS_IN_HAND);
+    protected readonly List<ICard> _cards = new(DEFAULT_COUNT_CARDS_IN_HAND);
 
     public PlayerBase(string name)
     {
-        if (string.IsNullOrWhiteSpace(name)) 
+        if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentNullException(nameof(name), "Имя игрока не может быть пустым.");
-        
+
         Name = name;
     }
 
