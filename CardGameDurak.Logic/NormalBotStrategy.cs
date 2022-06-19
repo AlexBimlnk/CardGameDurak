@@ -7,12 +7,16 @@ namespace CardGameDurak.Logic;
 /// </summary>
 public sealed class NormalStrategy : IBotStrategy
 {
-    private ICard? FindOptimalNotTrumpCard(
+    private ICard? FindOptimal(
         IReadOnlyCollection<ICard> desktopCards,
-        IReadOnlyCollection<ICard> handCards) =>
-        handCards.Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-              .Where(x => !x.IsTrump)
-              .MinBy(x => x.Rank);
+        IReadOnlyCollection<ICard> handCards,
+        bool withTrump) =>
+        handCards.Where(x =>
+                        desktopCards.Count != 0
+                        ? desktopCards.Any(y => x.Rank == y.Rank)
+                        : true)
+                 .Where(x => x.IsTrump == withTrump)
+                 .MinBy(x => x.Rank);
 
     /// <inheritdoc/>
     public bool TryAttack(
@@ -20,7 +24,7 @@ public sealed class NormalStrategy : IBotStrategy
         IReadOnlyCollection<ICard> desktopCards,
         out ICard? resultCard)
     {
-        resultCard = FindOptimalNotTrumpCard(desktopCards, handCards);
+        resultCard = FindOptimal(desktopCards, handCards, withTrump: false);
 
         if (desktopCards.Count == 0)
             resultCard ??= handCards.MinBy(x => x.Rank);
