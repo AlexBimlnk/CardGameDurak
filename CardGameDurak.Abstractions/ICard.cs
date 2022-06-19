@@ -23,12 +23,12 @@ public interface ICard
     public IPlayer? Owner { get; set; }
 
     /// <summary xml:lang = "ru">
-    /// Является ли карты козырной?
+    /// Является ли карты козырной.
     /// </summary>
     public bool IsTrump { get; set; }
 
     /// <summary xml:lang = "ru">
-    /// Побита ли карта на столе?
+    /// Побита ли карта на столе.
     /// </summary>
     public bool IsCloseOnDesktop { get; set; }
 }

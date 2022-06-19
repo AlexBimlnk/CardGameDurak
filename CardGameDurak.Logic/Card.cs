@@ -6,7 +6,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Игральная карта.
 /// </summary>
-public class Card : ICard, IComparable<Card>
+public class Card : ICard
 {
     /// <summary xml:lang = "ru">
     /// Создает новый экземпляр класса <see cref="Card"/>.
@@ -31,16 +31,10 @@ public class Card : ICard, IComparable<Card>
 
     /// <inheritdoc/>
     public IPlayer? Owner { get; set; }
+
     /// <inheritdoc/>
     public bool IsTrump { get; set; }
+
     /// <inheritdoc/>
     public bool IsCloseOnDesktop { get; set; }
-    /// <inheritdoc/>
-    public int CompareTo(Card? card)
-    {
-        if (card is null)
-            throw new ArgumentNullException("Карты нет!");
-        if (!card.IsTrump) return Rank - card.Rank;
-        else return Rank - card.Rank + 100;
-    }
 }

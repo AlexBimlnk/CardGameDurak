@@ -44,8 +44,7 @@ public interface IBotStrategy
     /// то этот параметр будет <see langword="null"/>.
     /// </param>
     /// <param name="closedCard" xml:lang = "ru">
-    /// Карта, которую бот закрыл на столе. Если карта для защиты не найдется,
-    /// то этот параметр будет <see langword="null"/>.
+    /// Карта, которую бот должен закрыть на столе.
     /// </param>
     /// <returns xml:lang = "ru">
     /// <see langword="true"/>, если нашлась карта для защиты, 
@@ -55,6 +54,6 @@ public interface IBotStrategy
         int ownerId,
         IReadOnlyCollection<ICard> handCards,
         IReadOnlyCollection<ICard> desktopCards,
-        out ICard resultCard,
+        out ICard? resultCard,
         out ICard closedCard);
 }
