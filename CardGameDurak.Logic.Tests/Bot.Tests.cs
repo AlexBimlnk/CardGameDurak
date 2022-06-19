@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Enums;
 
 using FluentAssertions;
+
+using Moq;
 
 using Xunit;
 
@@ -45,7 +49,7 @@ public class BotTests
     [Theory(DisplayName = "Bot can attacking player.")]
     [MemberData(nameof(BotTestsData.CanAttackData), MemberType = typeof(BotTestsData))]
     [Trait("Category", "Properties")]
-    public void CanAttack(ICard [] botCards, IReadOnlyCollection<ICard> desktopCards, ICard expectedCard)
+    public void CanAttack(ICard[] botCards, IReadOnlyCollection<ICard> desktopCards, ICard expectedCard)
     {
         // Arrange
         var name = "BotName";
@@ -62,11 +66,12 @@ public class BotTests
     [Theory(DisplayName = "Bot can defending from outCard")]
     [MemberData(nameof(BotTestsData.CanDefenceData), MemberType = typeof(BotTestsData))]
     [Trait("Category", "Properties")]
-    public void CanDefence(IReadOnlyCollection<ICard> desktopCards, ICard closedCard, ICard expectedCard)
+    public void CanDefence(ICard[] botCards, IReadOnlyCollection<ICard> desktopCards, ICard closedCard, ICard expectedCard)
     {
         // Arrange
         var name = "BotName";
-        var bot = new Bot(name);
+        var bot = new Bot(name) { Id = 1 };
+        bot.ReceiveCards(botCards);
         // Act
         var result = bot.Defence(desktopCards, out var outCard);
 

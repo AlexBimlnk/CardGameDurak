@@ -43,15 +43,17 @@ public class Bot : PlayerBase, IBot
         if (desktopCards is null || desktopCards.Count == 0)
             throw new ArgumentNullException(nameof(desktopCards));
         _cards.Sort(); // сортировка IComparable в Card.cs
-        ICard myCard = _cards.Where(card => {
+        ICard myCard = _cards.Where(card =>
+        {
             return desktopCards.Where(owner => owner.Owner.Id != Id)
-                               .Any(x => x.Rank < card.Rank && x.Suit == card.Suit 
-                               || !x.IsTrump && card.IsTrump);})
-                               .MinBy(x => x.Rank);
+                               .Any(x => x.Rank < card.Rank && x.Suit == card.Suit
+                               || !x.IsTrump && card.IsTrump);
+        })
+                               .First();
 
         outCard = desktopCards.Where(card => desktopCards.Where(owner => owner.Owner.Id != Id)
                               .Any(card => myCard.Rank > card.Rank || card.IsTrump))
-                              .MinBy(x => x.Rank);
+                              .First();
         return myCard;
     }
 }
