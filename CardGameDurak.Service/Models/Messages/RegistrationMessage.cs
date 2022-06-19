@@ -18,11 +18,11 @@ internal class RegistrationMessage : IRegistrationMessage
     /// Идентификатор, который присвоили игроку.
     /// </param>
     /// <exception cref="ArgumentNullException" xml:lang = "ru">
-    /// Когда любой из параметров равен <see langword="null"/>.
+    /// Когда идентификатор игрока равен <see langword="null"/>.
     /// </exception>
     public RegistrationMessage(GameSessionId sessionId, int? playerId)
     {
-        SessionId = sessionId ?? throw new ArgumentNullException(nameof(sessionId));
+        SessionId = sessionId;
         PlayerId = playerId ?? throw new ArgumentNullException(nameof(playerId));
     }
 

@@ -12,7 +12,7 @@ internal class EventMessage : IEventMessage
         GameEvent playerEvent, 
         ICard card)
     {
-        SessionId = sessionId ?? throw new ArgumentNullException(nameof(sessionId));
+        SessionId = sessionId;
         Sender = sender ?? throw new ArgumentNullException(nameof(sender));
         PlayerEvent = playerEvent switch
         {

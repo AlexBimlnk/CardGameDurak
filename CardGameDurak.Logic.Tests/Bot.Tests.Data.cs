@@ -3,9 +3,9 @@
 using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
 
-using Xunit;
-
 using Moq;
+
+using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
 public class BotTestsData
@@ -78,6 +78,17 @@ public class BotTestsData
                 }
             },
 
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
             // Ожидаемая карта
             new Card(Suit.Spades, 7)
             {
@@ -141,6 +152,17 @@ public class BotTestsData
                     IsCloseOnDesktop = false,
                     IsTrump = true,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
@@ -216,6 +238,17 @@ public class BotTestsData
                 }
             },
 
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
             // Ожидаемая карта
             new Card(Suit.Hearts, 12)
             {
@@ -225,43 +258,9 @@ public class BotTestsData
             }
         }
     };
-    public static readonly TheoryData<ICard [], List <ICard>, ICard, ICard> CanDefenceData = new()
+    public static readonly TheoryData<IReadOnlyCollection<ICard>, ICard, ICard> CanDefenceData = new()
     {
         {
-            // Карты в руке у бота
-            new []
-            {
-                new Card(Suit.Spades, 8)
-                {
-                    IsCloseOnDesktop = false,
-                    IsTrump = false,
-                    Owner = s_playerStub1.Object
-                },
-                new Card(Suit.Spades, 9)
-                {
-                    IsCloseOnDesktop = false,
-                    IsTrump = false,
-                    Owner = s_playerStub1.Object
-                },
-                new Card(Suit.Diamonds, 8)
-                {
-                    IsCloseOnDesktop = false,
-                    IsTrump = false,
-                    Owner = s_playerStub1.Object
-                },
-                new Card(Suit.Hearts, 6)
-                {
-                    IsCloseOnDesktop = false,
-                    IsTrump = true,
-                    Owner = s_playerStub1.Object
-                },
-                new Card(Suit.Hearts, 7)
-                {
-                    IsCloseOnDesktop = false,
-                    IsTrump = true,
-                    Owner = s_playerStub1.Object
-                }
-            },
             // Карты на столе.
             new List<ICard>()
             {
@@ -282,6 +281,17 @@ public class BotTestsData
                     IsCloseOnDesktop = false,
                     IsTrump = false,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
@@ -359,6 +369,17 @@ public class BotTestsData
                 }
             },
 
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
             // Побитая карта
             new Card(Suit.Spades, 10)
             {
@@ -430,6 +451,17 @@ public class BotTestsData
                     IsCloseOnDesktop = false,
                     IsTrump = false,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
@@ -516,6 +548,17 @@ public class BotTestsData
                     IsCloseOnDesktop = true,
                     IsTrump = true,
                     Owner = s_playerStub2.Object
+                }
+            },
+
+            // Карты у бота
+            new []
+            {
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
                 }
             },
 
