@@ -32,7 +32,30 @@ public class GameSessionTests
             3
         }
     };
-    
+
+    private static List<ICard> CreateMockDeck(int size = 1)
+    {
+        var cards = new List<ICard>();
+
+        foreach (var i in Enumerable.Range(0, size))
+            cards.Add(Mock.Of<ICard>(MockBehavior.Strict));
+
+        return cards;
+    }
+    private static List<IPlayer> CreateMockPlayers()
+    {
+        var playerStub1 = new Mock<IPlayer>(MockBehavior.Strict);
+        playerStub1.SetupSet(x => x.Id = It.Is((int id) => 1 <= id));
+        var playerStub2 = new Mock<IPlayer>(MockBehavior.Strict);
+        playerStub2.SetupSet(x => x.Id = It.Is((int id) => 1 <= id));
+
+        return new List<IPlayer>()
+        {
+            playerStub1.Object,
+            playerStub2.Object
+        };
+    }
+
     #region Конструкторы
 
     [Fact(DisplayName = "Can be created.")]
@@ -41,12 +64,8 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
-        var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
-        var players = new List<IPlayer>() 
-        { 
-            Mock.Of<IPlayer>(MockBehavior.Strict),
-            Mock.Of<IPlayer>(MockBehavior.Strict)
-        };
+        var deck = CreateMockDeck();
+        var players = CreateMockPlayers();
 
         // Act
         var exception = Record.Exception(() => new GameSession(id, deck, players));
@@ -61,20 +80,15 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
-        var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
-        var players = new List<IPlayer>()
-        {
-            Mock.Of<IPlayer>(MockBehavior.Strict),
-            Mock.Of<IPlayer>(MockBehavior.Strict)
-        };
+        var deck = CreateMockDeck();
+        var players = CreateMockPlayers();
 
         // Act
-        var exception1 = Record.Exception(() => new GameSession(null!, deck, players));
-        var exception2 = Record.Exception(() => new GameSession(id, null!, players));
-        var exception3 = Record.Exception(() => new GameSession(id, deck, null!));
+        var exception1 = Record.Exception(() => new GameSession(id, null!, players));
+        var exception2 = Record.Exception(() => new GameSession(id, deck, null!));
 
         // Assert
-        new[] { exception1, exception2, exception3 }.Should().AllBeOfType<ArgumentNullException>();
+        new[] { exception1, exception2 }.Should().AllBeOfType<ArgumentNullException>();
     }
 
     [Fact(DisplayName = "Can't be created when players count less 2.")]
@@ -83,7 +97,7 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
-        var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
+        var deck = CreateMockDeck();
         var players = new List<IPlayer>()
         {
             Mock.Of<IPlayer>(MockBehavior.Strict),
@@ -105,20 +119,15 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
-        var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
-        var players = new List<IPlayer>()
-        {
-            Mock.Of<IPlayer>(MockBehavior.Strict),
-            Mock.Of<IPlayer>(MockBehavior.Strict)
-        };
+        var deck = CreateMockDeck();
+        var players = CreateMockPlayers();
         var session = new GameSession(id, deck, players);
-        var expectedResult = 1;
 
         // Act
         var result = session.Id;
 
         // Assert
-        result.Should().Be(expectedResult);
+        result.Should().Be(id);
     }
     #endregion
 
@@ -131,14 +140,8 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
-        var players = new List<IPlayer>()
-        {
-            Mock.Of<IPlayer>(MockBehavior.Strict),
-            Mock.Of<IPlayer>(MockBehavior.Strict)
-        };
-        var deck = new List<ICard>(deckSize);
-        foreach (var i in Enumerable.Range(0, deckSize))
-            deck.Add(Mock.Of<ICard>(MockBehavior.Strict));
+        var deck = CreateMockDeck(deckSize);
+        var players = CreateMockPlayers();
 
         var session = new GameSession(id, deck, players);
 
@@ -155,13 +158,9 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
-        var players = new List<IPlayer>()
-        {
-            Mock.Of<IPlayer>(MockBehavior.Strict),
-            Mock.Of<IPlayer>(MockBehavior.Strict)
-        };
-        var deck = new List<ICard>();
-        var session = new GameSession(id, deck, players);
+        var players = CreateMockPlayers();
+        var emptyDeck = new List<ICard>();
+        var session = new GameSession(id, emptyDeck, players);
 
         // Act
 

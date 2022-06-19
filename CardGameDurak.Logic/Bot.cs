@@ -21,12 +21,15 @@ public class Bot : PlayerBase, IBot
     /// <returns></returns>
     public ICard Attaсk(IReadOnlyCollection<ICard> desktopCards)
     {
+        _cards.Sort(); // сортировка IComparable в Card.cs
         if (desktopCards.Count == 0)
-            return _cards.Min();
-
-        return _cards.Where(owner => owner.Owner.Id == Id)
-                     .Where(card => desktopCards.Any(x => x.Rank == card.Rank))
-                     .Min();
+            return _cards.First();
+        else
+        {
+            return _cards.Where(owner => owner.Owner.Id == Id)
+                    .Where(card => desktopCards.Any(x => x.Rank == card.Rank))
+                    .First();
+        }
     }
 
     /// <summary>
@@ -39,18 +42,16 @@ public class Bot : PlayerBase, IBot
     {
         if (desktopCards is null || desktopCards.Count == 0)
             throw new ArgumentNullException(nameof(desktopCards));
-
-
-        ICard myCard = _cards.Where(card =>
-        {
+        _cards.Sort(); // сортировка IComparable в Card.cs
+        ICard myCard = _cards.Where(card => {
             return desktopCards.Where(owner => owner.Owner.Id != Id)
-                               .Select(tempCard => new { Rank = card.Rank, Suit = card.Suit, IsTrump = card.IsTrump, tempCard })
-                               .Any(x => x.Rank < card.Rank && x.Suit == card.Suit || !x.IsTrump && card.IsTrump);
-        }).Min();
+                               .Any(x => x.Rank < card.Rank && x.Suit == card.Suit 
+                               || !x.IsTrump && card.IsTrump);})
+                               .MinBy(x => x.Rank);
 
         outCard = desktopCards.Where(card => desktopCards.Where(owner => owner.Owner.Id != Id)
                               .Any(card => myCard.Rank > card.Rank || card.IsTrump))
-                              .Min(); // это по приколу написано
+                              .MinBy(x => x.Rank);
         return myCard;
     }
 }
