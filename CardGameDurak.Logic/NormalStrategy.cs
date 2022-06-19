@@ -13,12 +13,15 @@ public sealed class NormalStrategy : IBotStrategy
         IReadOnlyCollection<ICard> desktopCards,
         out ICard? resultCard)
     {
-        resultCard = handCards.Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                              .Where(x => !x.IsTrump)
-                              .MinBy(x => x.Rank);
+        resultCard = null!;
+
+        var simpleCards = handCards.Where(x => !x.IsTrump);
 
         if (desktopCards.Count == 0)
-            resultCard ??= handCards.MinBy(x => x.Rank);
+            resultCard = simpleCards.MinBy(x => x.Rank) ?? handCards.MinBy(x => x.Rank);
+
+        resultCard ??= simpleCards.Where(x => desktopCards.Any(y => x.Rank == y.Rank))
+                                  .MinBy(x => x.Rank);
 
         return resultCard is not null;
     }
