@@ -35,7 +35,7 @@ public sealed class NormalStrategy : IBotStrategy
             throw new ArgumentNullException(nameof(desktopCards));
 
         var needClosed = desktopCards.Where(x => x.Owner!.Id != ownerId)
-                                     .Single(x => !x.IsCloseOnDesktop);
+                                     .First(x => !x.IsCloseOnDesktop);
         closedCard = needClosed;
 
         resultCard = handCards.Where(x => needClosed.Rank < x.Rank)
