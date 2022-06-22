@@ -1,14 +1,15 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
+using CardGameDurak.Logic;
 
 namespace CardGameDurak.Service.Models;
 
 internal class GameEvent : IGameEvent
 {
-    public GameEvent(PlayerEvent playerEvent, ICard card = default!)
+    public GameEvent(PlayerEvent playerEvent, Card card = default!)
     {
-        Value = card;
-        Event = playerEvent switch
+        Card = card;
+        PlayerEvent = playerEvent switch
         {
             PlayerEvent.DropOnDesktop => card is not null
                 ? playerEvent
@@ -19,7 +20,7 @@ internal class GameEvent : IGameEvent
         };
     }
 
-    public PlayerEvent Event { get; }
+    public PlayerEvent PlayerEvent { get; }
 
-    public ICard? Value { get; }
+    public ICard? Card { get; }
 }

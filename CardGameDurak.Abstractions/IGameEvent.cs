@@ -10,10 +10,10 @@ public interface IGameEvent
     /// <summary xml:lang = "ru">
     /// Событие, которое совершил игрок.
     /// </summary>
-    public PlayerEvent Event { get; }
+    public PlayerEvent PlayerEvent { get; }
 
     /// <summary xml:lang = "ru">
     /// Значение, сопровождающее игровое событие.
     /// </summary>
-    public ICard? Value { get; }
+    public ICard? Card { get; }
 }

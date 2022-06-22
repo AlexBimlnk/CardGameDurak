@@ -1,6 +1,7 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.Messages;
+using CardGameDurak.Logic;
 using CardGameDurak.Network.Messages;
 using CardGameDurak.Service.Models;
 
