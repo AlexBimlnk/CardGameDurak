@@ -43,7 +43,7 @@ public sealed class NormalStrategy : IBotStrategy
 
         resultCard = handCards.Where(x => needClosed.Rank < x.Rank)
                               .Where(x => needClosed.Suit == x.Suit)
-                              .FirstOrDefault();
+                              .MinBy(x => x.Rank);
 
         return resultCard is not null;
     }

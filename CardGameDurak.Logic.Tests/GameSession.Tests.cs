@@ -163,9 +163,9 @@ public class GameSessionTests
         var session = new GameSession(id, emptyDeck, players);
 
         // Act
-
+        var exception = Record.Exception(() => new GameSession(id, emptyDeck, players));
         // Assert
-        Assert.True(false);
+        exception.Should().BeNull();
     }
     #endregion
 }
