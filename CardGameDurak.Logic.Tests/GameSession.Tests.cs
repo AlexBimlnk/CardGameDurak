@@ -164,6 +164,7 @@ public class GameSessionTests
 
         // Act
         var exception = Record.Exception(() => new GameSession(id, emptyDeck, players));
+
         // Assert
         exception.Should().BeNull();
     }
