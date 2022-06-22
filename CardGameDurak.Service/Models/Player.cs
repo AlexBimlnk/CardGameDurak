@@ -1,8 +1,9 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Messages;
 
 namespace CardGameDurak.Service.Models;
 
-public class Player : IPlayer
+public sealed class Player : IPlayer, ISender
 {
     public int? Id { get; set ; }
 

@@ -24,4 +24,15 @@ public interface IGameSession
     /// Список карт, находящихся на столе.
     /// </summary>
     public IReadOnlyCollection<ICard> Desktop { get; }
+
+    /// <summary xml:lang = "ru">
+    /// Возвращает карты, принадлежащие указанному игроку.
+    /// </summary>
+    /// <param name="player" xml:lang = "ru">
+    /// Игрок.
+    /// </param>
+    /// <returns xml:lang = "ru">
+    /// Коллекцию карт, принадлежащую игроку.
+    /// </returns>
+    public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player);
 }
