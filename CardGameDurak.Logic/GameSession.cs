@@ -67,7 +67,7 @@ public class GameSession : IGameSession
         _players.AddRange(players);
 
         if (_players.Count < MIN_AMOUNT_PLAYERS)
-            throw new ArgumentException("Count of players can't be less." + MIN_AMOUNT_PLAYERS.ToString(), nameof(players));
+            throw new ArgumentException("Count of players can't be less " + MIN_AMOUNT_PLAYERS.ToString() + " .", nameof(players));
 
         foreach (var i in Enumerable.Range(0, _players.Count))
             _players[i].Id = i + 1;
