@@ -158,8 +158,8 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
-        var players = CreateMockPlayers();
         var emptyDeck = new List<ICard>();
+        var players = CreateMockPlayers();
 
         // Act
         var exception = Record.Exception(() => new GameSession(id, emptyDeck, players));

@@ -103,6 +103,7 @@ public class GameSession : IGameSession
 
         return _();
     }
+
     /// <summary xml:lang = "ru">
     /// Устанавливает козырную масть карт
     /// </summary>
