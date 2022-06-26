@@ -131,10 +131,10 @@ public class GameSessionTests
     }
     #endregion
 
-    #region Методы
+   #region Методы
 
     [Theory(DisplayName = "Can give cards.")]
-    [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))]
+    [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))] 
     [Trait("Category", "Properties")]
     public void CanGiveCards(int deckSize, int countCards, int expectedCountCards)
     {
@@ -152,18 +152,22 @@ public class GameSessionTests
         result.Count().Should().Be(expectedCountCards);
     }
 
-    [Fact(DisplayName = "Can't give cards when argunment is invalid.")]
+    [Theory(DisplayName = "Can't give cards when argunment is invalid.")]
+    [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))]
+    // не понял, как через InlineData пока сделать
     [Trait("Category", "Properties")]
-    public void CanNotGiveCardsWhenArgumentIsInvalid()
+    public void CanNotGiveCardsWhenArgumentIsInvalid(int countCards)
     {
         // Arrange
         var id = new GameSessionId(1);
         var emptyDeck = new List<ICard>();
         var players = CreateMockPlayers();
 
+        var session = new GameSession(id, emptyDeck, players);
         // Act
-        var exception = Record.Exception(() => new GameSession(id, emptyDeck, players));
-
+        var result = countCards > 0 ?  session.GiveCards(countCards) : null!;
+        // возможно вместо null! нужно написать new ArgumentException()
+        var exception = Record.Exception(() => result);
         // Assert
         exception.Should().BeNull();
     }

@@ -67,7 +67,7 @@ public class GameSession : IGameSession
         _players.AddRange(players);
 
         if (_players.Count < MIN_AMOUNT_PLAYERS)
-            throw new ArgumentException("Count of players can't be less " + MIN_AMOUNT_PLAYERS.ToString() + " .", nameof(players));
+            throw new ArgumentException($"Count of players can't be less {MIN_AMOUNT_PLAYERS}", nameof(players));
 
         foreach (var i in Enumerable.Range(0, _players.Count))
             _players[i].Id = i + 1;
@@ -108,7 +108,7 @@ public class GameSession : IGameSession
     /// Устанавливает козырную масть карт
     /// </summary>
     /// <returns xml:lang = "ru">
-    /// Карту типа Suit <see cref="Suit"/>.
+    /// Возвращает масть типа Suit что является перечислением <see cref="Suit"/>.
     /// </returns>
     public Suit SetTrumpCard() => _deck[_random.Next(0, _deck.Count)].Suit;
 }
