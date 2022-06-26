@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGameLogic", "CardGameLogic\CardGameLogic.csproj", "{4D947486-2EF5-4B7A-9B5B-32E5ADF87C93}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGameUI", "CardGameUI\CardGameUI.csproj", "{0B8E7239-D459-4F9F-907B-1E6E44C2F499}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGameDurak.Logic", "CardGameDurak.Logic\CardGameDurak.Logic.csproj", "{EAF8B8D7-E712-40A3-B5F8-87DD51690E76}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{25F782CD-1317-495F-A357-A7D1A5FA5E39}"
@@ -24,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGameDurak.Network.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGameDurak.Service", "CardGameDurak.Service\CardGameDurak.Service.csproj", "{AFCC4F52-82D8-4177-B510-5394DF8DEFD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGameDurak.Abstractions", "CardGameDurak.Abstractions\CardGameDurak.Abstractions.csproj", "{58B062F7-428D-49D9-836D-A8D2EDE8A242}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGameDurak.Abstractions", "CardGameDurak.Abstractions\CardGameDurak.Abstractions.csproj", "{58B062F7-428D-49D9-836D-A8D2EDE8A242}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,14 +28,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4D947486-2EF5-4B7A-9B5B-32E5ADF87C93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D947486-2EF5-4B7A-9B5B-32E5ADF87C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D947486-2EF5-4B7A-9B5B-32E5ADF87C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D947486-2EF5-4B7A-9B5B-32E5ADF87C93}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B8E7239-D459-4F9F-907B-1E6E44C2F499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B8E7239-D459-4F9F-907B-1E6E44C2F499}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B8E7239-D459-4F9F-907B-1E6E44C2F499}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B8E7239-D459-4F9F-907B-1E6E44C2F499}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAF8B8D7-E712-40A3-B5F8-87DD51690E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAF8B8D7-E712-40A3-B5F8-87DD51690E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAF8B8D7-E712-40A3-B5F8-87DD51690E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
