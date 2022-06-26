@@ -1,4 +1,5 @@
-﻿using CardGameDurak.Abstractions.Messages;
+﻿using CardGameDurak.Abstractions.Enums;
+using CardGameDurak.Abstractions.Messages;
 
 namespace CardGameDurak.Abstractions;
 
@@ -29,33 +30,47 @@ public interface IGameCoordinator<TAwaitPlayer> where TAwaitPlayer : IAwaitPlaye
     /// Игрок типа <typeparamref name="TAwaitPlayer"/>, ожидающий игру.
     /// </param>
     /// <returns xml:lang = "ru">
-    /// Задачу типа <see cref="Task{TResult}"/>, которая выполнится,
-    /// когда игрока подключат к игре. Результатом выполнения
-    /// является идентификатор игровой сессии.
+    /// Задачу типа <see cref="Task{TResult}"/>, результатом
+    /// которой будет состояние игровой сессии типа <see cref="ISessionState{TLinkedValue}"/>.
     /// </returns>
-    public Task<long> JoinToGame(TAwaitPlayer player);
+    public Task<ISessionState<IEnumerable<ICard>>> JoinToGame(TAwaitPlayer player);
 
     /// <summary xml:lang = "ru">
     /// Обноаляет игровую сессию.
     /// </summary>
-    /// <param name="message" xml:lang = "ru">
-    /// Сообщение, содержащие новое событие в игре.
+    /// <param name="sessionId" xml:lang = "ru">
+    /// Идентификатор сессии.
+    /// </param>
+    /// <param name="event" xml:lang = "ru">
+    /// Событие, произошедшее в игре.
+    /// </param>
+    /// <param name="player" xml:lang = "ru">
+    /// Игрок, отправивший сообщение о событии.
+    /// </param>
+    /// <param name="card" xml:lang = "ru">
+    /// Прикрепленная к событию карта.
     /// </param>
     /// <returns xml:lang = "ru">
     /// Задачу, которая завершится после обновления сессии.
     /// </returns>
-    public Task UpdateSession(IEventMessage message);
+    public Task UpdateSession(GameSessionId sessionId, IGameEvent @event, IPlayer player);
 
     /// <summary xml:lang = "ru">
     /// Создает задачу на обновление игровой сессии, которая
     /// выполнится когда поступит обновление.
     /// </summary>
-    /// <param name="session" xml:lang = "ru">
-    /// Игровая сессия, которую нужно будет обновить.
+    /// <param name="sessionId" xml:lang = "ru">
+    /// Идентификатор сессии.
+    /// </param>
+    /// <param name="version" xml:lang = "ru">
+    /// Версия сессии.
+    /// </param>
+    /// <param name="player" xml:lang = "ru">
+    /// Игрок, запросивший обновление.
     /// </param>
     /// <returns xml:lang = "ru">
     /// Задачу типа <see cref="Task{TResult}"/>, результатом
-    /// которой будет игровая сессия типа <see cref="IGameSession"/>.
+    /// которой будет состояние игровой сессии типа <see cref="ISessionState{TLinkedValue}"/>.
     /// </returns>
-    public Task<IGameSession> GetUpdateForSession(IGameSession session);
+    public Task<ISessionState<IEnumerable<ICard>>> GetUpdateForSession(GameSessionId sessionId, int version, IPlayer player);
 }
