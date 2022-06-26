@@ -165,7 +165,7 @@ public class GameSessionTests
 
         var session = new GameSession(id, emptyDeck, players);
         // Act
-        var result = countCards > 0 ?  session.GiveCards(countCards) : null!;
+        var result = countCards > 0 ? session.GiveCards(countCards) : null!;
         // возможно вместо null! нужно написать new ArgumentException()
         var exception = Record.Exception(() => result);
         // Assert
