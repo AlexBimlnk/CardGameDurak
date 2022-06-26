@@ -111,4 +111,7 @@ public class GameSession : IGameSession
     /// Возвращает масть типа Suit что является перечислением <see cref="Suit"/>.
     /// </returns>
     public Suit SetTrumpCard() => _deck[_random.Next(0, _deck.Count)].Suit;
+
+    /// <inheritdoc/>
+    public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
 }
