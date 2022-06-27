@@ -1,6 +1,6 @@
 ﻿using CardGameDurak.Abstractions.Enums;
 
-namespace CardGameDurak.Abstractions;
+namespace CardGameDurak.Abstractions.Controlling;
 
 /// <summary xml:lang = "ru">
 /// Контракт, описывающий игровое событие.

@@ -1,5 +1,6 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
+using CardGameDurak.Abstractions.Players;
 
 namespace CardGameDurak.Logic;
 

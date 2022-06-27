@@ -1,4 +1,4 @@
-﻿namespace CardGameDurak.Abstractions;
+﻿namespace CardGameDurak.Abstractions.Players;
 
 /// <summary xml:lang = "ru">
 /// Контракт, описывающий игрока, ожидающего игру.

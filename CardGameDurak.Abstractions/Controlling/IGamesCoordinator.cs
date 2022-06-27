@@ -1,7 +1,7 @@
-﻿using CardGameDurak.Abstractions.Enums;
-using CardGameDurak.Abstractions.Messages;
+﻿using CardGameDurak.Abstractions.GameSession;
+using CardGameDurak.Abstractions.Players;
 
-namespace CardGameDurak.Abstractions;
+namespace CardGameDurak.Abstractions.Controlling;
 
 /// <summary xml:lang = "ru">
 /// Контракт, описывающий игровой координатор, 
