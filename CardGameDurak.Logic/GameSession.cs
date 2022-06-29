@@ -1,4 +1,6 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.GameSession;
+using CardGameDurak.Abstractions.Players;
 
 namespace CardGameDurak.Logic;
 

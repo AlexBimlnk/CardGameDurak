@@ -1,4 +1,4 @@
-﻿using CardGameDurak.Abstractions;
+﻿using CardGameDurak.Abstractions.GameSession;
 using CardGameDurak.Abstractions.Messages;
 
 namespace CardGameDurak.Network.Messages;

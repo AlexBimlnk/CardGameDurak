@@ -1,6 +1,9 @@
 ﻿using System.Collections.Concurrent;
 
 using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Controlling;
+using CardGameDurak.Abstractions.GameSession;
+using CardGameDurak.Abstractions.Players;
 using CardGameDurak.Logic;
 using CardGameDurak.Service.Models;
 

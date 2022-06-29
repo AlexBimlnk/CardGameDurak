@@ -1,4 +1,5 @@
-﻿using CardGameDurak.Abstractions;
+﻿using CardGameDurak.Abstractions.Controlling;
+using CardGameDurak.Abstractions.Players;
 
 namespace CardGameDurak.Network;
 internal class SingleGameController : IGameController

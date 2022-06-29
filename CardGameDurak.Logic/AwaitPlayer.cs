@@ -1,6 +1,6 @@
-﻿using CardGameDurak.Abstractions.Messages;
+﻿using CardGameDurak.Abstractions.Players;
 
-namespace CardGameDurak.Abstractions;
+namespace CardGameDurak.Logic;
 
 /// <summary xml:lang = "ru">
 /// Игрок ожидающий игру.

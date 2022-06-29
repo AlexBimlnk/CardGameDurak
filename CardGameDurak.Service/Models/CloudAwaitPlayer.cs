@@ -1,5 +1,7 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.GameSession;
 using CardGameDurak.Abstractions.Messages;
+using CardGameDurak.Logic;
 
 using Newtonsoft.Json;
 
