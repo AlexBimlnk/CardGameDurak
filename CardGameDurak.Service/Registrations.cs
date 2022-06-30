@@ -1,4 +1,4 @@
-﻿using CardGameDurak.Abstractions;
+﻿using CardGameDurak.Abstractions.Controlling;
 using CardGameDurak.Service.Models;
 
 namespace CardGameDurak.Service;
@@ -15,5 +15,6 @@ internal static class Registrations
     /// Коллекция служб.
     /// </param>
     public static void AddGameCoorditanor(this IServiceCollection services) =>
-        services.AddSingleton<IGameCoordinator<AwaitPlayer>, CloudCoordinator>();
+        services.AddSingleton<ICloudSender, CloudSender>()
+                .AddSingleton<IGameCoordinator<CloudAwaitPlayer>, CloudCoordinator>();
 }

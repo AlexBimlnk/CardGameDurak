@@ -1,5 +1,6 @@
 ﻿using CardGameDurak.Abstractions;
-using CardGameDurak.Abstractions.Enums;
+using CardGameDurak.Abstractions.GameSession;
+using CardGameDurak.Abstractions.Players;
 
 namespace CardGameDurak.Logic;
 
@@ -101,5 +102,7 @@ public class GameSession : IGameSession
 
         return _();
     }
-    public Suit SetTrumpCard() => _deck[_random.Next(0, _deck.Count)].Suit;
+
+    /// <inheritdoc/>
+    public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
 }

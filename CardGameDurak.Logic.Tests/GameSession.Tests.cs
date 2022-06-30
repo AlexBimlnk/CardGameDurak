@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.GameSession;
+using CardGameDurak.Abstractions.Players;
 
 using FluentAssertions;
 
