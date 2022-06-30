@@ -7,7 +7,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Игровая сессия.
 /// </summary>
-public class GameSession : IGameSession
+public class GameSession : IGameSession, IEquatable<IGameSession>
 {
     private const int DEFAULT_SIZE_DECK = 36;
     private const int DEFAULT_AMOUNT_PLAYERS = 2;
@@ -54,6 +54,7 @@ public class GameSession : IGameSession
 
     /// <inheritdoc/>
     public int Version { get; }
+
 
     /// <inheritdoc/>
     public IReadOnlyCollection<IPlayer> Players => _players;
@@ -105,4 +106,38 @@ public class GameSession : IGameSession
 
     /// <inheritdoc/>
     public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        var curSession = obj as GameSession;
+        if ((curSession is null) && ! GetType().Equals(curSession!.GetType()))
+            return false;
+        else
+        {
+            var countEquals =  ((Players.Count == curSession.Players.Count)
+                    && (Desktop.Count == curSession.Desktop.Count));
+            if (countEquals)
+            {
+                for (int i = 0; i < Players.Count; i++)
+                {
+                    if (GetPlayerCards(Players.ElementAt(i)).Count
+                        != GetPlayerCards(curSession.Players.ElementAt(i)).Count)
+                    {
+                        countEquals = false;
+                        break;
+                    }
+                }
+                for (int i = 0; i < Desktop.Count; i++)
+                {
+                    if (Desktop.ElementAt(i) != curSession.Desktop.ElementAt(i) 
+                        || !Desktop.ElementAt(i).GetType().Equals(curSession.Desktop.ElementAt(i).GetType()))
+                    {
+                        countEquals = false;
+                        break;
+                    }
+                }
+            }
+            return countEquals;
+        }
+    }
 }
