@@ -107,7 +107,7 @@ public class GameSession : IGameSession, IEquatable<IGameSession>
     /// <inheritdoc/>
     public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
     /// <inheritdoc/>
-    public override bool Equals(object? obj)
+    public bool Equals(IGameSession? obj)
     {
         var curSession = obj as GameSession;
         if ((curSession is null) && ! GetType().Equals(curSession!.GetType()))
