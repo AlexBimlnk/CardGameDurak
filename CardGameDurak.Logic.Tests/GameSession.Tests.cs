@@ -109,7 +109,7 @@ public class GameSessionTests
         var exception = Record.Exception(() => new GameSession(id, deck, players));
 
         // Assert
-        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        exception.Should().NotBeNull().And.BeOfType<ArgumentOutOfRangeException>();
     }
     #endregion
 
@@ -155,6 +155,8 @@ public class GameSessionTests
     }
 
     [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(101)]
     [Theory(DisplayName = "Can't give cards when argunment is invalid.")]
     [Trait("Category", "Properties")]
     public void CanNotGiveCardsWhenArgumentIsInvalid(int countCards)
@@ -170,7 +172,7 @@ public class GameSessionTests
         var exception = Record.Exception(() => session.GiveCards(countCards));
 
         // Assert
-        exception.Should().NotBeNull();
+        exception.Should().NotBeNull().And.BeOfType<ArgumentOutOfRangeException>();
     }
     #endregion
 }

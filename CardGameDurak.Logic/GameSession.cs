@@ -48,8 +48,6 @@ public class GameSession : IGameSession
         IEnumerable<IPlayer> players)
     {
         Id = id;
-        if (players.Count() < MIN_AMOUNT_PLAYERS)
-            throw new ArgumentException(nameof(players));
         _deck.AddRange(deck ?? throw new ArgumentNullException(nameof(deck)));
         AddPlayers(players ?? throw new ArgumentNullException(nameof(players)));
     }
@@ -70,7 +68,7 @@ public class GameSession : IGameSession
     {
         _players.AddRange(players);
 
-        if ((_players.Count < MIN_AMOUNT_PLAYERS) && (_players.Count > MAX_AMOUNT_PLAYERS))
+        if ((_players.Count < MIN_AMOUNT_PLAYERS) || (_players.Count > MAX_AMOUNT_PLAYERS))
             throw new ArgumentOutOfRangeException(nameof(_players.Count));
 
         foreach (var i in Enumerable.Range(0, _players.Count))
@@ -112,7 +110,7 @@ public class GameSession : IGameSession
     /// Устанавливает козырную масть карт
     /// </summary>
     /// <returns xml:lang = "ru">
-    /// Возвращает масть типа Suit. <see cref="Suit"/>.
+    /// Возвращает масть типа Suit <see cref="Suit"/>.
     /// </returns>
     public Suit SetTrumpCard() => _deck[_random.Next(0, _deck.Count)].Suit;
 
