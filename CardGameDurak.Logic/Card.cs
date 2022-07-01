@@ -32,4 +32,10 @@ public class Card : ICard
 
     /// <inheritdoc/>
     public IPlayer? Owner { get; set; }
+
+    /// <inheritdoc/>
+    public bool IsTrump { get; set; }
+
+    /// <inheritdoc/>
+    public bool IsCloseOnDesktop { get; set; }
 }

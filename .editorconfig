@@ -253,6 +253,8 @@ csharp_prefer_static_local_function = true:suggestion
 csharp_style_expression_bodied_lambdas = true:warning
 csharp_style_expression_bodied_local_functions = when_on_single_line:error
 dotnet_diagnostic.CA1507.severity = error
+csharp_style_prefer_parameter_null_checking = true:suggestion
+csharp_style_prefer_method_group_conversion = true:silent
 
 [*.vb]
 #### Стили именования ####
