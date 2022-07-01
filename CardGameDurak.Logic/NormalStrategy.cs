@@ -41,9 +41,14 @@ public sealed class NormalStrategy : IBotStrategy
                                      .First(x => !x.IsCloseOnDesktop);
         closedCard = needClosed;
 
-        resultCard = handCards.Where(x => needClosed.Rank < x.Rank)
-                              .Where(x => needClosed.Suit == x.Suit)
-                              .MinBy(x => x.Rank);
+        if (!needClosed.IsTrump)
+        {
+            resultCard = handCards.Where(x => needClosed.Rank < x.Rank)
+                                  .Where(x => needClosed.Suit == x.Suit)
+                                  .MinBy(x => x.Rank);
+            resultCard ??= handCards.Where(x => x.IsTrump).MinBy(x => x.Rank);
+        }
+        else resultCard = null!;
 
         return resultCard is not null;
     }

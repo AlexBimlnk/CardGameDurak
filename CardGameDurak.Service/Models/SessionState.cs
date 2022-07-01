@@ -1,4 +1,5 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.GameSession;
 using CardGameDurak.Logic;
 
 namespace CardGameDurak.Service.Models;
