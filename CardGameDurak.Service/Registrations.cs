@@ -1,4 +1,4 @@
-﻿using CardGameDurak.Abstractions;
+﻿using CardGameDurak.Abstractions.Controlling;
 using CardGameDurak.Service.Models;
 
 namespace CardGameDurak.Service;

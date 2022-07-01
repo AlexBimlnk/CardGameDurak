@@ -56,4 +56,5 @@ public interface IBotStrategy
         IReadOnlyCollection<ICard> desktopCards,
         out ICard? resultCard,
         out ICard closedCard);
+
 }

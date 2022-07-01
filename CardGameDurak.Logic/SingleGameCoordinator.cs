@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using CardGameDurak.Abstractions;
-using CardGameDurak.Abstractions.Enums;
+﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Controlling;
+using CardGameDurak.Abstractions.GameSession;
+using CardGameDurak.Abstractions.Players;
 
 namespace CardGameDurak.Logic;
 internal class SingleGameCoordinator : IGameCoordinator<AwaitPlayer>

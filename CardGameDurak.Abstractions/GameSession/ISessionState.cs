@@ -1,4 +1,4 @@
-﻿namespace CardGameDurak.Abstractions;
+﻿namespace CardGameDurak.Abstractions.GameSession;
 
 /// <summary xml:lang = "ru">
 /// Контракт, описывающий состояние игровой сессии.
