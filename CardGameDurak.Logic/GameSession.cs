@@ -105,7 +105,9 @@ public class GameSession : IGameSession, IEquatable<IGameSession>
     }
 
     /// <inheritdoc/>
+    
     public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
+
     /// <inheritdoc/>
     public bool Equals(IGameSession? obj)
     {
@@ -139,5 +141,12 @@ public class GameSession : IGameSession, IEquatable<IGameSession>
             }
             return countEquals;
         }
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        var equals = false;
+        return equals;
     }
 }
