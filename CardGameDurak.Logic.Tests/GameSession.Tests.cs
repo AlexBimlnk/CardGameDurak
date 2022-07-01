@@ -109,7 +109,7 @@ public class GameSessionTests
         var exception = Record.Exception(() => new GameSession(id, deck, players));
 
         // Assert
-        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        exception.Should().NotBeNull().And.BeOfType<ArgumentOutOfRangeException>();
     }
     #endregion
 
@@ -133,10 +133,10 @@ public class GameSessionTests
     }
     #endregion
 
-    #region Методы
+   #region Методы
 
     [Theory(DisplayName = "Can give cards.")]
-    [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))]
+    [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))] 
     [Trait("Category", "Properties")]
     public void CanGiveCards(int deckSize, int countCards, int expectedCountCards)
     {
@@ -154,20 +154,25 @@ public class GameSessionTests
         result.Count().Should().Be(expectedCountCards);
     }
 
-    [Fact(DisplayName = "Can't give cards when argunment is invalid.")]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(101)]
+    [Theory(DisplayName = "Can't give cards when argunment is invalid.")]
     [Trait("Category", "Properties")]
-    public void CanNotGiveCardsWhenArgumentIsInvalid()
+    public void CanNotGiveCardsWhenArgumentIsInvalid(int countCards)
     {
         // Arrange
         var id = new GameSessionId(1);
-        var players = CreateMockPlayers();
         var emptyDeck = new List<ICard>();
+        var players = CreateMockPlayers();
+
         var session = new GameSession(id, emptyDeck, players);
 
         // Act
+        var exception = Record.Exception(() => session.GiveCards(countCards));
 
         // Assert
-        Assert.True(false);
+        exception.Should().NotBeNull().And.BeOfType<ArgumentOutOfRangeException>();
     }
     #endregion
 }
