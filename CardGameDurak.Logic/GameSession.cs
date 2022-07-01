@@ -68,7 +68,7 @@ public class GameSession : IGameSession
     {
         _players.AddRange(players);
 
-        if ((_players.Count < MIN_AMOUNT_PLAYERS) || (_players.Count > MAX_AMOUNT_PLAYERS))
+        if (_players.Count < MIN_AMOUNT_PLAYERS || _players.Count > MAX_AMOUNT_PLAYERS)
             throw new ArgumentOutOfRangeException(nameof(_players.Count));
 
         foreach (var i in Enumerable.Range(0, _players.Count))
