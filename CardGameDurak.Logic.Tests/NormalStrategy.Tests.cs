@@ -21,6 +21,7 @@ public class NormalStrategyTests
     {
         // Arrange
         var strategy = new NormalStrategy();
+
         // Act
         var result = strategy.TryAttack(botCards, desktopCards, out var resultCard);
 

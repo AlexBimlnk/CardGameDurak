@@ -34,6 +34,7 @@ public class BotTests
     [Trait("Category", "Constructors")]
     public void BotCanNotBeCreatedWhenNameIsMissing(string name)
     {
+        // Arrange
         var strategy = new NormalStrategy();
 
         // Act
@@ -47,6 +48,7 @@ public class BotTests
     [Trait("Category", "Constructors")]
     public void BotCanNotBeCreatedWhenStategyIsNull()
     {
+        // Arrange
         var name = "BotName";
 
         // Act

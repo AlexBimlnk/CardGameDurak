@@ -2,7 +2,7 @@
 
 using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
-
+using CardGameDurak.Abstractions.Players;
 using Moq;
 
 using Xunit;
@@ -23,6 +23,116 @@ public class NormalStrategyTestsData
 
     public static readonly TheoryData<List<ICard>, List<ICard>, ICard, bool> TryAttackData = new()
     {
+                 {
+            // Карты в руке у бота
+            new List<ICard>()
+            {
+                new Card(Suit.Clubs, 8)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Clubs, 9)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Diamonds, 8)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 8)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
+            // Карты на столе.
+            new List<ICard>(),
+
+            // Ожидаемая карта
+            new Card(Suit.Spades, 7)
+            {
+                IsCloseOnDesktop = false,
+                IsTrump = false,
+                Owner = s_playerStub1.Object
+            },
+
+            true
+        },
+        {
+            // Карты в руке у бота
+            new List<ICard>()
+            {
+                new Card(Suit.Hearts, 6)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 8)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 9)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 10)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 12)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
+            // Карты на столе.
+            new List<ICard>(),
+
+            // Ожидаемая карта
+            new Card(Suit.Hearts, 6)
+            {
+                IsCloseOnDesktop = false,
+                IsTrump = true,
+                Owner = s_playerStub1.Object
+            },
+
+            true
+        },
         {
             // Карты в руке у бота
             new List<ICard>()
@@ -343,6 +453,72 @@ public class NormalStrategyTestsData
             // Карты на столе.
             new List<ICard>()
             {
+                new Card(Suit.Hearts, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub2.Object
+                }
+            },
+
+            // Побитая карта
+            new Card(Suit.Hearts, 7)
+            {
+                IsCloseOnDesktop = false,
+                IsTrump = true,
+                Owner = s_playerStub2.Object
+            },
+
+            // Ожидаемая карта
+            null!,
+
+            false
+        },
+        {
+            // Карты в руке у бота
+            new List<ICard>()
+            {
+                new Card(Suit.Clubs, 6)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Clubs, 8)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Diamonds, 8)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Spades, 7)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Spades, 11)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = false,
+                    Owner = s_playerStub1.Object
+                },
+                new Card(Suit.Hearts, 10)
+                {
+                    IsCloseOnDesktop = false,
+                    IsTrump = true,
+                    Owner = s_playerStub1.Object
+                }
+            },
+
+            // Карты на столе.
+            new List<ICard>()
+            {
                 new Card(Suit.Clubs, 7)
                 {
                     IsCloseOnDesktop = false,
@@ -601,17 +777,21 @@ public class NormalStrategyTestsData
             },
 
             // Побитая карта
-                new Card(Suit.Diamonds, 10)
-                {
-                    IsCloseOnDesktop = false,
-                    IsTrump = false,
-                    Owner = s_playerStub2.Object
-                },
+            new Card(Suit.Diamonds, 10)
+            {
+                 IsCloseOnDesktop = false,
+                 IsTrump = false,
+                 Owner = s_playerStub2.Object
+            },
 
             // Ожидаемая карта
-            null!,
-
-            false
+            new Card(Suit.Hearts, 6)
+            {
+                 IsCloseOnDesktop = false,
+                 IsTrump = true,
+                 Owner = s_playerStub1.Object
+            },
+            true
         }
     };
 }
