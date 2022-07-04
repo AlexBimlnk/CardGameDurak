@@ -11,6 +11,7 @@ public sealed class NormalStrategy : IBotStrategy
     public bool TryAttack(
         IReadOnlyCollection<ICard> handCards,
         IReadOnlyCollection<ICard> desktopCards,
+        int deckSize,
         out ICard? resultCard)
     {
         resultCard = null!;
@@ -31,6 +32,7 @@ public sealed class NormalStrategy : IBotStrategy
         int ownerId,
         IReadOnlyCollection<ICard> handCards,
         IReadOnlyCollection<ICard> desktopCards,
+        int deckSize,
         out ICard? resultCard,
         out ICard closedCard)
     {
