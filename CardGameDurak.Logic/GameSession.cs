@@ -7,7 +7,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Игровая сессия.
 /// </summary>
-public class GameSession : IGameSession, IEquatable<IGameSession>
+public class GameSession : IEquatable<IGameSession>
 {
     private const int DEFAULT_SIZE_DECK = 36;
     private const int DEFAULT_AMOUNT_PLAYERS = 2;
@@ -41,7 +41,7 @@ public class GameSession : IGameSession, IEquatable<IGameSession>
     /// </exception>
     public GameSession(
         GameSessionId id,
-        IEnumerable<ICard> deck, 
+        IEnumerable<ICard> deck,
         IEnumerable<IPlayer> players)
     {
         Id = id;
@@ -105,48 +105,51 @@ public class GameSession : IGameSession, IEquatable<IGameSession>
     }
 
     /// <inheritdoc/>
-    
+
     public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public bool Equals(IGameSession? obj)
+    public bool Equals(IGameSession? curSession)
     {
-        var curSession = obj as GameSession;
-        if ((curSession is null) && ! GetType().Equals(curSession!.GetType()))
+        if (curSession is null)
             return false;
-        else
+        var countEquals = ((Players.Count == curSession.Players.Count)
+                          && (Desktop.Count == curSession.Desktop.Count));
+        if (countEquals)
         {
-            var countEquals =  ((Players.Count == curSession.Players.Count)
-                    && (Desktop.Count == curSession.Desktop.Count));
-            if (countEquals)
-            {
-                for (int i = 0; i < Players.Count; i++)
-                {
-                    if (GetPlayerCards(Players.ElementAt(i)).Count
-                        != GetPlayerCards(curSession.Players.ElementAt(i)).Count)
-                    {
-                        countEquals = false;
-                        break;
-                    }
-                }
-                for (int i = 0; i < Desktop.Count; i++)
-                {
-                    if (Desktop.ElementAt(i) != curSession.Desktop.ElementAt(i) 
-                        || !Desktop.ElementAt(i).GetType().Equals(curSession.Desktop.ElementAt(i).GetType()))
-                    {
-                        countEquals = false;
-                        break;
-                    }
-                }
-            }
-            return countEquals;
+             for (int i = 0; i < Players.Count; i++)
+             {
+                 if (GetPlayerCards(Players.ElementAt(i)).Count
+                     != GetPlayerCards(curSession.Players.ElementAt(i)).Count)
+                 {
+                     countEquals = false;
+                     break;
+                 }
+             }
+             for (int i = 0; i < Desktop.Count; i++)
+             {
+                 if (Desktop.ElementAt(i) != curSession.Desktop.ElementAt(i)
+                     || !Desktop.ElementAt(i).GetType().Equals(curSession.Desktop.ElementAt(i).GetType()))
+                 {
+                     countEquals = false;
+                     break;
+                 }
+             }
         }
+        return countEquals;
     }
 
     /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
-        var equals = false;
-        return equals;
+        if (obj is null)
+            return false;
+        if ((obj is not GameSession curSession) || (curSession is null))
+            return false;
+        else
+            return Equals(curSession);
     }
+
+    /// <inheritdoc/>
+    public override int GetHashCode() => base.GetHashCode();
 }
