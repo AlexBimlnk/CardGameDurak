@@ -15,7 +15,7 @@ public interface IBotStrategy
     /// Карты, находящиеся на игровом столе.
     /// </param>
     /// <param name="deckSize" xml:lang = "ru">
-    /// Текущее количество карт в колоде
+    /// Текущее количество карт в колоде.
     /// </param>
     /// <param name="resultCard" xml:lang = "ru">
     /// Карта, которую нужно подкинуть. Если карта для атаки не найдется,
@@ -44,7 +44,7 @@ public interface IBotStrategy
     /// Карты, находящиеся на игровом столе.
     /// </param>
     /// <param name="deckSize" xml:lang = "ru">
-    /// Текущее количество карт в колоде
+    /// Текущее количество карт в колоде.
     /// </param>
     /// <param name="resultCard" xml:lang = "ru">
     /// Карта, которой бот отбивается. Если карта для защиты не найдется,
