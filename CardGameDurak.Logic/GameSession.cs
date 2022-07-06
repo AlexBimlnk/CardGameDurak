@@ -117,24 +117,24 @@ public class GameSession : IEquatable<IGameSession>
                           && (Desktop.Count == curSession.Desktop.Count));
         if (countEquals)
         {
-             for (int i = 0; i < Players.Count; i++)
-             {
-                 if (GetPlayerCards(Players.ElementAt(i)).Count
-                     != GetPlayerCards(curSession.Players.ElementAt(i)).Count)
-                 {
-                     countEquals = false;
-                     break;
-                 }
-             }
-             for (int i = 0; i < Desktop.Count; i++)
-             {
-                 if (Desktop.ElementAt(i) != curSession.Desktop.ElementAt(i)
-                     || !Desktop.ElementAt(i).GetType().Equals(curSession.Desktop.ElementAt(i).GetType()))
-                 {
-                     countEquals = false;
-                     break;
-                 }
-             }
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (GetPlayerCards(Players.ElementAt(i)).Count
+                    != GetPlayerCards(curSession.Players.ElementAt(i)).Count)
+                {
+                    countEquals = false;
+                    break;
+                }
+            }
+            for (int i = 0; i < Desktop.Count; i++)
+            {
+                if (Desktop.ElementAt(i) != curSession.Desktop.ElementAt(i)
+                    || !Desktop.ElementAt(i).GetType().Equals(curSession.Desktop.ElementAt(i).GetType()))
+                {
+                    countEquals = false;
+                    break;
+                }
+            }
         }
         return countEquals;
     }
