@@ -35,6 +35,12 @@ public class Card : IEquatable<ICard>
     public IPlayer? Owner { get; set; }
 
     /// <inheritdoc/>
+    public bool IsTrump { get; set; }
+
+    /// <inheritdoc/>
+    public bool IsCloseOnDesktop { get; set; }
+
+    /// <inheritdoc/>
     public bool Equals(ICard? curCard)
     {
         if (curCard is null) 
