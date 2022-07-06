@@ -7,7 +7,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Игровая сессия.
 /// </summary>
-public class GameSession : IEquatable<IGameSession>, IEquatable<ICard>
+public class GameSession : IEquatable<IGameSession>
 {
     private const int DEFAULT_SIZE_DECK = 36;
     private const int DEFAULT_AMOUNT_PLAYERS = 2;
