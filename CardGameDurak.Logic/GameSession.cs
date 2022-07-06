@@ -7,7 +7,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Игровая сессия.
 /// </summary>
-public class GameSession : IEquatable<IGameSession>
+public class GameSession : IEquatable<IGameSession>, IEquatable<ICard>
 {
     private const int DEFAULT_SIZE_DECK = 36;
     private const int DEFAULT_AMOUNT_PLAYERS = 2;
@@ -105,38 +105,17 @@ public class GameSession : IEquatable<IGameSession>
     }
 
     /// <inheritdoc/>
-
     public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
 
     /// <inheritdoc/>
     public bool Equals(IGameSession? curSession)
     {
-        if (curSession is null)
+        if (curSession is null || Id != curSession.Id || Version != curSession.Version 
+            || Players.Count != curSession.Players.Count || Desktop.Count != curSession.Desktop.Count)
             return false;
-        var countEquals = ((Players.Count == curSession.Players.Count)
-                          && (Desktop.Count == curSession.Desktop.Count));
-        if (countEquals)
-        {
-            for (int i = 0; i < Players.Count; i++)
-            {
-                if (GetPlayerCards(Players.ElementAt(i)).Count
-                    != GetPlayerCards(curSession.Players.ElementAt(i)).Count)
-                {
-                    countEquals = false;
-                    break;
-                }
-            }
-            for (int i = 0; i < Desktop.Count; i++)
-            {
-                if (Desktop.ElementAt(i) != curSession.Desktop.ElementAt(i)
-                    || !Desktop.ElementAt(i).GetType().Equals(curSession.Desktop.ElementAt(i).GetType()))
-                {
-                    countEquals = false;
-                    break;
-                }
-            }
-        }
-        return countEquals;
+        if (Players.Except(curSession.Players).Any() || Desktop.Except(curSession.Desktop).Any())
+            return false;
+        return true;
     }
 
     /// <inheritdoc/>
@@ -144,12 +123,12 @@ public class GameSession : IEquatable<IGameSession>
     {
         if (obj is null)
             return false;
-        if ((obj is not GameSession curSession) || (curSession is null))
-            return false;
+        if (obj is IGameSession session)
+            return Equals(session);
         else
-            return Equals(curSession);
+            return false;
     }
 
     /// <inheritdoc/>
-    public override int GetHashCode() => base.GetHashCode();
+    public override int GetHashCode() => HashCode.Combine(Id, Version);
 }
