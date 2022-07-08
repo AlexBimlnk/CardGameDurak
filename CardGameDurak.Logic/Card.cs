@@ -1,6 +1,5 @@
 ﻿using CardGameDurak.Abstractions;
 using CardGameDurak.Abstractions.Enums;
-using CardGameDurak.Abstractions.GameSession;
 using CardGameDurak.Abstractions.Players;
 
 namespace CardGameDurak.Logic;
@@ -43,9 +42,9 @@ public class Card : IEquatable<ICard>
     /// <inheritdoc/>
     public bool Equals(ICard? curCard)
     {
-        if (curCard is null) 
+        if (curCard is null)
             return false;
-        if (Rank != curCard.Rank || Suit != curCard.Suit || Owner != curCard.Owner)
+        if (Rank != curCard.Rank || Suit != curCard.Suit)
             return false;
         return true;
     }

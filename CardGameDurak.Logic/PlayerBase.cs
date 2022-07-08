@@ -1,4 +1,5 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.Players;
 
 namespace CardGameDurak.Logic;
@@ -6,7 +7,7 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Базовый класс для всех игроков.
 /// </summary>
-internal abstract class PlayerBase : IPlayer
+internal abstract class PlayerBase : IEquatable<IPlayer>
 {
     protected readonly List<ICard> _cards = new List<ICard>(6);
 
@@ -20,6 +21,26 @@ internal abstract class PlayerBase : IPlayer
 
     /// <inheritdoc/>
     public int? Id { get; set; }
+
+    /// <inheritdoc/>
+    public bool Equals(IPlayer? curPlayer)
+    {
+        if (curPlayer is null)
+            return false;
+        if (Name != curPlayer.Name || Id != curPlayer.Id || CountCards != curPlayer.CountCards)
+            return false;
+        return true;
+    }
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
+        if (obj is IPlayer player)
+            return Equals(player);
+        else
+            return false;
+    }
+    public override int GetHashCode() => HashCode.Combine(Id, Name);
 
     /// <summary xml:lang = "ru">
     /// Принимает карты, которые ему выдают.

@@ -110,7 +110,7 @@ public class GameSession : IEquatable<IGameSession>
     /// <inheritdoc/>
     public bool Equals(IGameSession? curSession)
     {
-        if (curSession is null || Id != curSession.Id || Version != curSession.Version 
+        if (curSession is null || Id != curSession.Id || Version != curSession.Version
             || Players.Count != curSession.Players.Count || Desktop.Count != curSession.Desktop.Count)
             return false;
         if (Players.Except(curSession.Players).Any() || Desktop.Except(curSession.Desktop).Any())
