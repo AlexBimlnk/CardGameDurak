@@ -34,7 +34,7 @@ public class GameSessionTests
             3
         }
     };
-    
+
     #region Конструкторы
 
     [Fact(DisplayName = "Can be created.")]
@@ -44,8 +44,8 @@ public class GameSessionTests
         // Arrange
         var id = new GameSessionId(1);
         var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
-        var players = new List<IPlayer>() 
-        { 
+        var players = new List<IPlayer>()
+        {
             Mock.Of<IPlayer>(MockBehavior.Strict),
             Mock.Of<IPlayer>(MockBehavior.Strict)
         };
@@ -154,6 +154,48 @@ public class GameSessionTests
     [Fact(DisplayName = "Can't give cards when argunment is invalid.")]
     [Trait("Category", "Properties")]
     public void CanNotGiveCardsWhenArgumentIsInvalid()
+    {
+        // Arrange
+        var id = new GameSessionId(1);
+        var players = new List<IPlayer>()
+        {
+            Mock.Of<IPlayer>(MockBehavior.Strict),
+            Mock.Of<IPlayer>(MockBehavior.Strict)
+        };
+        var deck = new List<ICard>();
+        var session = new GameSession(id, deck, players);
+
+        // Act
+
+        // Assert
+        Assert.True(false);
+    }
+
+    [Theory(DisplayName = "Sessions are equivalent")]
+    [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))]
+    [Trait("Category", "Properties")]
+    public void SessionsEquals(GameSessionId Id, int Version)
+    {
+        // Arrange
+        var id = new GameSessionId(1);
+        var deck = new List<ICard>() { Mock.Of<ICard>(MockBehavior.Strict) };
+        var players = new List<IPlayer>()
+        {
+            Mock.Of<IPlayer>(MockBehavior.Strict),
+            Mock.Of<IPlayer>(MockBehavior.Strict)
+        };
+        var session = new GameSession(id, deck, players);
+        var curSession = new GameSession(Id, deck, players);
+        // Act
+        var result = session.Equals(curSession);
+
+        // Assert
+        result.Should().Be(true);
+    }
+
+    [Fact(DisplayName = "Sessions are not equivalent when argument is invalid")]
+    [Trait("Category", "Properties")]
+    public void SessionsDoesNotEqualsWhenArgumentisInvalid()
     {
         // Arrange
         var id = new GameSessionId(1);

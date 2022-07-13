@@ -62,6 +62,9 @@ public class GameSession : IEquatable<IGameSession>
     /// <inheritdoc/>
     public IReadOnlyCollection<ICard> Desktop => _desktop;
 
+    /// <inheritdoc/>
+    public IReadOnlyCollection<ICard> Deck => _deck;
+
     private void AddPlayers(IEnumerable<IPlayer> players)
     {
         _players.AddRange(players);
@@ -111,9 +114,8 @@ public class GameSession : IEquatable<IGameSession>
     public bool Equals(IGameSession? curSession)
     {
         if (curSession is null || Id != curSession.Id || Version != curSession.Version
-            || Players.Count != curSession.Players.Count || Desktop.Count != curSession.Desktop.Count)
-            return false;
-        if (Players.Except(curSession.Players).Any() || Desktop.Except(curSession.Desktop).Any())
+            || Players.Count != curSession.Players.Count || Desktop.Count != curSession.Desktop.Count
+            || Deck.Count != curSession.Deck.Count)
             return false;
         return true;
     }

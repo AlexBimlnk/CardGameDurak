@@ -28,6 +28,11 @@ public interface IGameSession
     public IReadOnlyCollection<ICard> Desktop { get; }
 
     /// <summary xml:lang = "ru">
+    /// Список карт, находящихся в колоде.
+    /// </summary>
+    public IReadOnlyCollection<ICard> Deck{ get; }
+
+    /// <summary xml:lang = "ru">
     /// Возвращает карты, принадлежащие указанному игроку.
     /// </summary>
     /// <param name="player" xml:lang = "ru">
