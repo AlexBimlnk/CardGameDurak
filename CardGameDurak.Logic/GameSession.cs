@@ -117,6 +117,15 @@ public class GameSession : IEquatable<IGameSession>
             || Players.Count != curSession.Players.Count || Desktop.Count != curSession.Desktop.Count
             || Deck.Count != curSession.Deck.Count)
             return false;
+        for (int i = 0; i < Players.Count; i++)
+            if (Players.ElementAt(i).CountCards != curSession.Players.ElementAt(i).CountCards)
+                return false;
+        for (int i = 0; i < Deck.Count; i++)
+            if (!Deck.ElementAt(i).Equals(curSession.Deck.ElementAt(i)))
+                return false;
+        for (int i = 0; i < Desktop.Count; i++)
+            if (!Desktop.ElementAt(i).Equals(curSession.Desktop.ElementAt(i)))
+                return false;
         return true;
     }
 
