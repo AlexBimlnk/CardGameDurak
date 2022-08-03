@@ -2,6 +2,8 @@
 using CardGameDurak.Abstractions.GameSession;
 using CardGameDurak.Abstractions.Players;
 
+using Microsoft.Extensions.Options;
+
 namespace CardGameDurak.Logic;
 
 /// <summary xml:lang = "ru">
@@ -19,6 +21,8 @@ public class GameSession : IGameSession
     private readonly List<IPlayer> _players = new(DEFAULT_AMOUNT_PLAYERS);
     private readonly List<ICard> _desktop = new(MAX_AMOUNT_CARD_ON_DESKTOP);
 
+    private readonly GameSessionConfiguration _configuration;
+
     private readonly Random _random = new();
 
     /// <summary xml:lang = "ru">
@@ -26,6 +30,9 @@ public class GameSession : IGameSession
     /// </summary>
     /// <param name="id" xml:lang = "ru">
     /// Идентификатор игровой сессии.
+    /// </param>
+    /// <param name="configuration" xml:lang = "ru">
+    /// Конфигурация игровой сессии.
     /// </param>
     /// <param name="deck" xml:lang = "ru">
     /// Коллекция карт, представляющая колоду.
@@ -41,11 +48,13 @@ public class GameSession : IGameSession
     /// </exception>
     public GameSession(
         GameSessionId id,
+        GameSessionConfiguration configuration,
         IEnumerable<ICard> deck, 
         IEnumerable<IPlayer> players)
     {
         Id = id;
-        _deck.AddRange(deck ?? throw new ArgumentNullException(nameof(deck)));
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        AddDeck(deck ?? throw new ArgumentNullException(nameof(deck)));
         AddPlayers(players ?? throw new ArgumentNullException(nameof(players)));
     }
 
@@ -65,11 +74,25 @@ public class GameSession : IGameSession
     {
         _players.AddRange(players);
 
-        if (_players.Count < 2)
-            throw new ArgumentException("Count of players can't be less 2.", nameof(players));
+        if (_players.Count < _configuration.MinPlayersCount ||
+            _players.Count > _configuration.MaxPlayersCount)
+        {
+            throw new ArgumentOutOfRangeException(nameof(_players.Count), 
+                "Players count is not included in the configuration interval");
+        }
 
         foreach (var i in Enumerable.Range(0, _players.Count))
             _players[i].Id = i + 1;
+    }
+    private void AddDeck(IEnumerable<ICard> cards)
+    {
+        _deck.AddRange(cards);
+
+        if (_deck.Count != _configuration.DeckSize)
+        {
+            throw new ArgumentOutOfRangeException(nameof(_deck.Count),
+                "Deck count is not included in the configuration interval");
+        }
     }
 
     /// <summary xml:lang = "ru">

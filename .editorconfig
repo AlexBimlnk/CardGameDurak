@@ -65,7 +65,7 @@ csharp_prefer_braces = false:suggestion
 #prefer block bodies for accessors
 csharp_style_expression_bodied_accessors = when_on_single_line:error
 #prefer block bodies for constructors
-csharp_style_expression_bodied_constructors = when_on_single_line:error
+csharp_style_expression_bodied_constructors = false:error
 #prefer block bodies for indexers
 csharp_style_expression_bodied_indexers = false:error
 #prefer block bodies for methods
