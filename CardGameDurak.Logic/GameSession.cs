@@ -1,4 +1,5 @@
 ﻿using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.GameSession;
 using CardGameDurak.Abstractions.Players;
 
@@ -12,13 +13,15 @@ namespace CardGameDurak.Logic;
 public class GameSession : IGameSession
 {
     private const int DEFAULT_SIZE_DECK = 36;
-    private const int DEFAULT_AMOUNT_PLAYERS = 2;
+    private const int MAX_SIZE_DECK = 52;
+    private const int MIN_AMOUNT_PLAYERS = 2;
+    private const int MAX_AMOUNT_PLAYERS = 6;
     private const int MAX_AMOUNT_CARD_ON_DESKTOP = 12;
     private const int MAX_AMOUNT_CARD_TO_GIVE = 6;
     private const int MIN_AMOUNT_CARD_TO_GIVE = 1;
 
     private readonly List<ICard> _deck = new(DEFAULT_SIZE_DECK);
-    private readonly List<IPlayer> _players = new(DEFAULT_AMOUNT_PLAYERS);
+    private readonly List<IPlayer> _players = new(MIN_AMOUNT_PLAYERS);
     private readonly List<ICard> _desktop = new(MAX_AMOUNT_CARD_ON_DESKTOP);
 
     private readonly GameSessionConfiguration _configuration;
@@ -125,6 +128,14 @@ public class GameSession : IGameSession
 
         return _();
     }
+
+    /// <summary xml:lang = "ru">
+    /// Устанавливает козырную масть карт
+    /// </summary>
+    /// <returns xml:lang = "ru">
+    /// Возвращает масть типа Suit <see cref="Suit"/>.
+    /// </returns>
+    public Suit SetTrumpCard() => _deck[_random.Next(0, _deck.Count)].Suit;
 
     /// <inheritdoc/>
     public IReadOnlyCollection<ICard> GetPlayerCards(IPlayer player) => throw new NotImplementedException();
