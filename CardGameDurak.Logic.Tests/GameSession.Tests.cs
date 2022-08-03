@@ -154,7 +154,7 @@ public class GameSessionTests
     }
     #endregion
 
-   #region Методы
+    #region Методы
 
     [Theory(DisplayName = "Can give cards.")]
     [MemberData(nameof(GiveCardsData), MemberType = typeof(GameSessionTests))] 
@@ -194,11 +194,11 @@ public class GameSessionTests
         {
             MinPlayersCount = 2,
             MaxPlayersCount = 2,
-            DeckSize = 36
+            DeckSize = 1
         };
         var players = CreateMockPlayers();
-        var emptyDeck = new List<ICard>();
-        var session = new GameSession(id, configuration, emptyDeck, players);
+        var deck = CreateMockDeck();
+        var session = new GameSession(id, configuration, deck, players);
 
         // Act
         var exception = Record.Exception(() => session.GiveCards(countCards));

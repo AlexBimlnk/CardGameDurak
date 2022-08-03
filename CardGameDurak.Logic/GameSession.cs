@@ -3,8 +3,6 @@ using CardGameDurak.Abstractions.Enums;
 using CardGameDurak.Abstractions.GameSession;
 using CardGameDurak.Abstractions.Players;
 
-using Microsoft.Extensions.Options;
-
 namespace CardGameDurak.Logic;
 
 /// <summary xml:lang = "ru">
@@ -12,16 +10,12 @@ namespace CardGameDurak.Logic;
 /// </summary>
 public class GameSession : IGameSession
 {
-    private const int DEFAULT_SIZE_DECK = 36;
-    private const int MAX_SIZE_DECK = 52;
-    private const int MIN_AMOUNT_PLAYERS = 2;
-    private const int MAX_AMOUNT_PLAYERS = 6;
     private const int MAX_AMOUNT_CARD_ON_DESKTOP = 12;
     private const int MAX_AMOUNT_CARD_TO_GIVE = 6;
     private const int MIN_AMOUNT_CARD_TO_GIVE = 1;
 
-    private readonly List<ICard> _deck = new(DEFAULT_SIZE_DECK);
-    private readonly List<IPlayer> _players = new(MIN_AMOUNT_PLAYERS);
+    private readonly List<ICard> _deck;
+    private readonly List<IPlayer> _players;
     private readonly List<ICard> _desktop = new(MAX_AMOUNT_CARD_ON_DESKTOP);
 
     private readonly GameSessionConfiguration _configuration;
@@ -57,6 +51,8 @@ public class GameSession : IGameSession
     {
         Id = id;
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        _players = new(_configuration.MinPlayersCount);
+        _deck = new(_configuration.DeckSize);
         AddDeck(deck ?? throw new ArgumentNullException(nameof(deck)));
         AddPlayers(players ?? throw new ArgumentNullException(nameof(players)));
     }
@@ -133,7 +129,7 @@ public class GameSession : IGameSession
     /// Устанавливает козырную масть карт
     /// </summary>
     /// <returns xml:lang = "ru">
-    /// Возвращает масть типа Suit <see cref="Suit"/>.
+    /// Возвращает масть типа <see cref="Suit"/>.
     /// </returns>
     public Suit SetTrumpCard() => _deck[_random.Next(0, _deck.Count)].Suit;
 
