@@ -28,6 +28,8 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _configuration = options?.Value ?? throw new ArgumentNullException(nameof(options));
+
+        _logger.LogDebug($"{nameof(CloudCoordinator)} started");
     }
 
     public string Name => "I SINGLE COORDINATOR";
