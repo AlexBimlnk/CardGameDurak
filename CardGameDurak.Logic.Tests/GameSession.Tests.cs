@@ -66,11 +66,17 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
+        var configuration = new GameSessionConfiguration
+        {
+            MinPlayersCount = 2,
+            MaxPlayersCount = 2,
+            DeckSize = 1
+        };
         var deck = CreateMockDeck();
         var players = CreateMockPlayers();
 
         // Act
-        var exception = Record.Exception(() => new GameSession(id, deck, players));
+        var exception = Record.Exception(() => new GameSession(id, configuration, deck, players));
 
         // Assert
         exception.Should().BeNull();
@@ -82,34 +88,43 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
+        var configuration = new GameSessionConfiguration
+        {
+            MinPlayersCount = 2,
+            MaxPlayersCount = 2,
+            DeckSize = 1
+        };
         var deck = CreateMockDeck();
         var players = CreateMockPlayers();
 
         // Act
-        var exception1 = Record.Exception(() => new GameSession(id, null!, players));
-        var exception2 = Record.Exception(() => new GameSession(id, deck, null!));
+        var exception1 = Record.Exception(() => new GameSession(id, configuration, null!, players));
+        var exception2 = Record.Exception(() => new GameSession(id, configuration, deck, null!));
 
         // Assert
         new[] { exception1, exception2 }.Should().AllBeOfType<ArgumentNullException>();
     }
 
-    [Fact(DisplayName = "Can't be created when players count less 2.")]
+    [Fact(DisplayName = "Can't be created without configuration.")]
     [Trait("Category", "Constructors")]
-    public void CanNotBeCreatedWhenCountPlayersLessTwo()
+    public void CanNotBeCreatedWithoutConfiguration()
     {
         // Arrange
         var id = new GameSessionId(1);
-        var deck = CreateMockDeck();
-        var players = new List<IPlayer>()
+        var configuration = new GameSessionConfiguration
         {
-            Mock.Of<IPlayer>(MockBehavior.Strict),
+            MinPlayersCount = 2,
+            MaxPlayersCount = 2,
+            DeckSize = 1
         };
+        var deck = CreateMockDeck();
+        var players = CreateMockPlayers();
 
         // Act
-        var exception = Record.Exception(() => new GameSession(id, deck, players));
+        var exception = Record.Exception(() => new GameSession(id, null!, deck, players));
 
         // Assert
-        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        exception.Should().BeOfType<ArgumentNullException>();
     }
     #endregion
 
@@ -121,9 +136,15 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
+        var configuration = new GameSessionConfiguration
+        {
+            MinPlayersCount = 2,
+            MaxPlayersCount = 2,
+            DeckSize = 1
+        };
         var deck = CreateMockDeck();
         var players = CreateMockPlayers();
-        var session = new GameSession(id, deck, players);
+        var session = new GameSession(id, configuration, deck, players);
 
         // Act
         var result = session.Id;
@@ -142,10 +163,16 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
+        var configuration = new GameSessionConfiguration
+        {
+            MinPlayersCount = 2,
+            MaxPlayersCount = 2,
+            DeckSize = deckSize
+        };
         var deck = CreateMockDeck(deckSize);
         var players = CreateMockPlayers();
 
-        var session = new GameSession(id, deck, players);
+        var session = new GameSession(id, configuration, deck, players);
 
         // Act
         var result = session.GiveCards(countCards);
@@ -160,9 +187,15 @@ public class GameSessionTests
     {
         // Arrange
         var id = new GameSessionId(1);
+        var configuration = new GameSessionConfiguration
+        {
+            MinPlayersCount = 2,
+            MaxPlayersCount = 2,
+            DeckSize = 36
+        };
         var players = CreateMockPlayers();
         var emptyDeck = new List<ICard>();
-        var session = new GameSession(id, emptyDeck, players);
+        var session = new GameSession(id, configuration, emptyDeck, players);
 
         // Act
 
