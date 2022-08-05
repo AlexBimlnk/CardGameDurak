@@ -7,11 +7,11 @@ using FluentAssertions;
 using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
-public class AdditionalStrategyTests
+public class MediumStrategyTests
 {
     #region Методы
     [Theory(DisplayName = "Works attack additional strategy.")]
-    [MemberData(nameof(AdditionalStrategyTestsData.TryAttackData), MemberType = typeof(AdditionalStrategyTestsData))]
+    [MemberData(nameof(MediumStrategyTestsData.TryAttackData), MemberType = typeof(MediumStrategyTestsData))]
     [Trait("Category", "Properties")]
     public void TryAttackWorks(
         ICard[] botCards,
@@ -21,7 +21,7 @@ public class AdditionalStrategyTests
         bool expectedResult)
     {
         // Arrange
-        var strategy = new AdditionalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var result = strategy.TryAttack(botCards, desktopCards, deckSize, out var resultCard);
@@ -32,7 +32,7 @@ public class AdditionalStrategyTests
     }
 
     [Theory(DisplayName = "Works defence additional strategy.")]
-    [MemberData(nameof(AdditionalStrategyTestsData.TryDefenceData), MemberType = typeof(AdditionalStrategyTestsData))]
+    [MemberData(nameof(MediumStrategyTestsData.TryDefenceData), MemberType = typeof(MediumStrategyTestsData))]
     [Trait("Category", "Properties")]
     public void CanDefence(
         ICard[] botCards,
@@ -44,7 +44,7 @@ public class AdditionalStrategyTests
     {
         // Arrange
         var ownerId = 1;
-        var strategy = new AdditionalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var result = strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard);

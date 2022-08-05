@@ -9,14 +9,14 @@ using Moq;
 using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
-public class AdditionalStrategyTestsData
+public class MediumStrategyTestsData
 {
     // "Заглушки" на бота (s_playerStub1) и игрока (s_playerStub2)
     private static Mock<IPlayer> s_playerStub1 = new(MockBehavior.Strict);
     private static Mock<IPlayer> s_playerStub2 = new(MockBehavior.Strict);
 
 
-    static AdditionalStrategyTestsData()
+    static MediumStrategyTestsData()
     {
         s_playerStub1.Setup(x => x.Id).Returns(1);
         s_playerStub2.Setup(x => x.Id).Returns(2);
