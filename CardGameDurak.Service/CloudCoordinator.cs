@@ -7,6 +7,8 @@ using CardGameDurak.Abstractions.Players;
 using CardGameDurak.Logic;
 using CardGameDurak.Service.Models;
 
+using Microsoft.Extensions.Options;
+
 namespace CardGameDurak.Service;
 
 internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
@@ -20,10 +22,15 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
     private const int STORE_UPDATED_IN_SECONDS = 30;
 
     private readonly ILogger<CloudCoordinator> _logger;
+    private readonly GameSessionConfiguration _configuration;
 
-    public CloudCoordinator(ILogger<CloudCoordinator> logger) =>
+    public CloudCoordinator(ILogger<CloudCoordinator> logger, IOptions<GameSessionConfiguration> options)
+    {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _configuration = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
+        _logger.LogDebug($"{nameof(CloudCoordinator)} started");
+    }
 
     public string Name => "I SINGLE COORDINATOR";
 
@@ -86,6 +93,7 @@ internal sealed class CloudCoordinator : IGameCoordinator<CloudAwaitPlayer>
                 var sessionId = new GameSessionId(_sessions.Count + 1);
                 var session = new GameSession(
                     sessionId,
+                    _configuration,
                     CreateDeck(),
                     players);
 
