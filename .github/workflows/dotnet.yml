@@ -32,4 +32,4 @@ jobs:
       run: dotnet build CardGameDurakSolution.sln
       
     - name: Test
-      run: dotnet test CardGameDurakSolution.sln --verbosity normal
+      run: dotnet test --no-restore --verbosity normal
