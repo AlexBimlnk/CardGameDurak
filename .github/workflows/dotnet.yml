@@ -23,13 +23,13 @@ jobs:
       uses: NuGet/setup-nuget@v1.0.6
         
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore CardGameDurakSolution.sln
       
     - name: NuGet Restore  
-      run: nuget restore 
+      run: nuget restore CardGameDurakSolution.sln
       
     - name: Build
-      run: dotnet build --no-restore2
+      run: dotnet build CardGameDurakSolution.sln
       
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test CardGameDurakSolution.sln --verbosity normal
