@@ -31,16 +31,16 @@ public class MediumStrategy: IBotStrategy
             > 4 => resultCard ??= simpleCards
                                     .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
                                     .MinBy(x => x.Rank)
-                                        ?? handCards
-                                            .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                                            .Where(x => x.Rank < 10)
-                                            .MinBy(x => x.Rank),
+                              ?? handCards
+                                    .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
+                                    .Where(x => x.Rank < 10)
+                                    .MinBy(x => x.Rank),
             _ => resultCard ??= simpleCards
                                 .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
                                 .MinBy(x => x.Rank)
-                                    ?? handCards
-                                        .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                                        .MinBy(x => x.Rank)
+                            ?? handCards
+                                .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
+                                .MinBy(x => x.Rank)
         };
 
         return resultCard is not null;
@@ -64,10 +64,11 @@ public class MediumStrategy: IBotStrategy
                             .Where(x => x.Owner!.Id != ownerId)
                             .First(x => !x.IsCloseOnDesktop);
         closedCard = needClosed;
-        resultCard = handCards.Where(x => !x.IsTrump)
-                              .Where(x => needClosed.Rank < x.Rank)
-                              .Where(x => needClosed.Suit == x.Suit)
-                              .MinBy(x => x.Rank);
+        resultCard = handCards
+                        .Where(x => !x.IsTrump)
+                        .Where(x => needClosed.Rank < x.Rank)
+                        .Where(x => needClosed.Suit == x.Suit)
+                        .MinBy(x => x.Rank);
         resultCard ??= deckSize switch
         {
             > 11 => handCards
@@ -75,24 +76,25 @@ public class MediumStrategy: IBotStrategy
                     .Where(needClosed => !needClosed.IsTrump)
                     .Where(x => x.Rank <= 10)
                     .MinBy(x => x.Rank),
-            > 4 => resultCard ??= handCards.Where(x => x.IsTrump)
-                    .Where(x => !needClosed.IsTrump)
-                    .MinBy(x => x.Rank)
-                        ?? handCards
-                            .Where(x => x.IsTrump)
-                            .Where(x => needClosed.IsTrump)
-                            .Where(x => x.Rank > needClosed.Rank)
-                            .Where(x => needClosed.Rank <= 10)
-                            .MinBy(x => x.Rank),
+            > 4 => resultCard ??= handCards
+                                    .Where(x => x.IsTrump)
+                                    .Where(x => !needClosed.IsTrump)
+                                    .MinBy(x => x.Rank)
+                              ?? handCards
+                                    .Where(x => x.IsTrump)
+                                    .Where(x => needClosed.IsTrump)
+                                    .Where(x => x.Rank > needClosed.Rank)
+                                    .Where(x => needClosed.Rank <= 10)
+                                    .MinBy(x => x.Rank),
             _ => resultCard ??= handCards
                                 .Where(x => x.IsTrump)
                                 .Where(x => !needClosed.IsTrump)
                                 .MinBy(x => x.Rank)
-                        ?? handCards
-                            .Where(x => x.IsTrump)
-                            .Where(x => needClosed.IsTrump)
-                            .Where(x => x.Rank > needClosed.Rank)
-                            .MinBy(x => x.Rank)
+                            ?? handCards
+                                .Where(x => x.IsTrump)
+                                .Where(x => needClosed.IsTrump)
+                                .Where(x => x.Rank > needClosed.Rank)
+                                .MinBy(x => x.Rank)
         };
         return resultCard is not null;
     }
