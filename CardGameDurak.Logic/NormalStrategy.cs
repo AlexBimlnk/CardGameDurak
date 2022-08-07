@@ -36,8 +36,10 @@ public sealed class NormalStrategy : IBotStrategy
         out ICard? resultCard,
         out ICard closedCard)
     {
-        if (desktopCards is null || desktopCards.Count == 0)
-            throw new ArgumentNullException(nameof(desktopCards));
+        if (desktopCards == null)
+            ArgumentNullException.ThrowIfNull(desktopCards);
+        if (desktopCards.Count == 0)
+            throw new ArgumentException("Карт нет на столе");
 
         var needClosed = desktopCards.Where(x => x.Owner!.Id != ownerId)
                                      .First(x => !x.IsCloseOnDesktop);
