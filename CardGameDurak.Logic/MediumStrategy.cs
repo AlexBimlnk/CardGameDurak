@@ -54,19 +54,18 @@ public class MediumStrategy: IBotStrategy
         out ICard? resultCard,
         out ICard closedCard)
     {
-        if (desktopCards == null)
-            ArgumentNullException.ThrowIfNull(desktopCards);
+        ArgumentNullException.ThrowIfNull(desktopCards);
         if (desktopCards.Count == 0)
             throw new ArgumentException("Карт нет на столе");
         var needClosed = desktopCards
-                            .Where(x => x.Owner!.Id != ownerId)
-                            .First(x => !x.IsCloseOnDesktop);
+                        .Where(x => x.Owner!.Id != ownerId)
+                        .First(x => !x.IsCloseOnDesktop);
         closedCard = needClosed;
         resultCard = handCards
-                        .Where(x => !x.IsTrump)
-                        .Where(x => needClosed.Rank < x.Rank)
-                        .Where(x => needClosed.Suit == x.Suit)
-                        .MinBy(x => x.Rank);
+                    .Where(x => !x.IsTrump)
+                    .Where(x => needClosed.Rank < x.Rank)
+                    .Where(x => needClosed.Suit == x.Suit)
+                    .MinBy(x => x.Rank);
         resultCard ??= deckSize switch
         {
             > 11 => handCards

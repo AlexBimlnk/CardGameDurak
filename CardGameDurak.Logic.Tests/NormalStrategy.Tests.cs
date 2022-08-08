@@ -54,5 +54,25 @@ public class NormalStrategyTests
         resultCard.Should().BeEquivalentTo(expectedCard);
         resultClosedCard.Should().BeEquivalentTo(closedCard);
     }
+
+    [Fact]
+    public void CanNotDefenceWhenDesktopIsNull(ICard[] botCards,
+        IReadOnlyCollection<ICard> desktopCards,
+        ICard closedCard,
+        ICard expectedCard,
+        bool expectedResult)
+    {
+        // Act
+
+        // Assert
+    }
+
+    [Fact]
+    public void CanNotDefenceWhenDesktopCountIsZero()
+    {
+        // Act
+
+        // Assert
+    }
     #endregion 
 }

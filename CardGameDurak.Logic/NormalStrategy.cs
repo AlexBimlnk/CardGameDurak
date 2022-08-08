@@ -36,8 +36,7 @@ public sealed class NormalStrategy : IBotStrategy
         out ICard? resultCard,
         out ICard closedCard)
     {
-        if (desktopCards == null)
-            ArgumentNullException.ThrowIfNull(desktopCards);
+        ArgumentNullException.ThrowIfNull(desktopCards);
         if (desktopCards.Count == 0)
             throw new ArgumentException("Карт нет на столе");
 

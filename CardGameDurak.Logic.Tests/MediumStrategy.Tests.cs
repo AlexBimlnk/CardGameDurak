@@ -1,14 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using CardGameDurak.Abstractions;
+using CardGameDurak.Abstractions.GameSession;
+using CardGameDurak.Abstractions.Players;
 
 using FluentAssertions;
+
+using Moq;
 
 using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
 public class MediumStrategyTests
 {
+
     #region Методы
     [Theory(DisplayName = "Works attack additional strategy.")]
     [MemberData(nameof(MediumStrategyTestsData.TryAttackData), MemberType = typeof(MediumStrategyTestsData))]
@@ -53,6 +60,44 @@ public class MediumStrategyTests
         result.Should().Be(expectedResult);
         resultCard.Should().BeEquivalentTo(expectedCard);
         resultClosedCard.Should().BeEquivalentTo(closedCard);
+    }
+
+    [Fact(DisplayName = "Bot can not defence cause desktop is null.")]
+    [Trait("Category", "Properties")]
+    public void CanNotDefenceWhenDesktopIsNull()
+    {
+        // Arrange
+        var botCards = Array.Empty<ICard>(); // как тут создать массив mockов?
+        List<ICard> desktopCards = null!;
+        var decksize = 0;
+        ICard closedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        ICard expectedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        var expectedResult = false;
+
+        // Act
+        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, decksize, closedCard, expectedCard, expectedResult));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+    }
+
+    [Fact(DisplayName = "Bot can not defence cause count of desktopCards is 0")]
+    [Trait("Category", "Properties")]
+    public void CanNotDefenceWhenDesktopCountIsZero()
+    {
+        // Arrange
+        var botCards = Array.Empty<ICard>(); // Аналогично
+        var desktopCards = new List<ICard>();
+        var decksize = 0;
+        ICard closedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        ICard expectedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        var expectedResult = false;
+
+        // Act
+        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, decksize, closedCard, expectedCard, expectedResult));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
     }
     #endregion 
 }
