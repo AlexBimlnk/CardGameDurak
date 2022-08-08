@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using CardGameDurak.Abstractions;
 
 using FluentAssertions;
+
+using Moq;
 
 using Xunit;
 
@@ -55,24 +58,40 @@ public class NormalStrategyTests
         resultClosedCard.Should().BeEquivalentTo(closedCard);
     }
 
-    [Fact]
-    public void CanNotDefenceWhenDesktopIsNull(ICard[] botCards,
-        IReadOnlyCollection<ICard> desktopCards,
-        ICard closedCard,
-        ICard expectedCard,
-        bool expectedResult)
+    [Fact(DisplayName = "Bot can not defence cause desktop is null.")]
+    [Trait("Category", "Properties")]
+    public void CanNotDefenceWhenDesktopIsNull()
     {
+        // Arrange
+        var botCards = Array.Empty<ICard>(); // как тут создать массив mockов?
+        List<ICard> desktopCards = null!;
+        ICard closedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        ICard expectedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        var expectedResult = false;
+
         // Act
+        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, closedCard, expectedCard, expectedResult));
 
         // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
     }
 
-    [Fact]
+    [Fact(DisplayName = "Bot can not defence cause count of desktopCards is 0")]
+    [Trait("Category", "Properties")]
     public void CanNotDefenceWhenDesktopCountIsZero()
     {
+        // Arrange
+        var botCards = Array.Empty<ICard>(); // Аналогично
+        var desktopCards = new List<ICard>();
+        ICard closedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        ICard expectedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        var expectedResult = false;
+
         // Act
+        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, closedCard, expectedCard, expectedResult));
 
         // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        #endregion
     }
-    #endregion 
 }
