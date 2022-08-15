@@ -12,6 +12,11 @@ namespace CardGameDurak.Logic;
 /// </summary>
 public class MediumStrategy: IBotStrategy
 {
+    /// <summary xml:lang = "ru">
+    /// Максимально возможная величина козырной карты, которую может использовать бот при достаточном количестве карт
+    /// </summary>
+    public const int MAX_POSSIBLE_RANK_TRUMP_CARD = 10;
+
     /// <inheritdoc/>
     public bool TryAttack(
         IReadOnlyCollection<ICard> handCards,
@@ -33,7 +38,7 @@ public class MediumStrategy: IBotStrategy
                     .MinBy(x => x.Rank)
                         ?? handCards
                             .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                            .Where(x => x.Rank < 10)
+                            .Where(x => x.Rank <= MAX_POSSIBLE_RANK_TRUMP_CARD)
                             .MinBy(x => x.Rank),
             _ => resultCard ??= simpleCards
                     .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
@@ -71,7 +76,7 @@ public class MediumStrategy: IBotStrategy
             > 11 => handCards
                     .Where(x => x.IsTrump)
                     .Where(needClosed => !needClosed.IsTrump)
-                    .Where(x => x.Rank <= 10)
+                    .Where(x => x.Rank <= MAX_POSSIBLE_RANK_TRUMP_CARD)
                     .MinBy(x => x.Rank),
             > 4 => resultCard ??= handCards
                     .Where(x => x.IsTrump)
@@ -81,7 +86,7 @@ public class MediumStrategy: IBotStrategy
                             .Where(x => x.IsTrump)
                             .Where(x => needClosed.IsTrump)
                             .Where(x => x.Rank > needClosed.Rank)
-                            .Where(x => needClosed.Rank <= 10)
+                            .Where(x => needClosed.Rank <= MAX_POSSIBLE_RANK_TRUMP_CARD)
                             .MinBy(x => x.Rank),
             _ => resultCard ??= handCards
                     .Where(x => x.IsTrump)
