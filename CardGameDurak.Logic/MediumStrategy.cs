@@ -24,6 +24,9 @@ public class MediumStrategy: IBotStrategy
         int deckSize,
         out ICard? resultCard)
     {
+        ArgumentNullException.ThrowIfNull(handCards, nameof(handCards));
+        if (deckSize < 0)
+            throw new ArgumentException("Кол-во карт в колоде не может быть отрицательным");
         resultCard = null!;
         var simpleCards = handCards.Where(x => !x.IsTrump);
         if (desktopCards.Count == 0)
@@ -59,7 +62,12 @@ public class MediumStrategy: IBotStrategy
         out ICard? resultCard,
         out ICard closedCard)
     {
-        ArgumentNullException.ThrowIfNull(desktopCards);
+        ArgumentNullException.ThrowIfNull(handCards, nameof(handCards));
+        ArgumentNullException.ThrowIfNull(desktopCards, nameof(desktopCards));
+        if (deckSize < 0)
+            throw new ArgumentException("Кол-во карт в колоде не может быть отрицательным");
+        if (handCards.Count == 0)
+            throw new ArgumentException("Отсутствуют карты у бота, нечем защищаться!");
         if (desktopCards.Count == 0)
             throw new ArgumentException("Карт нет на столе");
         var needClosed = desktopCards

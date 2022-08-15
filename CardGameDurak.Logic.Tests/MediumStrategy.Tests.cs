@@ -67,11 +67,11 @@ public class MediumStrategyTests
     public void CanNotDefenceWhenDesktopIsNull()
     {
         // Arrange
-        var botCards = Array.Empty<ICard>(); // как тут создать массив mockов?
+        var botCards = new ICard[1];
         List<ICard> desktopCards = null!;
         var decksize = 0;
-        ICard closedCard = Mock.Of<ICard>(MockBehavior.Strict);
-        ICard expectedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        ICard closedCard = null!;
+        ICard expectedCard = null!;
         var expectedResult = false;
 
         // Act
@@ -86,15 +86,53 @@ public class MediumStrategyTests
     public void CanNotDefenceWhenDesktopCountIsZero()
     {
         // Arrange
-        var botCards = Array.Empty<ICard>(); // Аналогично
+        var botCards = new ICard[1];
         var desktopCards = new List<ICard>();
         var decksize = 0;
-        ICard closedCard = Mock.Of<ICard>(MockBehavior.Strict);
-        ICard expectedCard = Mock.Of<ICard>(MockBehavior.Strict);
+        ICard closedCard = null!;
+        ICard expectedCard = null!;
         var expectedResult = false;
 
         // Act
         var exception = Record.Exception(() => CanDefence(botCards, desktopCards, decksize, closedCard, expectedCard, expectedResult));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+    }
+
+    [Fact(DisplayName = "Bot can not defence cause there are not hand cards")]
+    [Trait("Category", "Properties")]
+    public void CanNotDefenceWhenHandIsNull()
+    {
+        // Arrange
+        ICard[] botCards = null!;
+        var desktopCards = new List<ICard>();
+        var deckSize = 0;
+        ICard closedCard = null!;
+        ICard expectedCard = null!;
+        var expectedResult = false;
+
+        // Act
+        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, deckSize, closedCard, expectedCard, expectedResult));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+    }
+
+    [Fact(DisplayName = "Bot can not defence cause count of handCards is 0")]
+    [Trait("Category", "Properties")]
+    public void CanNotDefenceWhenHandCountIsZero()
+    {
+        // Arrange
+        var botCards = new ICard[0];
+        var desktopCards = new List<ICard>();
+        var deckSize = 0;
+        ICard closedCard = null!;
+        ICard expectedCard = null!;
+        var expectedResult = false;
+
+        // Act
+        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, deckSize, closedCard, expectedCard, expectedResult));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
