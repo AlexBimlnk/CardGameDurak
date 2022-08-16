@@ -8,6 +8,14 @@ namespace CardGameDurak.Logic;
 public sealed class NormalStrategy : IBotStrategy
 {
     /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException" xml:lnag = "ru">
+    /// Когда список карт в руке (и дополнительно при защите на столе) равен <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException" xml:lnag = "ru">
+    /// Когда кол-во карт в колоде меньше нуля или когда при защите у бота отсутствуют карты в руке, а также на поле
+    /// </exception>
+    
+    /// <inheritdoc/>
     public bool TryAttack(
         IReadOnlyCollection<ICard> handCards,
         IReadOnlyCollection<ICard> desktopCards,

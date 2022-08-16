@@ -63,14 +63,14 @@ public class NormalStrategyTests
     public void CanNotDefenceWhenDesktopIsNull()
     {
         // Arrange
-        var botCards = new ICard[1];
-        List<ICard> desktopCards = null!;
-        ICard closedCard = null!;
-        ICard expectedCard = null!;
-        var expectedResult = false;
+        var ownerId = 1;
+        var botCards = Array.Empty<ICard>();
+        ICard[] desktopCards = null!;
+        var deckSize = 20;
+        var strategy = new NormalStrategy();
 
         // Act
-        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, closedCard, expectedCard, expectedResult));
+        var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -81,14 +81,14 @@ public class NormalStrategyTests
     public void CanNotDefenceWhenDesktopCountIsZero()
     {
         // Arrange
-        var botCards = new ICard[1];
-        var desktopCards = new List<ICard>();
-        ICard closedCard = null!;
-        ICard expectedCard = null!;
-        var expectedResult = false;
+        var ownerId = 1;
+        var botCards = Array.Empty<ICard>();
+        var desktopCards = Array.Empty<ICard>();
+        var deckSize = 20;
+        var strategy = new NormalStrategy();
 
         // Act
-        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, closedCard, expectedCard, expectedResult));
+        var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
@@ -99,14 +99,14 @@ public class NormalStrategyTests
     public void CanNotDefenceWhenHandIsNull()
     {
         // Arrange
+        var ownerId = 1;
         ICard[] botCards = null!;
-        var desktopCards = new List<ICard>();
-        ICard closedCard = null!;
-        ICard expectedCard = null!;
-        var expectedResult = false;
+        var desktopCards = Array.Empty<ICard>();
+        var deckSize = 20;
+        var strategy = new NormalStrategy();
 
         // Act
-        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, closedCard, expectedCard, expectedResult));
+        var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -117,17 +117,36 @@ public class NormalStrategyTests
     public void CanNotDefenceWhenHandCountIsZero()
     {
         // Arrange
-        var botCards = new ICard[0];
-        var desktopCards = new List<ICard>();
-        ICard closedCard = null!;
-        ICard expectedCard = null!;
-        var expectedResult = false;
+        var ownerId = 1;
+        var botCards = Array.Empty<ICard>();
+        var desktopCards = Array.Empty<ICard>();
+        var deckSize = 20;
+        var strategy = new NormalStrategy();
 
         // Act
-        var exception = Record.Exception(() => CanDefence(botCards, desktopCards, closedCard, expectedCard, expectedResult));
+        var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
 
         // Assert
         exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+    }
+
+    [Fact(DisplayName = "Bot can not do anything cause count of deck cards is less 0")]
+    [Trait("Category", "Properties")]
+    public void CanNotDefenceWhenDeckIsLessZero()
+    {
+        // Arrange
+        var ownerId = 1;
+        var botCards = Array.Empty<ICard>();
+        var desktopCards = Array.Empty<ICard>();
+        var deckSize = -1;
+        var strategy = new NormalStrategy();
+
+        // Act
+        var exception1 = Record.Exception(() => strategy.TryAttack(botCards, desktopCards, deckSize, out var resultCard));
+        var exception2 = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
+
+        // Assert
+        new[] { exception1, exception2 }.Should().AllBeOfType<ArgumentException>();
     }
     #endregion
 }

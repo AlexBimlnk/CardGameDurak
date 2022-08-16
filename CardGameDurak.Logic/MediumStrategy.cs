@@ -12,10 +12,15 @@ namespace CardGameDurak.Logic;
 /// </summary>
 public class MediumStrategy: IBotStrategy
 {
-    /// <summary xml:lang = "ru">
-    /// Максимально возможная величина козырной карты, которую может использовать бот при достаточном количестве карт
-    /// </summary>
-    public const int MAX_POSSIBLE_RANK_TRUMP_CARD = 10;
+    private const int MAX_POSSIBLE_RANK_TRUMP_CARD = 10;
+
+    /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException" xml:lnag = "ru">
+    /// Когда список карт в руке (и дополнительно при защите на столе) равен <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException" xml:lnag = "ru">
+    /// Когда кол-во карт в колоде меньше нуля или когда при защите у бота отсутствуют карты в руке, а также на поле
+    /// </exception>
 
     /// <inheritdoc/>
     public bool TryAttack(
