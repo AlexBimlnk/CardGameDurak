@@ -5,11 +5,10 @@ using CardGameDurak.Abstractions;
 
 using FluentAssertions;
 
-using Moq;
-
 using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
+
 public class NormalStrategyTests
 {
     #region Методы

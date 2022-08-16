@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using CardGameDurak.Abstractions;
-using CardGameDurak.Abstractions.GameSession;
-using CardGameDurak.Abstractions.Players;
 
 using FluentAssertions;
-
-using Moq;
 
 using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
+
 public class MediumStrategyTests
 {
 
@@ -136,7 +132,7 @@ public class MediumStrategyTests
 
     [Fact(DisplayName = "Bot can not do anything cause count of deck cards is less 0")]
     [Trait("Category", "Properties")]
-    public void CanNotDefenceWhenDeckIsLessZero()
+    public void CanNotDoAnythingWhenDeckIsLessZero()
     {
         // Arrange
         var ownerId = 1;

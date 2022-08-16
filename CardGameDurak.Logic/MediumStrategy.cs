@@ -10,19 +10,17 @@ namespace CardGameDurak.Logic;
 /// <summary xml:lang = "ru">
 /// Стратегия, используемая ботом на средней сложности.
 /// </summary>
-public class MediumStrategy: IBotStrategy
+public sealed class MediumStrategy: IBotStrategy
 {
     private const int MAX_POSSIBLE_RANK_TRUMP_CARD = 10;
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException" xml:lnag = "ru">
-    /// Когда список карт в руке (и дополнительно при защите на столе) равен <see langword="null"/>.
+    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// Когда список карт находящихся в руке или столе равен <see langword="null"/>.
     /// </exception>
-    /// <exception cref="ArgumentException" xml:lnag = "ru">
-    /// Когда кол-во карт в колоде меньше нуля или когда при защите у бота отсутствуют карты в руке, а также на поле
+    /// <exception cref="ArgumentException" xml:lang = "ru">
+    /// Когда <paramref name="deckSize"/> меньше нуля.
     /// </exception>
-
-    /// <inheritdoc/>
     public bool TryAttack(
         IReadOnlyCollection<ICard> handCards,
         IReadOnlyCollection<ICard> desktopCards,
@@ -30,8 +28,11 @@ public class MediumStrategy: IBotStrategy
         out ICard? resultCard)
     {
         ArgumentNullException.ThrowIfNull(handCards, nameof(handCards));
+        ArgumentNullException.ThrowIfNull(desktopCards);
+
         if (deckSize < 0)
             throw new ArgumentException("Кол-во карт в колоде не может быть отрицательным");
+
         resultCard = null!;
         var simpleCards = handCards.Where(x => !x.IsTrump);
         if (desktopCards.Count == 0)
@@ -59,6 +60,12 @@ public class MediumStrategy: IBotStrategy
     }
 
     /// <inheritdoc/>
+    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// Когда список карт находящихся в руке или столе равен <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException" xml:lang = "ru">
+    /// Когда <paramref name="deckSize"/> меньше нуля или любой список карт пустой.
+    /// </exception>
     public bool TryDefence(
         int ownerId,
         IReadOnlyCollection<ICard> handCards,
@@ -69,12 +76,17 @@ public class MediumStrategy: IBotStrategy
     {
         ArgumentNullException.ThrowIfNull(handCards, nameof(handCards));
         ArgumentNullException.ThrowIfNull(desktopCards, nameof(desktopCards));
+
         if (deckSize < 0)
             throw new ArgumentException("Кол-во карт в колоде не может быть отрицательным");
+
         if (handCards.Count == 0)
             throw new ArgumentException("Отсутствуют карты у бота, нечем защищаться!");
+
         if (desktopCards.Count == 0)
             throw new ArgumentException("Карт нет на столе");
+
+
         var needClosed = desktopCards
                         .Where(x => x.Owner!.Id != ownerId)
                         .First(x => !x.IsCloseOnDesktop);
