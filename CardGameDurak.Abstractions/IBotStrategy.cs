@@ -14,6 +14,9 @@ public interface IBotStrategy
     /// <param name="desktopCards" xml:lang = "ru">
     /// Карты, находящиеся на игровом столе.
     /// </param>
+    /// <param name="deckSize" xml:lang = "ru">
+    /// Текущее количество карт в колоде.
+    /// </param>
     /// <param name="resultCard" xml:lang = "ru">
     /// Карта, которую нужно подкинуть. Если карта для атаки не найдется,
     /// то этот параметр будет <see langword="null"/>.
@@ -25,6 +28,7 @@ public interface IBotStrategy
     public bool TryAttack(
         IReadOnlyCollection<ICard> handCards,
         IReadOnlyCollection<ICard> desktopCards,
+        int deckSize,
         out ICard? resultCard);
 
     /// <summary xml:lang = "ru">
@@ -38,6 +42,9 @@ public interface IBotStrategy
     /// </param>
     /// <param name="desktopCards" xml:lang = "ru">
     /// Карты, находящиеся на игровом столе.
+    /// </param>
+    /// <param name="deckSize" xml:lang = "ru">
+    /// Текущее количество карт в колоде.
     /// </param>
     /// <param name="resultCard" xml:lang = "ru">
     /// Карта, которой бот отбивается. Если карта для защиты не найдется,
@@ -54,6 +61,7 @@ public interface IBotStrategy
         int ownerId,
         IReadOnlyCollection<ICard> handCards,
         IReadOnlyCollection<ICard> desktopCards,
+        int deckSize,
         out ICard? resultCard,
         out ICard closedCard);
 

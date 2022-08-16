@@ -9,21 +9,22 @@ using Xunit;
 
 namespace CardGameDurak.Logic.Tests;
 
-public class NormalStrategyTests
+public class MediumStrategyTests
 {
+
     #region Методы
-    [Theory(DisplayName = "Works attack strategy.")]
-    [MemberData(nameof(NormalStrategyTestsData.TryAttackData), MemberType = typeof(NormalStrategyTestsData))]
+    [Theory(DisplayName = "Works attack additional strategy.")]
+    [MemberData(nameof(MediumStrategyTestsData.TryAttackData), MemberType = typeof(MediumStrategyTestsData))]
     [Trait("Category", "Properties")]
     public void TryAttackWorks(
         ICard[] botCards,
         IReadOnlyCollection<ICard> desktopCards,
+        int deckSize,
         ICard expectedCard,
         bool expectedResult)
     {
         // Arrange
-        var deckSize = 24;
-        var strategy = new NormalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var result = strategy.TryAttack(botCards, desktopCards, deckSize, out var resultCard);
@@ -33,20 +34,20 @@ public class NormalStrategyTests
         resultCard.Should().BeEquivalentTo(expectedCard);
     }
 
-    [Theory(DisplayName = "Works defence strategy.")]
-    [MemberData(nameof(NormalStrategyTestsData.TryDefenceData), MemberType = typeof(NormalStrategyTestsData))]
+    [Theory(DisplayName = "Works defence additional strategy.")]
+    [MemberData(nameof(MediumStrategyTestsData.TryDefenceData), MemberType = typeof(MediumStrategyTestsData))]
     [Trait("Category", "Properties")]
     public void CanDefence(
         ICard[] botCards,
         IReadOnlyCollection<ICard> desktopCards,
+        int deckSize,
         ICard closedCard,
         ICard expectedCard,
         bool expectedResult)
     {
         // Arrange
         var ownerId = 1;
-        var deckSize = 24;
-        var strategy = new NormalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var result = strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard);
@@ -66,7 +67,7 @@ public class NormalStrategyTests
         var botCards = Array.Empty<ICard>();
         ICard[] desktopCards = null!;
         var deckSize = 20;
-        var strategy = new NormalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
@@ -84,7 +85,7 @@ public class NormalStrategyTests
         var botCards = Array.Empty<ICard>();
         var desktopCards = Array.Empty<ICard>();
         var deckSize = 20;
-        var strategy = new NormalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
@@ -102,7 +103,7 @@ public class NormalStrategyTests
         ICard[] botCards = null!;
         var desktopCards = Array.Empty<ICard>();
         var deckSize = 20;
-        var strategy = new NormalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
@@ -120,7 +121,7 @@ public class NormalStrategyTests
         var botCards = Array.Empty<ICard>();
         var desktopCards = Array.Empty<ICard>();
         var deckSize = 20;
-        var strategy = new NormalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var exception = Record.Exception(() => strategy.TryDefence(ownerId, botCards, desktopCards, deckSize, out var resultCard, out var resultClosedCard));
@@ -131,14 +132,14 @@ public class NormalStrategyTests
 
     [Fact(DisplayName = "Bot can not do anything cause count of deck cards is less 0")]
     [Trait("Category", "Properties")]
-    public void CanNotDefenceWhenDeckIsLessZero()
+    public void CanNotDoAnythingWhenDeckIsLessZero()
     {
         // Arrange
         var ownerId = 1;
         var botCards = Array.Empty<ICard>();
         var desktopCards = Array.Empty<ICard>();
         var deckSize = -1;
-        var strategy = new NormalStrategy();
+        var strategy = new MediumStrategy();
 
         // Act
         var exception1 = Record.Exception(() => strategy.TryAttack(botCards, desktopCards, deckSize, out var resultCard));
@@ -147,5 +148,5 @@ public class NormalStrategyTests
         // Assert
         new[] { exception1, exception2 }.Should().AllBeOfType<ArgumentException>();
     }
-    #endregion
+    #endregion 
 }
