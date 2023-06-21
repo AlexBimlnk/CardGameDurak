@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CardGameDurak.Abstractions;
+﻿namespace Logic;
 
-namespace CardGameDurak.Logic;
-
-/// <summary xml:lang = "ru">
+/// <summary>
 /// Стратегия, используемая ботом на средней сложности.
 /// </summary>
-public sealed class MediumStrategy: IBotStrategy
+public sealed class MediumStrategy : IBotStrategy
 {
-    private const int MAX_POSSIBLE_RANK_TRUMP_CARD = 10;
+    private const CardType MAX_POSSIBLE_TYPE_TRUMP_CARD = CardType.Ten;
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// <exception cref="ArgumentNullException">
     /// Когда список карт находящихся в руке или столе равен <see langword="null"/>.
     /// </exception>
-    /// <exception cref="ArgumentException" xml:lang = "ru">
+    /// <exception cref="ArgumentException">
     /// Когда <paramref name="deckSize"/> меньше нуля.
     /// </exception>
     public bool TryAttack(
@@ -36,34 +29,34 @@ public sealed class MediumStrategy: IBotStrategy
         resultCard = null!;
         var simpleCards = handCards.Where(x => !x.IsTrump);
         if (desktopCards.Count == 0)
-            resultCard = simpleCards.MinBy(x => x.Rank) ?? handCards.MinBy(x => x.Rank);
+            resultCard = simpleCards.MinBy(x => x.Type) ?? handCards.MinBy(x => x.Type);
         resultCard ??= deckSize switch
         {
             > 11 => resultCard ??= simpleCards
-                    .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                    .MinBy(x => x.Rank),
+                    .Where(x => desktopCards.Any(y => x.Type == y.Type))
+                    .MinBy(x => x.Type),
             > 4 => resultCard ??= simpleCards
-                    .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                    .MinBy(x => x.Rank)
+                    .Where(x => desktopCards.Any(y => x.Type == y.Type))
+                    .MinBy(x => x.Type)
                         ?? handCards
-                            .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                            .Where(x => x.Rank <= MAX_POSSIBLE_RANK_TRUMP_CARD)
-                            .MinBy(x => x.Rank),
+                            .Where(x => desktopCards.Any(y => x.Type == y.Type))
+                            .Where(x => x.Type <= MAX_POSSIBLE_TYPE_TRUMP_CARD)
+                            .MinBy(x => x.Type),
             _ => resultCard ??= simpleCards
-                    .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                    .MinBy(x => x.Rank)
+                    .Where(x => desktopCards.Any(y => x.Type == y.Type))
+                    .MinBy(x => x.Type)
                         ?? handCards
-                            .Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                            .MinBy(x => x.Rank)
+                            .Where(x => desktopCards.Any(y => x.Type == y.Type))
+                            .MinBy(x => x.Type)
         };
         return resultCard is not null;
     }
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// <exception cref="ArgumentNullException">
     /// Когда список карт находящихся в руке или столе равен <see langword="null"/>.
     /// </exception>
-    /// <exception cref="ArgumentException" xml:lang = "ru">
+    /// <exception cref="ArgumentException">
     /// Когда <paramref name="deckSize"/> меньше нуля или любой список карт пустой.
     /// </exception>
     public bool TryDefence(
@@ -87,41 +80,41 @@ public sealed class MediumStrategy: IBotStrategy
             throw new ArgumentException("Карт нет на столе");
 
 
-        var needClosed = desktopCards
-                        .Where(x => x.Owner!.Id != ownerId)
-                        .First(x => !x.IsCloseOnDesktop);
+        var needClosed = desktopCards.First();
+                        //.Where(x => x.Owner!.Id != ownerId)
+                        //.First(x => !x.IsCloseOnDesktop);
         closedCard = needClosed;
         resultCard = handCards
                     .Where(x => !x.IsTrump)
-                    .Where(x => needClosed.Rank < x.Rank)
+                    .Where(x => needClosed.Type < x.Type)
                     .Where(x => needClosed.Suit == x.Suit)
-                    .MinBy(x => x.Rank);
+                    .MinBy(x => x.Type);
         resultCard ??= deckSize switch
         {
             > 11 => handCards
                     .Where(x => x.IsTrump)
                     .Where(needClosed => !needClosed.IsTrump)
-                    .Where(x => x.Rank <= MAX_POSSIBLE_RANK_TRUMP_CARD)
-                    .MinBy(x => x.Rank),
+                    .Where(x => x.Type <= MAX_POSSIBLE_TYPE_TRUMP_CARD)
+                    .MinBy(x => x.Type),
             > 4 => resultCard ??= handCards
                     .Where(x => x.IsTrump)
                     .Where(x => !needClosed.IsTrump)
-                    .MinBy(x => x.Rank)
+                    .MinBy(x => x.Type)
                         ?? handCards
                             .Where(x => x.IsTrump)
                             .Where(x => needClosed.IsTrump)
-                            .Where(x => x.Rank > needClosed.Rank)
-                            .Where(x => needClosed.Rank <= MAX_POSSIBLE_RANK_TRUMP_CARD)
-                            .MinBy(x => x.Rank),
+                            .Where(x => x.Type > needClosed.Type)
+                            .Where(x => needClosed.Type <= MAX_POSSIBLE_TYPE_TRUMP_CARD)
+                            .MinBy(x => x.Type),
             _ => resultCard ??= handCards
                     .Where(x => x.IsTrump)
                     .Where(x => !needClosed.IsTrump)
-                    .MinBy(x => x.Rank)
+                    .MinBy(x => x.Type)
                         ?? handCards
                             .Where(x => x.IsTrump)
                             .Where(x => needClosed.IsTrump)
-                            .Where(x => x.Rank > needClosed.Rank)
-                            .MinBy(x => x.Rank)
+                            .Where(x => x.Type > needClosed.Type)
+                            .MinBy(x => x.Type)
         };
         return resultCard is not null;
     }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Logic.Events;
+namespace Logic.Events.GameEvents;
 
 /// <summary>
 /// Базовый класс для игровых событий.

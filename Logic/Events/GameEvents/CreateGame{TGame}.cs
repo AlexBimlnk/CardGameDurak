@@ -1,4 +1,6 @@
-﻿namespace Logic.Events;
+﻿using Logic.GameTypes;
+
+namespace Logic.Events.GameEvents;
 
 /// <summary>
 /// Событие создания игры.

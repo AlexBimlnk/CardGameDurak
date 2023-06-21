@@ -1,4 +1,4 @@
-﻿namespace Logic;
+﻿namespace Logic.GameTypes;
 
 /// <summary>
 /// Маркерный тип игры.

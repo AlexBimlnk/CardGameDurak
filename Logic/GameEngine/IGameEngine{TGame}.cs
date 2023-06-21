@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Logic.Events.GameEvents;
+using Logic.GameTypes;
 
-using Logic.Events;
+namespace Logic.GameEngine;
 
-namespace Logic.GameCore;
+/// <summary>
+/// Описывает движок карточной игры.
+/// </summary>
+/// <typeparam name="TGame">
+/// Тип карточной игры.
+/// </typeparam>
 public interface IGameEngine<TGame>
+    where TGame : IGameType
 {
     /// <summary>
     /// Обрабатывает игровое событие.
@@ -21,5 +24,5 @@ public interface IGameEngine<TGame>
     /// <returns>
     /// <see cref="Task"/>.
     /// </returns>
-    public Task ProcessEvent(IGameEvent gameEvent, CancellationToken token);
+    public Task ProcessEvent(IGameEvent<TGame> gameEvent, CancellationToken token);
 }

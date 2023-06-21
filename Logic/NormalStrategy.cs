@@ -1,17 +1,15 @@
-﻿using CardGameDurak.Abstractions;
+﻿namespace Logic;
 
-namespace CardGameDurak.Logic;
-
-/// <summary xml:lang = "ru">
+/// <summary>
 /// Стратегия, используемая ботом на средней сложности.
 /// </summary>
 public sealed class NormalStrategy : IBotStrategy
 {
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// <exception cref="ArgumentNullException">
     /// Когда список карт находящихся в руке или столе равен <see langword="null"/>.
     /// </exception>
-    /// <exception cref="ArgumentException" xml:lang = "ru">
+    /// <exception cref="ArgumentException">
     /// Когда <paramref name="deckSize"/> меньше нуля.
     /// </exception>
     public bool TryAttack(
@@ -29,19 +27,19 @@ public sealed class NormalStrategy : IBotStrategy
         var simpleCards = handCards.Where(x => !x.IsTrump);
 
         if (desktopCards.Count == 0)
-            resultCard = simpleCards.MinBy(x => x.Rank) ?? handCards.MinBy(x => x.Rank);
+            resultCard = simpleCards.MinBy(x => x.Type) ?? handCards.MinBy(x => x.Type);
 
-        resultCard ??= simpleCards.Where(x => desktopCards.Any(y => x.Rank == y.Rank))
-                                  .MinBy(x => x.Rank);
+        resultCard ??= simpleCards.Where(x => desktopCards.Any(y => x.Type == y.Type))
+                                  .MinBy(x => x.Type);
 
         return resultCard is not null;
     }
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException" xml:lang = "ru">
+    /// <exception cref="ArgumentNullException">
     /// Когда список карт находящихся в руке или столе равен <see langword="null"/>.
     /// </exception>
-    /// <exception cref="ArgumentException" xml:lang = "ru">
+    /// <exception cref="ArgumentException">
     /// Когда <paramref name="deckSize"/> меньше нуля или любой список карт пустой.
     /// </exception>
     public bool TryDefence(
@@ -64,15 +62,16 @@ public sealed class NormalStrategy : IBotStrategy
         if (desktopCards.Count == 0)
             throw new ArgumentException("Карт нет на столе");
 
-        var needClosed = desktopCards.Where(x => x.Owner!.Id != ownerId)
-                                     .First(x => !x.IsCloseOnDesktop);
+        var needClosed = desktopCards.First();
+            //.Where(x => x.Owner!.Id != ownerId)
+              //                       .First(x => !x.IsCloseOnDesktop);
         closedCard = needClosed;
         if (!needClosed.IsTrump)
         {
-            resultCard = handCards.Where(x => needClosed.Rank < x.Rank)
+            resultCard = handCards.Where(x => needClosed.Type < x.Type)
                                   .Where(x => needClosed.Suit == x.Suit)
-                                  .MinBy(x => x.Rank);
-            resultCard ??= handCards.Where(x => x.IsTrump).MinBy(x => x.Rank);
+                                  .MinBy(x => x.Type);
+            resultCard ??= handCards.Where(x => x.IsTrump).MinBy(x => x.Type);
         }
         else resultCard = null!;
 

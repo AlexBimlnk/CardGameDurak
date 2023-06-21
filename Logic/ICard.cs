@@ -9,4 +9,8 @@ namespace Logic;
 public interface ICard
 {
     public CardType Type { get; }
+
+    public Suit Suit { get; } 
+
+    public bool IsTrump { get; }
 }

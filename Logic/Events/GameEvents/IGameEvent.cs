@@ -1,4 +1,4 @@
-﻿namespace Logic.Events;
+﻿namespace Logic.Events.GameEvents;
 
 /// <summary>
 /// Описывает игровое событие.

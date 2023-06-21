@@ -1,38 +1,31 @@
-﻿using CardGameDurak.Abstractions;
-using CardGameDurak.Abstractions.Enums;
-using CardGameDurak.Abstractions.Players;
+﻿namespace Logic;
 
-namespace Logic;
-
-/// <summary xml:lang = "ru">
+/// <summary>
 /// Игральная карта.
 /// </summary>
 public class Card : ICard
 {
-    /// <summary xml:lang = "ru">
+    /// <summary>
     /// Создает новый экземпляр класса <see cref="Card"/>.
     /// </summary>
-    /// <param name="suit" xml:lang = "ru">
+    /// <param name="suit">
     /// Масть карты.
     /// </param>
-    /// <param name="rank" xml:lang = "ru">
+    /// <param name="type">
     /// Сила карты.
     /// </param>
-    public Card(Suit suit, int rank)
+    public Card(Suit suit, CardType type)
     {
         Suit = suit;
-        Rank = rank;
+        Type = type;
     }
 
     /// <inheritdoc/>
-    public int Rank { get; }
+    public CardType Type { get; }
 
     /// <inheritdoc/>
     public Suit Suit { get; }
 
     /// <inheritdoc/>
-    public IPlayer? Owner { get; set; }
-
-    /// <inheritdoc/>
-    public bool IsTrump { get; set; }
+    public bool IsTrump => throw new NotSupportedException();
 }

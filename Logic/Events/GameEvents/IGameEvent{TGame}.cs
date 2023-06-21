@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Logic.Events;
+using Logic.GameTypes;
+
+namespace Logic.Events.GameEvents;
 
 /// <summary>
 /// Описывает типизированное игровое событие.
